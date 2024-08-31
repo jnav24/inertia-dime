@@ -16,12 +16,13 @@ export default {
         extend: {
             colors: {
                 danger: '#C62828',
-                'dark-danger': '#4B0F0F',
-                'dark-primary': '#264653',
-                'dark-secondary': '#A88D3E',
+                'dm-danger': '#4B0F0F',
+                'dm-primary': '#264653',
+                'dm-secondary': '#A88D3E',
                 primary: '#45ADA8',
                 secondary: '#EFC958',
                 success: '#198754',
+                'dm-main': '#0E1013',
             },
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],

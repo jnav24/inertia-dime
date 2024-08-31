@@ -1,20 +1,24 @@
 <script setup lang="ts">
-import ApplicationLogo from '@/Components/ApplicationLogo.vue';
-import { Link } from '@inertiajs/vue3';
 </script>
 
 <template>
-    <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100 dark:bg-gray-900">
-        <div>
-            <Link href="/">
-                <ApplicationLogo class="w-20 h-20 fill-current text-gray-500" />
-            </Link>
+    <main class="flex h-screen w-full p-2 bg-white dark:bg-dm-main">
+        <div class="w-1/3 max-w-160 relative rounded-xl overflow-hidden">
+            <div class="bg-primary/85 absolute w-full h-full"></div>
+            <img src="/img/onboard_bg_1-1.jpg" class="object-cover h-full" alt="Dime Background">
         </div>
 
-        <div
-            class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg"
-        >
-            <slot />
-        </div>
-    </div>
+        <section class="flex flex-col justify-between px-4 flex-1">
+            <div class="flex space-x-1 items-center pt-2">
+                <div class="w-14 overflow-hidden">
+                    <img src="/img/logo_1.png" alt="Dime Logo" class="h-12 min-w-36">
+                </div>
+                <p class="text-3xl font-light text-gray-600">Dime</p>
+            </div>
+
+            <div class="pb-20">
+                <slot />
+            </div>
+        </section>
+    </main>
 </template>
