@@ -14,6 +14,9 @@ export default {
 
     theme: {
         extend: {
+            borderWidth: {
+                6: '6px',
+            },
             colors: {
                 danger: '#C62828',
                 'dm-danger': '#4B0F0F',
