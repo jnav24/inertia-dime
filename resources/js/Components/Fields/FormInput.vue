@@ -15,22 +15,25 @@ const props = withDefaults(
         readOnly?: boolean;
         rules?: RulesType | Array<keyof RulesType>;
         validateOnInit?: boolean;
-        value: string;
+        value?: string;
     }>(),
-    { onBlur: true, validateOnInit: false },
+    { onBlur: true, validateOnInit: false, value: undefined },
 );
 
-const { error, labelId, updateInputValue } = useForm({
+const { error, labelId, getInputValue, updateInputValue } = useForm({
     label: props.label,
     validateOnInit: props.validateOnInit,
-    value: props.value,
+    value: props.value ?? '',
     rules: props.rules,
 });
 
 const updateValue = (event: Event) => {
     const { value } = event.target as HTMLInputElement;
     updateInputValue(value);
-    emit('update:value', value);
+
+    if (props.value) {
+        emit('update:value', value);
+    }
 };
 
 const updateOnBlur = (event: FocusEvent) => {
@@ -63,7 +66,7 @@ const updateOnBlur = (event: FocusEvent) => {
                     'bg-gray-200 text-gray-500 dark:bg-gray-700': readOnly,
                 }"
                 :type="password ? 'password' : 'text'"
-                :value="value"
+                :value="getInputValue"
                 :autocomplete="noAutocomplete || password ? 'on' : 'off'"
                 @blur="updateOnBlur($event)"
                 @input="updateValue($event)"

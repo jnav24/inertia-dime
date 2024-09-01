@@ -36,7 +36,6 @@ export type FormContextType = {
     formElements: FormElementsType;
     setupForm: (label: string, rules: any) => string;
     validateField: (labelId: string, value: string, initialize?: boolean) => string | null;
-    valid: boolean;
     validateAllFields: () => void;
     resetFields: () => void;
 };
