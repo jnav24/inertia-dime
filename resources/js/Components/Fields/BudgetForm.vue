@@ -2,17 +2,28 @@
 import type { FormContextType, FormElementValidationType, RulesType } from '@/types/form';
 import { FormContext } from '@/types/form';
 import { validateRules } from '@/utils/form-validator';
-import { provide, reactive } from "vue";
+import { provide, reactive, ref } from 'vue';
+import { useForm } from '@inertiajs/vue3';
+import Alert from "@/Components/Elements/Alert.vue";
 
-const props = defineProps<{ valid: boolean }>();
+type FormMethod = 'post' | 'get' | 'patch' | 'delete' | 'put';
+
+const props = withDefaults(
+    defineProps<{ action?: string, method?: FormMethod, valid?: boolean | undefined }>(),
+    { action: '', method: 'post', valid: undefined },
+);
 const emit = defineEmits<{
     (e: 'handleSubmit', event: Event): void;
     (e: 'update:valid', event: boolean): void;
 }>();
 
+const form = useForm({});
+
 const formElements = reactive({} as Record<string, FormElementValidationType>);
 
 let matchFields: Record<string, string> = {};
+
+const isValid = ref(false);
 
 const setFormElement = (
     name: string,
@@ -72,7 +83,11 @@ const isFormValid = () => {
     const valid = Object.values(formElements).filter(
         (elem: { valid: boolean; rules: RulesType | Array<keyof RulesType> }) => elem.valid,
     );
-    emit('update:valid', keys.length === valid.length);
+    isValid.value = keys.length === valid.length;
+
+    if (props.valid !== undefined) {
+        emit('update:valid', isValid.value)
+    }
 };
 
 const setMatchRules = (rules: RulesType | (keyof RulesType)[]) => {
@@ -141,9 +156,19 @@ const validateAllFields = () => {
     }
 };
 
+const getFormData = () => {
+    return Object.entries(formElements).reduce((result, [key, obj]) => {
+        return {
+            ...result,
+            [key]: obj.value
+        };
+    }, {});
+}
+
 const validateSubmit = (e: Event) => {
-    if (props.valid) {
-        return emit('handleSubmit', e);
+    if (isValid.value) {
+        emit('handleSubmit', e);
+        return form.transform((data) => ({ ...data, ...getFormData() })).submit(props.method, props.action)
     }
 
     validateAllFields();
@@ -154,7 +179,6 @@ const resetFields = () => {};
 provide<FormContextType>(FormContext, {
     formElements,
     setupForm,
-    valid: props.valid,
     validateField,
     validateAllFields,
     resetFields,
@@ -163,6 +187,7 @@ provide<FormContextType>(FormContext, {
 
 <template>
     <form @submit.prevent="validateSubmit">
+        <Alert v-if="form.hasErrors" type="error" :message="Object.values(form.errors)[0] as string" title="Error" />
         <slot />
     </form>
 </template>
