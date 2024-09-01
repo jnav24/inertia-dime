@@ -1,6 +1,6 @@
 import type { RulesType } from '@/types/form';
 import { toTitleCase } from '@/utils/functions';
-import { ValidationException } from './exceptions';
+// import { ValidationException } from './exceptions';
 
 class BudgetError extends Error {}
 
@@ -205,26 +205,26 @@ const validateRules = (
     };
 };
 
-const validateRequest = <InputObject, RuleObject extends keyof InputObject>(
-    request: InputObject,
-    rulesObject: Record<RuleObject, Array<keyof RulesType> | RulesType>,
-) => {
-    const errors = {} as Record<RuleObject, string>;
+// const validateRequest = <InputObject, RuleObject extends keyof InputObject>(
+//     request: InputObject,
+//     rulesObject: Record<RuleObject, Array<keyof RulesType> | RulesType>,
+// ) => {
+//     const errors = {} as Record<RuleObject, string>;
+//
+//     (Object.keys(rulesObject) as RuleObject[]).forEach((field) => {
+//         const { error, valid } = validateRules(
+//             (request?.[field] ?? '') as string,
+//             rulesObject[field],
+//         );
+//         if (!valid) {
+//             errors[field] = error as string;
+//         }
+//     });
 
-    (Object.keys(rulesObject) as RuleObject[]).forEach((field) => {
-        const { error, valid } = validateRules(
-            (request?.[field] ?? '') as string,
-            rulesObject[field],
-        );
-        if (!valid) {
-            errors[field] = error as string;
-        }
-    });
-
-    if (Object.keys(errors).length) {
+    // if (Object.keys(errors).length) {
         // Nuxt calls this regardless if this only gets called on the server then throws an error
-        throw new ValidationException('Validation error', errors);
-    }
-};
+        // throw new ValidationException('Validation error', errors);
+    // }
+// };
 
-export { validateInput, validateRequest, validateRules };
+export { validateInput, validateRules };

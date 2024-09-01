@@ -32,5 +32,9 @@ export default function useForm({ label, rules, validateOnInit, value }: Props) 
         }
     };
 
-    return { error, labelId: labelId.value, updateInputValue };
+    const getInputValue = computed(() => {
+        return formContext?.formElements?.[labelId.value].value ?? value;
+    });
+
+    return { error, labelId: labelId.value, getInputValue, updateInputValue };
 }
