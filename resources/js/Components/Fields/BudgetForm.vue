@@ -15,6 +15,8 @@ const props = withDefaults(
 const emit = defineEmits<{
     (e: 'handleSubmit', event: Event): void;
     (e: 'update:valid', event: boolean): void;
+    (e: 'handleError', event: Record<string, string>): void;
+    (e: 'handleSuccess', event: any): void;
 }>();
 
 const form = useForm({});
@@ -23,6 +25,7 @@ const formElements = reactive({} as Record<string, FormElementValidationType>);
 
 let matchFields: Record<string, string> = {};
 
+const isSubmitting = ref(false);
 const isValid = ref(false);
 
 const setFormElement = (
@@ -166,12 +169,27 @@ const getFormData = () => {
 }
 
 const validateSubmit = (e: Event) => {
-    if (isValid.value) {
-        emit('handleSubmit', e);
-        return form.transform((data) => ({ ...data, ...getFormData() })).submit(props.method, props.action)
-    }
+    if (!isSubmitting.value) {
+        isSubmitting.value = true;
 
-    validateAllFields();
+        if (isValid.value) {
+            emit('handleSubmit', e);
+            form.transform((data) => ({ ...data, ...getFormData() })).submit(props.method, props.action, {
+                onBefore: (e) => emit('handleBefore', e),
+                onCancel: (e) => emit('handleCancel', e),
+                onError: (e) => emit('handleError', e),
+                onFinish: (e) => emit('handleFinish', e),
+                onProgress: (e) => emit('handleProgress', e),
+                onStart: (e) => emit('handleStart', e),
+                onSuccess: (e) => emit('handleSuccess', e),
+            });
+            isSubmitting.value = false;
+            return true;
+        }
+
+        validateAllFields();
+        isSubmitting.value = false;
+    }
 };
 
 const resetFields = () => {};
