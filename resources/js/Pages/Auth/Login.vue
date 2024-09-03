@@ -38,7 +38,7 @@ const submit = () => {
 
             <div class="flex items-center justify-between my-6">
                 <FormCheckbox label="Remember Me" value="" />
-                <Typography variant="caption">
+                <Typography v-if="canResetPassword" variant="caption">
                     <AppLink :href="route('password.request')">Forgot password?</AppLink>
                 </Typography>
             </div>
