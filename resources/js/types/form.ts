@@ -1,3 +1,5 @@
+import { Ref } from "vue";
+
 export const FormContext = Symbol('FormContext');
 
 export type RulesOptions = {
@@ -34,6 +36,7 @@ type FormElementsType = Record<string, FormElementValidationType>;
 
 export type FormContextType = {
     formElements: FormElementsType;
+    isSubmitting: Ref<boolean>;
     setupForm: (label: string, rules: any) => string;
     validateField: (labelId: string, value: string, initialize?: boolean) => string | null;
     validateAllFields: () => void;

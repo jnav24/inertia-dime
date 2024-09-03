@@ -1,8 +1,13 @@
 <script setup lang="ts">
+import { computed, inject } from "vue";
+import { FormContext, FormContextType } from "@/types/form";
+
 type ButtonColor = 'default' | 'primary' | 'secondary' | 'danger';
 
+const formContext = inject<FormContextType>(FormContext);
+
 defineEmits<{ (e: ''): void }>();
-withDefaults(
+const props = withDefaults(
     defineProps<{
         block?: boolean;
         checkbox?: boolean;
@@ -16,6 +21,8 @@ withDefaults(
     { color: 'default' },
 );
 
+const isDisabled = computed(() => props.disabled || formContext?.isSubmitting?.value || false);
+
 const validateSubmit = () => {};
 </script>
 
@@ -24,19 +31,19 @@ const validateSubmit = () => {};
         class="focus:shadow-outline rounded transition duration-150 focus:outline-none"
         :class="{
             'border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 active:bg-gray-200':
-                color === 'default' && !disabled,
+                color === 'default' && !isDisabled,
             'bg-primary text-white hover:bg-opacity-85 active:bg-dark-primary':
-                color === 'primary' && !disabled,
+                color === 'primary' && !isDisabled,
             'bg-secondary text-gray-700 hover:bg-opacity-85 active:bg-dark-secondary':
-                color === 'secondary' && !disabled,
-            'bg-danger hover:bg-opacity-85 active:bg-dark-danger': color === 'danger' && !disabled,
+                color === 'secondary' && !isDisabled,
+            'bg-danger hover:bg-opacity-85 active:bg-dark-danger': color === 'danger' && !isDisabled,
             'rounded-full p-2': fab,
             'rounded-md p-1': checkbox,
             'rounded-md px-6 py-3 text-sm': !fab && !checkbox,
-            'cursor-text bg-gray-300 text-gray-700': disabled,
+            'cursor-text bg-gray-300 text-gray-700': isDisabled,
             'w-full': block,
         }"
-        :disabled="disabled"
+        :disabled="isDisabled"
         @click="validateSubmit"
         :type="submit ? 'submit' : 'button'"
     >
