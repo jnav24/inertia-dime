@@ -26,10 +26,6 @@ export function validateAlphaNumeric(value: string): boolean {
     return /^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/.test(value);
 }
 
-export function validateSpecialCharacters(value: string): boolean {
-    return /[!@#$%^&*)(+=._-]+/g.test(value);
-}
-
 /**
  *
  * @param matchingValue; has the form rule `match`
@@ -93,6 +89,10 @@ function validatePhone(value: string) {
     return new RegExp(regex).test(value);
 }
 
+function validateSymbol(value: string) {
+    return /[!@#$%^&*)(+=._-]+/g.test(value);
+}
+
 const validators = {
     validateAlphaNumeric,
     validateEmail,
@@ -107,7 +107,7 @@ const validators = {
     validateMin,
     validatePhone,
     validateRequired,
-    validateSpecialCharacters,
+    validateSymbol,
     validateUpper,
 };
 
@@ -126,6 +126,7 @@ const defaultErrorMessages: Record<string, string> = {
     numeric: 'Field can only contain numbers',
     phone: 'Field must be a valid phone number',
     required: 'Field is required',
+    symbol: 'Field must contain a special character',
     upper: 'Field must contain an uppercase letter',
     // @todo add in
     // @todo add uuid

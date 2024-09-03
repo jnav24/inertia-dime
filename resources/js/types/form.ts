@@ -22,6 +22,7 @@ export type RulesType = {
     numeric?: RulesOptions;
     phone?: RulesOptions;
     required?: RulesOptions;
+    symbol?: RulesOptions;
     upper?: RulesOptions;
 };
 
