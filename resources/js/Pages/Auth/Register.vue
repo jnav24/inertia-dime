@@ -3,25 +3,9 @@ import GuestLayout from '@/Layouts/GuestLayout.vue';
 import BudgetForm from "@/Components/Fields/BudgetForm.vue";
 import FormInput from "@/Components/Fields/FormInput.vue";
 import FormButton from "@/Components/Fields/FormButton.vue";
-import { Head, useForm } from '@inertiajs/vue3';
+import { Head } from '@inertiajs/vue3';
 import Typography from "@/Components/Elements/Typography.vue";
 import AppLink from "@/Components/Elements/AppLink.vue";
-
-const form = useForm({
-    name: '',
-    email: '',
-    password: '',
-    password_confirmation: '',
-});
-
-const submit = () => {
-    form.post(route('register'), {
-        onFinish: () => {
-            form.reset('password', 'password_confirmation');
-        },
-    });
-};
-
 </script>
 
 <template>
@@ -40,7 +24,7 @@ const submit = () => {
                 <FormInput label="Confirm Password" :rules="['required', 'match:password']" password />
             </div>
 
-            <FormButton block color="secondary" submit>Register</FormButton>
+            <FormButton block color="primary" submit>Register</FormButton>
         </BudgetForm>
 
         <div class="my-6 text-center">
