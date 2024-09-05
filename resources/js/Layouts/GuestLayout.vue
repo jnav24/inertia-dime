@@ -3,7 +3,7 @@
 
 <template>
     <main class="flex h-screen w-full p-2 bg-white dark:bg-dm-main">
-        <div class="w-1/3 max-w-160 relative rounded-xl overflow-hidden">
+        <div class="w-1/2 relative rounded-xl overflow-hidden">
             <div class="bg-primary/85 absolute w-full h-full"></div>
             <img src="/img/onboard_bg_1-1.jpg" class="object-cover h-full" alt="Dime Background">
         </div>
