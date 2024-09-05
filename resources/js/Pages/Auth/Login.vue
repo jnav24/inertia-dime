@@ -43,7 +43,7 @@ const submit = () => {
                 </Typography>
             </div>
 
-            <FormButton block color="secondary" submit>Login</FormButton>
+            <FormButton block color="primary" submit>Login</FormButton>
         </BudgetForm>
 
         <div class="my-6 text-center">
