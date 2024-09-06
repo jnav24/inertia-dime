@@ -6,6 +6,7 @@ import FormButton from "@/Components/Fields/FormButton.vue";
 import { Head } from '@inertiajs/vue3';
 import Typography from "@/Components/Elements/Typography.vue";
 import AppLink from "@/Components/Elements/AppLink.vue";
+import { validation } from "@/utils/helpers";
 </script>
 
 <template>
@@ -20,7 +21,7 @@ import AppLink from "@/Components/Elements/AppLink.vue";
             <div class="mb-6 space-y-6">
                 <FormInput label="Name" :rules="['required', 'min:3', 'max:255']" />
                 <FormInput label="Email" :rules="['required', 'email']" />
-                <FormInput label="Password" :rules="['required', 'min:12', 'upper', 'symbol', 'lower', 'has-int']" password />
+                <FormInput label="Password" :rules="validation.password" password />
                 <FormInput label="Confirm Password" :rules="['required', 'match:password']" password />
             </div>
 
