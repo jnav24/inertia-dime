@@ -12,10 +12,6 @@ defineProps<{
     canResetPassword?: boolean;
     status?: string;
 }>();
-
-const submit = () => {
-    // ...
-};
 </script>
 
 <template>
