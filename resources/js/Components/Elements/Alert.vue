@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import Close from "@/Components/Icons/outline/Close.vue";
 import { computed } from 'vue';
+import CheckCircle from "@/Components/Icons/outline/CheckCircle.vue";
+import CloseCircle from "@/Components/Icons/outline/CloseCircle.vue";
 
 type Props = { message: string; title: string | null; type: 'error' | 'success' | 'warn' | 'info' };
 const props = withDefaults(defineProps<Props>(), { title: null });
@@ -25,8 +26,9 @@ const classes = computed(() => {
         :class="classes"
         role="alert"
     >
-        <div class="rounded-full border-6 p-2" :class="classes">
-            <Close classes="size-4" />
+        <div :class="classes">
+            <CloseCircle classes="size-8" v-if="type === 'error'" />
+            <CheckCircle classes="size-8" v-if="type === 'success'" />
         </div>
         <div class="ml-2 flex flex-col">
             <span v-if="title" class="font-bold">{{ title }}</span>
