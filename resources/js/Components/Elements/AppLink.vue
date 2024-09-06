@@ -5,5 +5,5 @@ const props = defineProps<InertiaLinkProps>()
 </script>
 
 <template>
-    <Link class="text-primary hover:text-dm-primary" :href="props.href"><slot /></Link>
+    <Link class="text-primary hover:text-dm-primary" v-bind="props"><slot /></Link>
 </template>
