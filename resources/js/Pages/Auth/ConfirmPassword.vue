@@ -1,52 +1,26 @@
 <script setup lang="ts">
 import GuestLayout from '@/Layouts/GuestLayout.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
-import { Head, useForm } from '@inertiajs/vue3';
-
-const form = useForm({
-    password: '',
-});
-
-const submit = () => {
-    form.post(route('password.confirm'), {
-        onFinish: () => {
-            form.reset();
-        },
-    });
-};
+import { Head } from '@inertiajs/vue3';
+import FormButton from "@/Components/Fields/FormButton.vue";
+import FormInput from "@/Components/Fields/FormInput.vue";
+import Typography from "@/Components/Elements/Typography.vue";
+import BudgetForm from "@/Components/Fields/BudgetForm.vue";
 </script>
 
 <template>
     <GuestLayout>
         <Head title="Confirm Password" />
 
-        <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
-            This is a secure area of the application. Please confirm your password before continuing.
+        <div class="space-y-2 my-12">
+            <Typography variant="h1">Confirm Password</Typography>
+            <Typography variant="body1">This is a secure area of the application. Please confirm your password before continuing.</Typography>
         </div>
 
-        <form @submit.prevent="submit">
-            <div>
-                <InputLabel for="password" value="Password" />
-                <TextInput
-                    id="password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    v-model="form.password"
-                    required
-                    autocomplete="current-password"
-                    autofocus
-                />
-                <InputError class="mt-2" :message="form.errors.password" />
+        <BudgetForm :action="route('password.confirm')">
+            <div class="space-y-4">
+                <FormInput label="Password" :rules="['required']" password />
+                <FormButton color="primary" block submit>Confirm</FormButton>
             </div>
-
-            <div class="flex justify-end mt-4">
-                <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Confirm
-                </PrimaryButton>
-            </div>
-        </form>
+        </BudgetForm>
     </GuestLayout>
 </template>
