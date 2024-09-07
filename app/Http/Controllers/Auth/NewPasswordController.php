@@ -26,7 +26,7 @@ class NewPasswordController extends Controller
             return redirect()->route('login');
         }
 
-        $user = User::where('email', $request->email)->first();
+        $user = User::query()->where('email', $request->email)->first();
         $token = $request->route('token');
 
         if (! $user || ! Password::getRepository()->exists($user, $token)) {
