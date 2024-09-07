@@ -41,7 +41,7 @@ const setFormElement = (
     };
 };
 
-const setFormId = (name: string): string => name.toLowerCase().replace(/\s+/g, '-');
+const setFormId = (name: string): string => name.toLowerCase().replace(/\s+/g, '_');
 
 const getMatchId = (rules: RulesType | Array<keyof RulesType>) => {
     let matchId: string | null = null;

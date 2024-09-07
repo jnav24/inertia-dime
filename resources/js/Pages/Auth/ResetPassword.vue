@@ -21,11 +21,12 @@ defineProps<{
             <Typography variant="h1">Reset Password</Typography>
         </div>
 
-        <BudgetForm :action="route('password.email')">
+        <BudgetForm :action="route('password.store')">
             <div class="space-y-4">
+                <FormInput label="Token" :value="token" hidden />
                 <FormInput label="Email" :rules="['required', 'email']" :value="email" />
                 <FormInput label="Password" :rules="validation.password" password />
-                <FormInput label="Confirm Password" :rules="['required', 'match:password']" password />
+                <FormInput label="Password Confirmation" :rules="['required', 'match:password']" password />
                 <FormButton color="primary" block submit>Reset Password</FormButton>
             </div>
         </BudgetForm>
