@@ -6,6 +6,7 @@ import FormLabel from "@/Components/Fields/FormLabel.vue";
 const emit = defineEmits<{ (e: 'update:value', value: string): void }>();
 const props = withDefaults(
     defineProps<{
+        hidden?: boolean;
         icon?: any;
         label: string;
         noAutocomplete?: boolean;
@@ -46,7 +47,7 @@ const updateOnBlur = (event: FocusEvent) => {
 </script>
 
 <template>
-    <div class="relative">
+    <div class="relative" v-show="!hidden">
         <FormLabel v-if="!placeholder" :error="error" labelId="labelId" :label="label" />
 
         <div class="relative mb-2">
@@ -71,7 +72,7 @@ const updateOnBlur = (event: FocusEvent) => {
                 @blur="updateOnBlur($event)"
                 @input="updateValue($event)"
                 :aria-labelledby="labelId"
-                :readonly="readOnly"
+                :readonly="readOnly || hidden"
                 :placeholder="placeholder ? label : ''"
             />
 
