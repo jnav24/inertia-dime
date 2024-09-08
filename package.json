@@ -3,7 +3,9 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build": "vue-tsc && vite build && vite build --ssr"
+        "build": "vue-tsc && vite build && vite build --ssr",
+        "format": "prettier --write 'resources/js/**/*.{js,vue,ts}'",
+        "format:check": "prettier --check 'resources/js/**/*.{js,vue,ts}'"
     },
     "devDependencies": {
         "@inertiajs/vue3": "^1.0.0",
