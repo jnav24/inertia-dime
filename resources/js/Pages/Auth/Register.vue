@@ -22,7 +22,7 @@ import { validation } from "@/utils/helpers";
                 <FormInput label="Name" :rules="['required', 'min:3', 'max:255']" />
                 <FormInput label="Email" :rules="['required', 'email']" />
                 <FormInput label="Password" :rules="validation.password" password />
-                <FormInput label="Confirm Password" :rules="['required', 'match:password']" password />
+                <FormInput label="Password Confirmation" :rules="['required', 'match:password']" password />
             </div>
 
             <FormButton block color="primary" submit>Register</FormButton>
