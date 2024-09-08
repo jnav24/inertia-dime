@@ -2,6 +2,11 @@ import { Ref } from 'vue';
 
 export const FormContext = Symbol('FormContext');
 
+export type Validator = {
+    message: (param?: string) => string;
+    validate: ((val: string) => void) | ((val: string, option: string) => void);
+};
+
 export type RulesOptions = {
     message?: string;
     pattern?: string;
@@ -15,6 +20,7 @@ export type RulesType = {
     [key: `gt:${number}`]: RulesOptions;
     [key: `lt:${number}`]: RulesOptions;
     'has-int'?: RulesOptions;
+    [key: `in:${string}`]: RulesOptions;
     lower?: RulesOptions;
     [key: `match:${string}`]: RulesOptions;
     [key: `max:${number}`]: RulesOptions;
@@ -23,6 +29,7 @@ export type RulesType = {
     phone?: RulesOptions;
     required?: RulesOptions;
     symbol?: RulesOptions;
+    uuid?: RulesOptions;
     upper?: RulesOptions;
 };
 
