@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, inject } from "vue";
-import { FormContext, FormContextType } from "@/types/form";
+import { computed, inject } from 'vue';
+import { FormContext, FormContextType } from '@/types/form';
 
 type ButtonColor = 'default' | 'primary' | 'secondary' | 'danger';
 
@@ -32,11 +32,12 @@ const validateSubmit = () => {};
         :class="{
             'border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 active:bg-gray-200':
                 color === 'default' && !isDisabled,
-            'bg-primary text-white hover:bg-opacity-85 active:bg-dark-primary':
+            'active:bg-dark-primary bg-primary text-white hover:bg-opacity-85':
                 color === 'primary' && !isDisabled,
-            'bg-secondary text-gray-700 hover:bg-opacity-85 active:bg-dark-secondary':
+            'active:bg-dark-secondary bg-secondary text-gray-700 hover:bg-opacity-85':
                 color === 'secondary' && !isDisabled,
-            'bg-danger hover:bg-opacity-85 active:bg-dark-danger': color === 'danger' && !isDisabled,
+            'active:bg-dark-danger bg-danger hover:bg-opacity-85':
+                color === 'danger' && !isDisabled,
             'rounded-full p-2': fab,
             'rounded-md p-1': checkbox,
             'rounded-md px-6 py-3 text-sm': !fab && !checkbox,

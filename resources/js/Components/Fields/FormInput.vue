@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { RulesType } from '@/types/form';
 import useForm from '@/Composables/useForm';
-import FormLabel from "@/Components/Fields/FormLabel.vue";
+import FormLabel from '@/Components/Fields/FormLabel.vue';
 
 const emit = defineEmits<{ (e: 'update:value', value: string): void }>();
 const props = withDefaults(

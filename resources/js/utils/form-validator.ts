@@ -180,9 +180,9 @@ const validateRules = (
         const [validationType, validationParams] = getTypeAndParam(type);
         const message = isNumeric
             ? setMessage(
-                defaultErrorMessages[validationType] ?? defaultErrorMessages.required,
-                validationParams ?? '',
-            )
+                  defaultErrorMessages[validationType] ?? defaultErrorMessages.required,
+                  validationParams ?? '',
+              )
             : value;
         const isValid = validateInput(type, inputValue);
 
@@ -222,10 +222,10 @@ const validateRules = (
 //         }
 //     });
 
-    // if (Object.keys(errors).length) {
-        // Nuxt calls this regardless if this only gets called on the server then throws an error
-        // throw new ValidationException('Validation error', errors);
-    // }
+// if (Object.keys(errors).length) {
+// Nuxt calls this regardless if this only gets called on the server then throws an error
+// throw new ValidationException('Validation error', errors);
+// }
 // };
 
 export { validateInput, validateRules };

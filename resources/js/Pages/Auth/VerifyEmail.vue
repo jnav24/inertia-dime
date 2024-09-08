@@ -2,11 +2,11 @@
 import { computed } from 'vue';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import { Head } from '@inertiajs/vue3';
-import Typography from "@/Components/Elements/Typography.vue";
-import BudgetForm from "@/Components/Fields/BudgetForm.vue";
-import FormButton from "@/Components/Fields/FormButton.vue";
-import AppLink from "@/Components/Elements/AppLink.vue";
-import Alert from "@/Components/Elements/Alert.vue";
+import Typography from '@/Components/Elements/Typography.vue';
+import BudgetForm from '@/Components/Fields/BudgetForm.vue';
+import FormButton from '@/Components/Fields/FormButton.vue';
+import AppLink from '@/Components/Elements/AppLink.vue';
+import Alert from '@/Components/Elements/Alert.vue';
 
 const props = defineProps<{
     status?: string;
@@ -19,10 +19,13 @@ const verificationLinkSent = computed(() => props.status === 'verification-link-
     <GuestLayout>
         <Head title="Email Verification" />
 
-        <div class="space-y-4 my-8">
+        <div class="my-8 space-y-4">
             <Typography variant="h1">Verify your email</Typography>
-            <Typography variant="body1">Thanks for signing up! Before getting started, could you verify your email address by clicking on the link
-                we just emailed to you? If you didn't receive the email, we will gladly send you another.</Typography>
+            <Typography variant="body1"
+                >Thanks for signing up! Before getting started, could you verify your email address
+                by clicking on the link we just emailed to you? If you didn't receive the email, we
+                will gladly send you another.</Typography
+            >
         </div>
 
         <Alert
@@ -38,11 +41,7 @@ const verificationLinkSent = computed(() => props.status === 'verification-link-
 
         <div class="mt-6 text-center">
             <Typography variant="caption">
-                <AppLink
-                    :href="route('logout')"
-                    method="post"
-                    as="button"
-                >Log Out</AppLink>
+                <AppLink :href="route('logout')" method="post" as="button">Log Out</AppLink>
             </Typography>
         </div>
     </GuestLayout>

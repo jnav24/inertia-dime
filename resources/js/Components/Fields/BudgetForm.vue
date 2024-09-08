@@ -4,12 +4,12 @@ import { FormContext } from '@/types/form';
 import { validateRules } from '@/utils/form-validator';
 import { provide, reactive, ref } from 'vue';
 import { useForm } from '@inertiajs/vue3';
-import Alert from "@/Components/Elements/Alert.vue";
+import Alert from '@/Components/Elements/Alert.vue';
 
 type FormMethod = 'post' | 'get' | 'patch' | 'delete' | 'put';
 
 const props = withDefaults(
-    defineProps<{ action?: string, method?: FormMethod, valid?: boolean | undefined }>(),
+    defineProps<{ action?: string; method?: FormMethod; valid?: boolean | undefined }>(),
     { action: '', method: 'post', valid: undefined },
 );
 const emit = defineEmits<{
@@ -89,7 +89,7 @@ const isFormValid = () => {
     isValid.value = keys.length === valid.length;
 
     if (props.valid !== undefined) {
-        emit('update:valid', isValid.value)
+        emit('update:valid', isValid.value);
     }
 };
 
@@ -108,16 +108,15 @@ const setMatchRules = (rules: RulesType | (keyof RulesType)[]) => {
             ...result,
             [`match:${formName}|${formElements[formName].value}`]: (rules as RulesType)[
                 matchKey[0]
-                ],
+            ],
         };
     }
 
     if (valuesIndex > -1) {
         const result = { ...rules };
         const formName = (result as Array<keyof RulesType>)[valuesIndex].split(':')[1];
-        (result as Array<keyof RulesType>)[
-            valuesIndex
-            ] = `match:${formName}|${formElements[formName].value}`;
+        (result as Array<keyof RulesType>)[valuesIndex] =
+            `match:${formName}|${formElements[formName].value}`;
         return result;
     }
 
@@ -163,10 +162,10 @@ const getFormData = () => {
     return Object.entries(formElements).reduce((result, [key, obj]) => {
         return {
             ...result,
-            [key]: obj.value
+            [key]: obj.value,
         };
     }, {});
-}
+};
 
 const validateSubmit = (e: Event) => {
     if (!isSubmitting.value) {
@@ -174,15 +173,19 @@ const validateSubmit = (e: Event) => {
 
         if (isValid.value) {
             emit('handleSubmit', e);
-            form.transform((data) => ({ ...data, ...getFormData() })).submit(props.method, props.action, {
-                onBefore: (e) => emit('handleBefore', e),
-                onCancel: (e) => emit('handleCancel', e),
-                onError: (e) => emit('handleError', e),
-                onFinish: (e) => emit('handleFinish', e),
-                onProgress: (e) => emit('handleProgress', e),
-                onStart: (e) => emit('handleStart', e),
-                onSuccess: (e) => emit('handleSuccess', e),
-            });
+            form.transform((data) => ({ ...data, ...getFormData() })).submit(
+                props.method,
+                props.action,
+                {
+                    onBefore: (e) => emit('handleBefore', e),
+                    onCancel: (e) => emit('handleCancel', e),
+                    onError: (e) => emit('handleError', e),
+                    onFinish: (e) => emit('handleFinish', e),
+                    onProgress: (e) => emit('handleProgress', e),
+                    onStart: (e) => emit('handleStart', e),
+                    onSuccess: (e) => emit('handleSuccess', e),
+                },
+            );
             isSubmitting.value = false;
             return true;
         }
@@ -206,7 +209,12 @@ provide<FormContextType>(FormContext, {
 
 <template>
     <form @submit.prevent="validateSubmit">
-        <Alert v-if="form.hasErrors" type="error" :message="Object.values(form.errors)[0] as string" title="Error" />
+        <Alert
+            v-if="form.hasErrors"
+            type="error"
+            :message="Object.values(form.errors)[0] as string"
+            title="Error"
+        />
         <slot />
     </form>
 </template>

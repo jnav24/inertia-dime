@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { RulesType } from '@/types/form';
 import useForm from '@/Composables/useForm';
-import Check from "@/Components/Icons/outline/Check.vue";
-import FormLabel from "@/Components/Fields/FormLabel.vue";
-import FormButton from "@/Components/Fields/FormButton.vue";
+import Check from '@/Components/Icons/outline/Check.vue';
+import FormLabel from '@/Components/Fields/FormLabel.vue';
+import FormButton from '@/Components/Fields/FormButton.vue';
 
 const props = defineProps<{
     label: string;
@@ -34,7 +34,12 @@ const updateValue = () => {
             <Check classes="size-4 text-white dark:text-gray-700" />
         </FormButton>
 
-        <FormButton checkbox color="primary" @click="updateValue" v-if="getInputValue === 'checked'">
+        <FormButton
+            checkbox
+            color="primary"
+            @click="updateValue"
+            v-if="getInputValue === 'checked'"
+        >
             <Check classes="size-4" />
         </FormButton>
 

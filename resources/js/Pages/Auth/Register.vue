@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import GuestLayout from '@/Layouts/GuestLayout.vue';
-import BudgetForm from "@/Components/Fields/BudgetForm.vue";
-import FormInput from "@/Components/Fields/FormInput.vue";
-import FormButton from "@/Components/Fields/FormButton.vue";
+import BudgetForm from '@/Components/Fields/BudgetForm.vue';
+import FormInput from '@/Components/Fields/FormInput.vue';
+import FormButton from '@/Components/Fields/FormButton.vue';
 import { Head } from '@inertiajs/vue3';
-import Typography from "@/Components/Elements/Typography.vue";
-import AppLink from "@/Components/Elements/AppLink.vue";
-import { validation } from "@/utils/helpers";
+import Typography from '@/Components/Elements/Typography.vue';
+import AppLink from '@/Components/Elements/AppLink.vue';
+import { validation } from '@/utils/helpers';
 </script>
 
 <template>
@@ -22,14 +22,21 @@ import { validation } from "@/utils/helpers";
                 <FormInput label="Name" :rules="['required', 'min:3', 'max:255']" />
                 <FormInput label="Email" :rules="['required', 'email']" />
                 <FormInput label="Password" :rules="validation.password" password />
-                <FormInput label="Password Confirmation" :rules="['required', 'match:password']" password />
+                <FormInput
+                    label="Password Confirmation"
+                    :rules="['required', 'match:password']"
+                    password
+                />
             </div>
 
             <FormButton block color="primary" submit>Register</FormButton>
         </BudgetForm>
 
         <div class="my-6 text-center">
-            <Typography variant="caption">Already have an account? <AppLink :href="route('login')">Log in</AppLink></Typography>
+            <Typography variant="caption"
+                >Already have an account?
+                <AppLink :href="route('login')">Log in</AppLink></Typography
+            >
         </div>
     </GuestLayout>
 </template>
