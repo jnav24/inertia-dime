@@ -2,6 +2,8 @@
 import { computed } from 'vue';
 import CheckCircle from "@/Components/Icons/outline/CheckCircle.vue";
 import CloseCircle from "@/Components/Icons/outline/CloseCircle.vue";
+import ExclamationCircle from "@/Components/Icons/outline/ExclamationCircle.vue";
+import InformationCircle from "@/Components/Icons/outline/InformationCircle.vue";
 
 type Props = { message: string; title: string | null; type: 'error' | 'success' | 'warn' | 'info' };
 const props = withDefaults(defineProps<Props>(), { title: null });
@@ -29,6 +31,8 @@ const classes = computed(() => {
         <div :class="classes">
             <CloseCircle classes="size-8" v-if="type === 'error'" />
             <CheckCircle classes="size-8" v-if="type === 'success'" />
+            <ExclamationCircle classes="size-8" v-if="type === 'warn'" />
+            <InformationCircle classes="size-8" v-if="type === 'info'" />
         </div>
         <div class="ml-2 flex flex-col">
             <span v-if="title" class="font-bold">{{ title }}</span>
