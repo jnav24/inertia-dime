@@ -56,7 +56,10 @@ const validators: Record<keyof RulesType, Validator> = {
 
     in: {
         message: (option: string) => `Field must contain one of the following: '${option}'`,
-        validate: (val: string, option: string) => option.split(',').includes(val),
+        validate: (val: string, option: string) => {
+            validateFunctionParam('in', option);
+            option.split(',').includes(val);
+        },
     },
 
     lower: {
@@ -75,6 +78,8 @@ const validators: Record<keyof RulesType, Validator> = {
     match: {
         message: (option: string) => `Field must match with '${option.split('|')?.[0]}' field`,
         validate: (val: string, matchingValue: string) => {
+            validateFunctionParam('match', matchingValue);
+
             if (matchingValue.includes('|')) {
                 return val === matchingValue.split('|')[1];
             }
@@ -169,7 +174,6 @@ const validateInput = (rule: string, val: string, options?: RulesOptions) => {
         throw new Error(`Function for type, ${validatorName}, is missing`);
     }
 
-    // @todo code smell here
     const inputValid = param
         ? validators[validatorName].validate(val, param)
         : validators[validatorName].validate(val);
