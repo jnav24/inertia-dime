@@ -15,16 +15,16 @@ export type RulesOptions = {
 export type RulesType = {
     'alpha-numeric'?: RulesOptions;
     email?: RulesOptions;
-    [key: `eq:${number}`]: RulesOptions;
-    [key: `float:${number}`]: RulesOptions;
-    [key: `gt:${number}`]: RulesOptions;
-    [key: `lt:${number}`]: RulesOptions;
+    'eq:'?: RulesOptions;
+    'float:'?: RulesOptions;
+    'gt:'?: RulesOptions;
+    'lt:'?: RulesOptions;
     'has-int'?: RulesOptions;
-    [key: `in:${string}`]: RulesOptions;
+    'in:'?: RulesOptions;
     lower?: RulesOptions;
-    [key: `match:${string}`]: RulesOptions;
-    [key: `max:${number}`]: RulesOptions;
-    [key: `min:${number}`]: RulesOptions;
+    'match:'?: RulesOptions;
+    'max:'?: RulesOptions;
+    'min:'?: RulesOptions;
     mixedCase?: RulesOptions;
     numeric?: RulesOptions;
     phone?: RulesOptions;
