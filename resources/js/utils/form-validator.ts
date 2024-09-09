@@ -78,8 +78,6 @@ const validators: Record<keyof RulesType, Validator> = {
     match: {
         message: (option: string) => `Field must match with '${option.split('|')?.[0]}' field`,
         validate: (val: string, matchingValue: string) => {
-            validateFunctionParam('match', matchingValue);
-
             if (matchingValue.includes('|')) {
                 return val === matchingValue.split('|')[1];
             }
