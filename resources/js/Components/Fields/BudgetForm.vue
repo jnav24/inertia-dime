@@ -46,15 +46,18 @@ const setFormId = (name: string): string => name.toLowerCase().replace(/\s+/g, '
 const getMatchId = (rules: RulesType | Array<keyof RulesType>) => {
     let matchId: string | null = null;
 
-    const keys = Object.keys(rules).filter((str) => str.includes('match'));
-    const values = Object.values(rules).filter((str) => str.includes('match'));
+    if (Array.isArray(rules)) {
+        const values = Object.values(rules).filter((str) => str.includes('match'));
 
-    if (keys.length && keys[0].includes(':')) {
-        matchId = keys[0].split(':')[1];
-    }
+        if (values.length && values[0].includes(':')) {
+            matchId = values[0].split(':')[1];
+        }
+    } else {
+        const keys = Object.keys(rules).filter((str) => str.includes('match'));
 
-    if (values.length && values[0].includes(':')) {
-        matchId = values[0].split(':')[1];
+        if (keys.length && keys[0].includes(':')) {
+            matchId = keys[0].split(':')[1];
+        }
     }
 
     return matchId;
@@ -94,7 +97,9 @@ const isFormValid = () => {
 };
 
 const setMatchRules = (rules: RulesType | (keyof RulesType)[]) => {
-    const valuesIndex = Object.values(rules).findIndex((rule) => rule.includes('match'));
+    const valuesIndex = (
+        Array.isArray(rules) ? Object.values(rules) : Object.keys(rules)
+    ).findIndex((rule) => rule.includes('match'));
 
     const matchKey = Object.keys(rules).filter((str) =>
         str.includes('match'),
