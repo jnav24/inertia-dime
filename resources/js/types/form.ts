@@ -25,6 +25,7 @@ export type RulesType = {
     [key: `match:${string}`]: RulesOptions;
     [key: `max:${number}`]: RulesOptions;
     [key: `min:${number}`]: RulesOptions;
+    mixedCase?: RulesOptions;
     numeric?: RulesOptions;
     phone?: RulesOptions;
     required?: RulesOptions;

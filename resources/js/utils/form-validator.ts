@@ -102,6 +102,13 @@ const validators: Record<keyof RulesType, Validator> = {
         },
     },
 
+    mixedCase: {
+        message: () => 'Field must contain both uppercase and lowercase letters',
+        validate: (val: string) => {
+            return validators.lower?.validate(val) && validators.upper?.validate(val);
+        },
+    },
+
     numeric: {
         message: () => 'Field can only contain numbers',
         validate: (val) => validateNumeric(val),
