@@ -4,13 +4,19 @@ export const FormContext = Symbol('FormContext');
 
 export type Validator = {
     message: (param?: string) => string;
-    validate: ((val: string) => void) | ((val: string, option: string) => void);
+    validate: (val: string, option?: string) => boolean;
 };
 
 export type RulesOptions = {
     message?: string;
     pattern?: string;
 };
+
+type RemoveColon<T> = {
+    [K in keyof T as K extends `${infer Prefix}:` ? Prefix : K]: T[K];
+};
+
+export type ValidatorType = RemoveColon<RulesType>;
 
 export type RulesType = {
     'alpha-numeric'?: RulesOptions;
