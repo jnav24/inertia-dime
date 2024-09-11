@@ -22,10 +22,11 @@ export default {
                 'dm-danger': '#4B0F0F',
                 'dm-primary': '#264653',
                 'dm-secondary': '#A88D3E',
-                primary: '#45ADA8',
+                primary: '#389894',
                 secondary: '#EFC958',
                 success: '#198754',
                 'dm-main': '#0E1013',
+                'lm-primary': '#61EAE4FF',
             },
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
