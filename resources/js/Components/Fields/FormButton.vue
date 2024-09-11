@@ -32,7 +32,7 @@ const validateSubmit = () => {};
         :class="{
             'border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 active:bg-gray-200':
                 color === 'default' && !isDisabled,
-            'active:bg-dark-primary bg-primary text-white hover:bg-opacity-85':
+            'active:bg-dark-primary bg-dm-primary text-white hover:bg-opacity-85':
                 color === 'primary' && !isDisabled,
             'active:bg-dark-secondary bg-secondary text-gray-700 hover:bg-opacity-85':
                 color === 'secondary' && !isDisabled,

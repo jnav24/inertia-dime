@@ -3,8 +3,14 @@
 <template>
     <main class="flex h-screen w-full bg-white p-2 dark:bg-dm-main">
         <div class="relative w-1/2 overflow-hidden rounded-xl">
-            <div class="absolute h-full w-full bg-primary/85"></div>
-            <img src="/img/onboard_bg_1-1.jpg" class="h-full object-cover" alt="Dime Background" />
+            <div
+                class="absolute h-full w-full bg-gradient-to-b from-primary/65 to-dm-primary"
+            ></div>
+            <img
+                src="/img/banner_user_profile.jpg"
+                class="h-full object-cover"
+                alt="Dime Background"
+            />
         </div>
 
         <section class="flex flex-1 flex-col justify-between px-6">

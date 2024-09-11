@@ -16,7 +16,7 @@ defineProps<{
 
 <template>
     <GuestLayout>
-        <Head title="Log in" />
+        <Head title="Login" />
 
         <div v-if="status" class="mb-4 text-sm font-medium text-green-600">
             {{ status }}
@@ -33,7 +33,7 @@ defineProps<{
             </div>
 
             <div class="my-6 flex items-center justify-between">
-                <FormCheckbox label="Remember Me" value="" />
+                <FormCheckbox label="Remember Me" />
                 <Typography v-if="canResetPassword" variant="caption">
                     <AppLink :href="route('password.request')">Forgot password?</AppLink>
                 </Typography>
