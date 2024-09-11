@@ -6,6 +6,10 @@ import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link } from '@inertiajs/vue3';
+import Typography from '@/Components/Elements/Typography.vue';
+import Chart from '@/Components/Icons/solid/Chart.vue';
+import Home from '@/Components/Icons/solid/Home.vue';
+import Reports from '@/Components/Icons/solid/Reports.vue';
 
 const showingNavigationDropdown = ref(false);
 </script>
@@ -13,7 +17,9 @@ const showingNavigationDropdown = ref(false);
 <template>
     <div>
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
-            <nav class="border-b border-gray-100 bg-white dark:border-gray-700 dark:bg-gray-800">
+            <nav
+                class="border-b border-gray-100 bg-dm-primary dark:border-gray-700 dark:bg-gray-800"
+            >
                 <!-- Primary Navigation Menu -->
                 <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div class="flex h-16 justify-between">
@@ -21,19 +27,28 @@ const showingNavigationDropdown = ref(false);
                             <!-- Logo -->
                             <div class="flex shrink-0 items-center">
                                 <Link :href="route('dashboard')">
-                                    <ApplicationLogo
-                                        class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200"
-                                    />
+                                    <img src="/img/logo_1.png" alt="Dime Logo" class="h-8" />
                                 </Link>
                             </div>
 
                             <!-- Navigation Links -->
-                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                            <div class="hidden items-center space-x-4 sm:-my-px sm:ms-10 sm:flex">
                                 <NavLink
                                     :href="route('dashboard')"
                                     :active="route().current('dashboard')"
                                 >
-                                    Dashboard
+                                    <Home classes="mr-2 size-4" />
+                                    <span>Dashboard</span>
+                                </NavLink>
+
+                                <NavLink :href="route('dashboard')">
+                                    <Chart classes="mr-2 size-4" />
+                                    <span>Budgets</span>
+                                </NavLink>
+
+                                <NavLink :href="route('dashboard')">
+                                    <Reports classes="mr-2 size-4" />
+                                    <span>Reports</span>
                                 </NavLink>
                             </div>
                         </div>
@@ -46,7 +61,7 @@ const showingNavigationDropdown = ref(false);
                                         <span class="inline-flex rounded-md">
                                             <button
                                                 type="button"
-                                                class="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300"
+                                                class="bg-dn-primary inline-flex items-center rounded-md border border-transparent px-3 py-2 text-sm font-medium leading-4 text-gray-200 transition duration-150 ease-in-out hover:text-gray-200 focus:outline-none dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300"
                                             >
                                                 {{ $page.props.auth.user.name }}
 
@@ -163,7 +178,7 @@ const showingNavigationDropdown = ref(false);
             <!-- Page Heading -->
             <header class="bg-white shadow dark:bg-gray-800" v-if="$slots.header">
                 <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-                    <slot name="header" />
+                    <Typography tag="h1" variant="h3"><slot name="header" /></Typography>
                 </div>
             </header>
 
