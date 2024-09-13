@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
@@ -41,7 +40,10 @@ const showingNavigationDropdown = ref(false);
                                     <span>Dashboard</span>
                                 </NavLink>
 
-                                <NavLink :href="route('dashboard')">
+                                <NavLink
+                                    :href="route('budget.index')"
+                                    :active="route().current('budget.index')"
+                                >
                                     <Chart classes="mr-2 size-4" />
                                     <span>Budgets</span>
                                 </NavLink>
@@ -178,7 +180,12 @@ const showingNavigationDropdown = ref(false);
             <!-- Page Heading -->
             <header class="bg-white shadow dark:bg-gray-800" v-if="$slots.header">
                 <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-                    <Typography tag="h1" variant="h3"><slot name="header" /></Typography>
+                    <div class="flex items-center justify-between">
+                        <Typography tag="h1" variant="h3"><slot name="header" /></Typography>
+                        <div class="space-x-2.5">
+                            <slot name="call-to-action" />
+                        </div>
+                    </div>
                 </div>
             </header>
 
