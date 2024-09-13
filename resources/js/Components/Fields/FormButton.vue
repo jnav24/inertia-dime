@@ -4,9 +4,9 @@ import { FormContext, FormContextType } from '@/types/form';
 
 type ButtonColor = 'default' | 'primary' | 'secondary' | 'danger';
 
-const formContext = inject<FormContextType>(FormContext);
+const formContext = inject<FormContextType>(FormContext, null);
 
-defineEmits<{ (e: ''): void }>();
+defineEmits<{ (e: 'onclick'): void }>();
 const props = withDefaults(
     defineProps<{
         block?: boolean;
@@ -22,8 +22,6 @@ const props = withDefaults(
 );
 
 const isDisabled = computed(() => props.disabled || formContext?.isSubmitting?.value || false);
-
-const validateSubmit = () => {};
 </script>
 
 <template>
@@ -45,7 +43,7 @@ const validateSubmit = () => {};
             'w-full': block,
         }"
         :disabled="isDisabled"
-        @click="validateSubmit"
+        @click="$emit('onclick')"
         :type="submit ? 'submit' : 'button'"
     >
         <span class="flex flex-row items-center justify-center">
