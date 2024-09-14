@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed, inject } from 'vue';
+import { computed, inject, resolveComponent } from 'vue';
 import { FormContext, FormContextType } from '@/types/form';
+import type { ConcreteComponent } from 'vue';
 
 type ButtonColor = 'default' | 'primary' | 'secondary' | 'danger';
 
@@ -15,6 +16,7 @@ const props = withDefaults(
         disabled?: boolean;
         fab?: boolean;
         filled?: boolean;
+        icon?: ConcreteComponent | string;
         submit?: boolean;
         size?: 'xs' | 'sm' | 'md' | 'lg';
     }>(),
@@ -22,6 +24,14 @@ const props = withDefaults(
 );
 
 const isDisabled = computed(() => props.disabled || formContext?.isSubmitting?.value || false);
+
+const setIcon = () => {
+    if (typeof props.icon === 'string') {
+        return resolveComponent(props.icon);
+    }
+
+    return props.icon;
+};
 </script>
 
 <template>
@@ -46,8 +56,9 @@ const isDisabled = computed(() => props.disabled || formContext?.isSubmitting?.v
         @click="$emit('onclick')"
         :type="submit ? 'submit' : 'button'"
     >
-        <span class="flex flex-row items-center justify-center">
-            <slot />
+        <span class="flex flex-row items-center justify-center space-x-2">
+            <component v-if="icon" :is="setIcon()" class="size-4" />
+            <span><slot /></span>
         </span>
     </button>
 </template>
