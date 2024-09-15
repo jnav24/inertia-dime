@@ -18,6 +18,7 @@ type Props = {
     label: string;
     placeholder?: string;
     rules?: RulesType | Array<keyof RulesType>;
+    hideLabel?: boolean;
     tabIndex?: number;
     validateOnInit?: boolean;
     value: string;
@@ -90,7 +91,7 @@ const handleSelection = (value: string) => {
 </script>
 
 <template>
-    <FormLabel v-if="!placeholder" :error="error" :labelId="labelId" :label="label" />
+    <FormLabel v-if="!hideLabel" :error="error" :labelId="labelId" :label="label" />
 
     <div
         class="relative mt-2 flex transform items-center justify-between rounded-md border border-solid px-2 py-2 outline-none"
