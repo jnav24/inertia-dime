@@ -1,5 +1,6 @@
 import defaultTheme from 'tailwindcss/defaultTheme';
 import forms from '@tailwindcss/forms';
+import colors from 'tailwindcss/colors';
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -27,6 +28,21 @@ export default {
                 success: '#198754',
                 'dm-main': '#0E1013',
                 'lm-primary': '#61EAE4FF',
+
+                // 'dm-primary': '#0E1013',
+                // 'dm-secondary': '#17181B',
+                'dm-stroke': '#25272b',
+                'dm-text': '#41444c',
+                'dm-text-hover': '#575b66',
+                'dm-disabled': '#3C3C3C',
+                'dm-text-disabled': '#777777',
+                // 'lm-primary': colors.gray['50'],
+                'lm-secondary': colors.white,
+                'lm-stroke': colors.gray['200'],
+                'lm-text': colors.gray['300'],
+                'lm-text-hover': colors.gray['500'],
+                'lm-disabled': '#E5E5E5',
+                'lm-text-disabled': '#ABABAB',
             },
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
