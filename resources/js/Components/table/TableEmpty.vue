@@ -3,7 +3,7 @@ import Typography from '@/Components/Elements/Typography.vue';
 import type { ConcreteComponent } from 'vue';
 import FormButton from '@/Components/Fields/FormButton.vue';
 
-type Props = {
+export type Props = {
     button?: {
         label: string;
         icon?: ConcreteComponent;
