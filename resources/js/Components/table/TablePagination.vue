@@ -4,7 +4,9 @@ import FormButton from '@/Components/Fields/FormButton.vue';
 import FormSelect from '@/Components/Fields/FormSelect.vue';
 import ChevronDoubleLeft from '@/Components/Icons/outline/ChevronDoubleLeft.vue';
 import ChevronDoubleRight from '@/Components/Icons/outline/ChevronDoubleRight.vue';
-import { toRefs } from 'vue';
+import { computed, toRefs } from 'vue';
+
+type Emits = { (e: 'page-change', v: number): void; (e: 'selection', v: number): void };
 
 type Props = {
     options: number[];
@@ -13,19 +15,19 @@ type Props = {
     total: number;
 };
 
-defineEmits<{ (e: 'page-change', v: number): void; (e: 'selection', v: number): void }>();
+defineEmits<Emits>();
 const props = defineProps<Props>();
 const { options, page, selected, total } = toRefs(props);
 
 const allowedLinks = 5;
 
-const items = computed(() => options.map((op) => ({ label: op.toString(), value: op.toString() })));
-const pages = computed(() => Math.ceil(total / selected));
+const items = computed(() => options.value.map((op) => ({ label: op.toString(), value: op })));
+const pages = computed(() => Math.ceil(total.value / selected.value));
 const endNumber = computed(() => {
-    const value = selected * page;
-    return total < value ? total : value;
+    const value = selected.value * page.value;
+    return total.value < value ? total.value : value;
 });
-const startNumber = computed(() => 1 + selected * (page - 1));
+const startNumber = computed(() => 1 + selected.value * (page.value - 1));
 </script>
 
 <template>
@@ -37,7 +39,13 @@ const startNumber = computed(() => 1 + selected * (page - 1));
         </div>
 
         <div class="flex flex-row items-center space-x-2">
-            <FormSelect handle-selection="" items="" label="" v-model:value="" />
+            <FormSelect
+                @handle-selection="$emit('selection', +$event)"
+                hide-label
+                :items="items"
+                label=""
+                :value="selected"
+            />
             <Typography variant="caption">per page</Typography>
         </div>
 
