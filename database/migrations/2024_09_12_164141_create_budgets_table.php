@@ -11,7 +11,7 @@ return new class extends Migration {
             $table->id();
             $table->uuid()->unique();
             $table->string('name');
-            $table->string('budget_cycle');
+            $table->dateTime('budget_cycle');
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
             $table->softDeletes();
