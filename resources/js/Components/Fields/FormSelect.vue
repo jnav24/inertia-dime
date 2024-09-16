@@ -91,45 +91,47 @@ const handleSelection = (value: string) => {
 </script>
 
 <template>
-    <FormLabel v-if="!hideLabel" :error="error" :labelId="labelId" :label="label" />
-
-    <div
-        class="relative mt-2 flex transform items-center justify-between rounded-md border border-solid px-2 py-2 outline-none"
-        :class="{
-            'border-red-600 bg-white text-red-600': error && !isDisabled,
-            'dark:bg-dark-main cursor-pointer border-gray-300 bg-white text-gray-600 transition duration-300 hover:border-gray-600 hover:text-gray-700 focus:border-primary dark:border-gray-700':
-                !error && !isDisabled,
-            'cursor-text border-gray-300 bg-gray-200 text-gray-500 dark:border-gray-600 dark:bg-gray-800':
-                isDisabled,
-            'z-50': selected,
-            'z-0': !selected,
-        }"
-        :tabindex="tabIndex"
-        @blur="handleBlur()"
-        @click="handleClick()"
-    >
-        <span class="flex-1 text-sm text-gray-500">{{ getPlaceholder }}</span>
-
-        <ChevronDown
-            classes="transform transition duration-300 size-4 ml-2"
-            :class="{ 'rotate-180': selected, 'rotate-0': !selected }"
-        />
+    <div>
+        <FormLabel v-if="!hideLabel" :error="error" :labelId="labelId" :label="label" />
 
         <div
-            class="dark:bg-dark-main absolute left-0 top-0 max-h-48 w-full transform overflow-y-auto rounded border border-gray-300 bg-white shadow-sm transition duration-300 ease-out"
+            class="relative mt-2 flex transform items-center justify-between rounded-md border border-solid px-2 py-2 outline-none"
             :class="{
-                'translate-y-12 opacity-100': selected,
-                'translate-y-0 opacity-0': !selected,
+                'border-red-600 bg-white text-red-600': error && !isDisabled,
+                'dark:bg-dark-main cursor-pointer border-gray-300 bg-white text-gray-600 transition duration-300 hover:border-gray-600 hover:text-gray-700 focus:border-primary dark:border-gray-700':
+                    !error && !isDisabled,
+                'cursor-text border-gray-300 bg-gray-200 text-gray-500 dark:border-gray-600 dark:bg-gray-800':
+                    isDisabled,
+                'z-50': selected,
+                'z-0': !selected,
             }"
-            :ref="dropDownItems"
+            :tabindex="tabIndex"
+            @blur="handleBlur()"
+            @click="handleClick()"
         >
+            <span class="flex-1 text-sm text-gray-500">{{ getPlaceholder }}</span>
+
+            <ChevronDown
+                classes="transform transition duration-300 size-4 ml-2"
+                :class="{ 'rotate-180': selected, 'rotate-0': !selected }"
+            />
+
             <div
-                class="p-2 text-sm hover:bg-gray-200"
-                v-for="(item, index) in items"
-                :key="index"
-                @click="handleSelection(item[itemValue])"
+                class="dark:bg-dark-main absolute left-0 top-0 max-h-48 w-full transform overflow-y-auto rounded border border-gray-300 bg-white shadow-sm transition duration-300 ease-out"
+                :class="{
+                    'translate-y-12 opacity-100': selected,
+                    'translate-y-0 opacity-0': !selected,
+                }"
+                :ref="dropDownItems"
             >
-                {{ item[itemLabel] }}
+                <div
+                    class="p-2 text-sm hover:bg-gray-200"
+                    v-for="(item, index) in items"
+                    :key="index"
+                    @click="handleSelection(item[itemValue])"
+                >
+                    {{ item[itemLabel] }}
+                </div>
             </div>
         </div>
     </div>
