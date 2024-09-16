@@ -19,6 +19,14 @@ class Budget extends Model
         'uuid',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'budget_cycle' => 'datetime',
+            'uuid' => 'string',
+        ];
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -27,12 +35,5 @@ class Budget extends Model
     public function aggregation(): HasOne
     {
         return $this->hasOne(BudgetAggregation::class);
-    }
-
-    protected function casts(): array
-    {
-        return [
-            'uuid' => 'string',
-        ];
     }
 }
