@@ -15,7 +15,7 @@ class BudgetResource extends JsonResource
             'id' => $this->uuid,
             'name' => $this->name,
             'budget_cycle' => $this->budget_cycle,
-            'data' => [],
+            'aggregation' => new BudgetAggregationResource($this->whenLoaded('aggregation')),
         ];
     }
 }
