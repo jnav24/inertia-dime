@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BudgetController;
+use App\Http\Controllers\BudgetTemplateController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -23,6 +24,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::group(['prefix' => 'dashboard'], function () {
         Route::get('/budgets', [BudgetController::class, 'index'])
             ->name('budget.index');
+        Route::post('/budgets', [BudgetController::class, 'store'])
+            ->name('budget.store');
+        Route::patch('/budgets/{uuid}', [BudgetController::class, 'update'])
+            ->name('budget.update');
+
+        Route::get('/budgets/template', [BudgetTemplateController::class, 'index'])
+            ->name('budget.template.index');
+        Route::patch('/budgets/template/{uuid}', [BudgetTemplateController::class, 'update'])
+            ->name('budget.template.update');
     });
 });
 
