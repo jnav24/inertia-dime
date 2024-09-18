@@ -17,15 +17,15 @@ class BudgetTemplate extends Model
         'user_id',
     ];
 
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
-
     protected function casts(): array
     {
         return [
             'uuid' => 'string',
         ];
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 }
