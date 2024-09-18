@@ -52,6 +52,8 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
+        $user->budgetTemplate()->create();
+
         Auth::login($user);
 
         return redirect(route('dashboard', absolute: false));
