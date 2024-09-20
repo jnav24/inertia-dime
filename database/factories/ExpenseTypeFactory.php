@@ -2,13 +2,13 @@
 
 namespace Database\Factories;
 
-use App\Models\BillType;
+use App\Models\ExpenseType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
 
-class BillTypeFactory extends Factory
+class ExpenseTypeFactory extends Factory
 {
-    protected $model = BillType::class;
+    protected $model = ExpenseType::class;
 
     public function definition(): array
     {

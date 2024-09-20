@@ -2,12 +2,12 @@
 
 namespace App\Http\Resources;
 
-use App\Models\BillType;
+use App\Models\ExpenseType;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-/** @mixin BillType */
-class BillTypeResource extends JsonResource
+/** @mixin ExpenseType */
+class ExpenseTypeResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
