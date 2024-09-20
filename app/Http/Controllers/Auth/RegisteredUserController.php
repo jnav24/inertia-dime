@@ -40,7 +40,7 @@ class RegisteredUserController extends Controller
                     ->mixedCase()
                     ->numbers()
                     ->symbols()
-                    ->uncompromised()
+                    ->uncompromised(),
             ],
         ]);
 

@@ -35,11 +35,11 @@ class EncryptedBudgetAggregation implements CastsAttributes
     public function set(Model $model, string $key, mixed $value, array $attributes): mixed
     {
         if (! ($value instanceof Collection)) {
-            throw new InvalidArgumentException("The given value must be an instance of Collection.");
+            throw new InvalidArgumentException('The given value must be an instance of Collection.');
         }
 
         if (! $value->every(fn ($item) => $item instanceof BudgetAggregationDto)) {
-            throw new InvalidArgumentException("The given value is not an instance of the BudgetAggregationDto");
+            throw new InvalidArgumentException('The given value is not an instance of the BudgetAggregationDto');
         }
 
         return Crypt::encryptString(json_encode($value));

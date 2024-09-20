@@ -56,7 +56,7 @@ class NewPasswordController extends Controller
                     ->mixedCase()
                     ->numbers()
                     ->symbols()
-                    ->uncompromised()
+                    ->uncompromised(),
             ],
         ]);
 

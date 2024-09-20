@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class BudgetTemplate extends Model
 {
-    use SoftDeletes, HasFactory, HasUuids, WithExpenses;
+    use HasFactory, HasUuids, SoftDeletes, WithExpenses;
 
     protected $fillable = [
         'uuid',
