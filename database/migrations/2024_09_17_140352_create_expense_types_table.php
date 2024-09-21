@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('expense_types', function (Blueprint $table) {
             $table->id();
-            $table->uuid();
+            $table->uuid()->unique();
             $table->string('name');
             $table->string('slug');
             $table->string('type');
