@@ -16,8 +16,9 @@ class EncryptedBudgetAggregation implements CastsAttributes
      * Cast the given value.
      *
      * @param  array<string, mixed>  $attributes
+     * @return Collection<BudgetAggregationDto>
      */
-    public function get(Model $model, string $key, mixed $value, array $attributes): mixed
+    public function get(Model $model, string $key, mixed $value, array $attributes): Collection
     {
         $decoded = json_decode(Crypt::decryptString($value), true);
 
