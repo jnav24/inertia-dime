@@ -2,12 +2,12 @@
 
 namespace App\Http\Resources;
 
-use App\Models\LoanTemplate;
+use App\Models\BankTemplate;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-/** @mixin LoanTemplate */
-class SpendTemplateResource extends JsonResource
+/** @mixin BankTemplate */
+class TemplateResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
