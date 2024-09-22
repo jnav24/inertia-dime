@@ -34,6 +34,6 @@ class LoanTemplate extends Model
 
     public function expenseType(): BelongsTo
     {
-        return $this->belongsTo(ExpenseType::class);
+        return $this->belongsTo(related: ExpenseType::class, ownerKey: 'uuid');
     }
 }
