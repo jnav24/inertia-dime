@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Casts\EncryptedIncome;
+use App\Traits\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,7 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class IncomeTemplate extends Model
 {
-    use SoftDeletes, HasFactory;
+    use SoftDeletes, HasFactory, HasUuids;
 
     protected $fillable = [
         'uuid',
