@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { computed, reactive, ref, watchEffect } from 'vue';
+import { computed, ConcreteComponent, reactive, ref, watchEffect } from 'vue';
 import TableEmpty, { Props as TableEmptyProps } from '@/Components/table/TableEmpty.vue';
 import FormCheckbox from '@/Components/Fields/FormCheckbox.vue';
 import TableRow from '@/Components/table/TableRow.vue';
 import TablePagination from '@/Components/table/TablePagination.vue';
-import Typography from '@/Components/Elements/Typography.vue';
 import { parseNested } from '@/utils/functions';
+import ColumnBasic from '@/Components/table/ColumnBasic.vue';
 
 type Column<T> = {
-    content: string | ((item: T) => ReactNode); // @todo
+    content: string | { props: Record<string, string | number>; component: ConcreteComponent };
     label: string;
     searchable?: boolean;
     colspan?: number;
@@ -43,7 +43,7 @@ watchEffect(() => {
     }
 });
 
-const hasData = computed(() => !!(props.columns.length && props.items.length));
+const hasData = computed(() => !!(props.columns?.length && props.items?.length));
 const paginateItems = computed(() =>
     props.items.slice(
         (paginateState.current - 1) * paginateState.selected,
@@ -75,11 +75,11 @@ const getColSpan = (col?: number) => {
     <TableEmpty v-if="!hasData" v-bind="empty" />
 
     <div
-        class="border-lm-stroke bg-lm-secondary dark:border-dm-stroke rounded-xl border dark:bg-dm-secondary"
+        class="rounded-xl border border-lm-stroke bg-lm-secondary dark:border-dm-stroke dark:bg-dm-secondary"
         v-else
     >
         <div
-            class="border-lm-stroke text-lm-text-hover dark:border-dm-stroke dark:text-dm-text-hover flex flex-row items-center justify-between space-x-4 border-b px-4 py-4"
+            class="flex flex-row items-center justify-between space-x-4 border-b border-lm-stroke px-4 py-4 text-lm-text-hover dark:border-dm-stroke dark:text-dm-text-hover"
         >
             <FormCheckbox
                 :defaultChecked="allChecked"
@@ -109,9 +109,11 @@ const getColSpan = (col?: number) => {
             />
             <div :class="getColSpan(column.colspan)" v-for="(column, int) in columns" :key="int">
                 <template v-if="typeof column.content === 'string'">
-                    <Typography variant="body1">{{ parseNested(item, column.content) }}</Typography>
+                    <ColumnBasic :value="parseNested(item, column.content)" />
                 </template>
-                <template v-else> pizza </template>
+                <template v-else>
+                    <component :is="column.content.component" v-bind="column.content.props(item)" />
+                </template>
             </div>
         </TableRow>
 
