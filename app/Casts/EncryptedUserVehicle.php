@@ -16,18 +16,17 @@ class EncryptedUserVehicle implements CastsAttributes
      *
      * @param  array<string, mixed>  $attributes
      */
-    public function get(Model $model, string $key, mixed $value, array $attributes): mixed
+    public function get(Model $model, string $key, mixed $value, array $attributes): UserVehicleDto
     {
-        $decoded = json_decode(Crypt::decryptString($value), true);
+        $item = json_decode(Crypt::decryptString($value), true);
 
-        return collect($decoded)
-            ->map(fn ($item) => new UserVehicleDto(
-                color: $item['color'],
-                make: $item['make'],
-                model: $item['model'],
-                year: $item['year'],
-                license: $item['license']
-            ));
+        return new UserVehicleDto(
+            color: $item['color'],
+            make: $item['make'],
+            model: $item['model'],
+            year: $item['year'],
+            license: $item['license']
+        );
     }
 
     /**
@@ -35,13 +34,9 @@ class EncryptedUserVehicle implements CastsAttributes
      *
      * @param  array<string, mixed>  $attributes
      */
-    public function set(Model $model, string $key, mixed $value, array $attributes): mixed
+    public function set(Model $model, string $key, mixed $value, array $attributes): string
     {
-        if (! ($value instanceof Collection)) {
-            throw new InvalidArgumentException('The given value must be an instance of Collection.');
-        }
-
-        if (! $value->every(fn ($item) => $item instanceof UserVehicleDto)) {
+        if (! $value instanceof UserVehicleDto) {
             throw new InvalidArgumentException('The given value is not an instance of the UserVehicleDto');
         }
 

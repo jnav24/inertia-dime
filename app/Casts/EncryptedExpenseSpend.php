@@ -16,12 +16,11 @@ class EncryptedExpenseSpend implements CastsAttributes
      *
      * @param  array<string, mixed>  $attributes
      */
-    public function get(Model $model, string $key, mixed $value, array $attributes): mixed
+    public function get(Model $model, string $key, mixed $value, array $attributes): ExpenseSpendDto
     {
-        $decoded = json_decode(Crypt::decryptString($value), true);
+        $item = json_decode(Crypt::decryptString($value), true);
 
-        return collect($decoded)
-            ->map(fn ($item) => new ExpenseSpendDto(name: $item['name'], amount: $item['amount'], due_date: $item['due_date']));
+        return new ExpenseSpendDto(name: $item['name'], amount: $item['amount'], due_date: $item['due_date']);
     }
 
     /**
@@ -29,13 +28,9 @@ class EncryptedExpenseSpend implements CastsAttributes
      *
      * @param  array<string, mixed>  $attributes
      */
-    public function set(Model $model, string $key, mixed $value, array $attributes): mixed
+    public function set(Model $model, string $key, mixed $value, array $attributes): string
     {
-        if (! ($value instanceof Collection)) {
-            throw new InvalidArgumentException('The given value must be an instance of Collection.');
-        }
-
-        if (! $value->every(fn ($item) => $item instanceof ExpenseSpendDto)) {
+        if (! $value instanceof ExpenseSpendDto) {
             throw new InvalidArgumentException('The given value is not an instance of the ExpenseSpendDto');
         }
 

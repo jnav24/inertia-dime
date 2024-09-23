@@ -5,24 +5,22 @@ namespace App\Casts;
 use App\Data\ExpenseGainDto;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Crypt;
 use InvalidArgumentException;
 
 class EncryptedExpenseGain implements CastsAttributes
 {
     /**
-     * Cast the given value.
-     *
-     * @param  array<string, mixed>  $attributes
-     * @return Collection<ExpenseGainDto>
+     * @param Model $model
+     * @param string $key
+     * @param mixed $value
+     * @param array $attributes
+     * @return ExpenseGainDto
      */
-    public function get(Model $model, string $key, mixed $value, array $attributes): Collection
+    public function get(Model $model, string $key, mixed $value, array $attributes): ExpenseGainDto
     {
-        $decoded = json_decode(Crypt::decryptString($value), true);
-
-        return collect($decoded)
-            ->map(fn ($item) => new ExpenseGainDto(name: $item['name'], amount: $item['amount']));
+        $item = json_decode(Crypt::decryptString($value), true);
+        return new ExpenseGainDto(name: $item['name'], amount: $item['amount']);
     }
 
     /**
@@ -30,13 +28,9 @@ class EncryptedExpenseGain implements CastsAttributes
      *
      * @param  array<string, mixed>  $attributes
      */
-    public function set(Model $model, string $key, mixed $value, array $attributes): mixed
+    public function set(Model $model, string $key, mixed $value, array $attributes): string
     {
-        if (! ($value instanceof Collection)) {
-            throw new InvalidArgumentException('The given value must be an instance of Collection.');
-        }
-
-        if (! $value->every(fn ($item) => $item instanceof ExpenseGainDto)) {
+        if (! $value instanceof ExpenseGainDto) {
             throw new InvalidArgumentException('The given value is not an instance of the ExpenseGainDto');
         }
 

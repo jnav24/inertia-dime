@@ -16,17 +16,15 @@ class EncryptedVehicle implements CastsAttributes
      *
      * @param  array<string, mixed>  $attributes
      */
-    public function get(Model $model, string $key, mixed $value, array $attributes): mixed
+    public function get(Model $model, string $key, mixed $value, array $attributes): VehicleDto
     {
-        $decoded = json_decode(Crypt::decryptString($value), true);
+        $item = json_decode(Crypt::decryptString($value), true);
 
-        return collect($decoded)
-            ->map(fn ($item) => new VehicleDto(
-                amount: $item['amount'],
-                balance: $item['balance'],
-                due_date: $item['due_date'],
-                mileage: $item['mileage']
-            )
+        return new VehicleDto(
+            amount: $item['amount'],
+            balance: $item['balance'],
+            due_date: $item['due_date'],
+            mileage: $item['mileage']
         );
     }
 
@@ -35,13 +33,9 @@ class EncryptedVehicle implements CastsAttributes
      *
      * @param  array<string, mixed>  $attributes
      */
-    public function set(Model $model, string $key, mixed $value, array $attributes): mixed
+    public function set(Model $model, string $key, mixed $value, array $attributes): string
     {
-        if (! ($value instanceof Collection)) {
-            throw new InvalidArgumentException('The given value must be an instance of Collection.');
-        }
-
-        if (! $value->every(fn ($item) => $item instanceof VehicleDto)) {
+        if (! $value instanceof VehicleDto) {
             throw new InvalidArgumentException('The given value is not an instance of the VehicleDto');
         }
 
