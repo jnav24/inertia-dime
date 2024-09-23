@@ -2,9 +2,11 @@ export const ucFirst = (val: string): string => val.charAt(0).toUpperCase() + va
 
 export const toTitleCase = (value: string, casing = '-'): string => {
     return value
-        .split(casing)
-        .map((word) => ucFirst(word))
-        .join(' ');
+        .replace(/[_-]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .replace(/([a-z])([A-Z])/g, '$1 $2')
+        .toLowerCase()
+        .replace(/(?:^|\s)\S/g, (a) => a.toUpperCase());
 };
 
 export const parseNested = <R extends object>(item: R, value: string): string => {
@@ -15,4 +17,13 @@ export const parseNested = <R extends object>(item: R, value: string): string =>
 
         return '';
     }, item) as string;
+};
+
+export const getDollarAmount = (val: number) => {
+    const formatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+    });
+
+    return formatter.format(val / 100);
 };
