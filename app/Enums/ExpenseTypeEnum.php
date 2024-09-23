@@ -18,6 +18,7 @@ enum ExpenseTypeEnum: string
     case INVESTMENT = 'investment';
     case LOAN = 'loan';
     case MEDICAL = 'medical';
+//    case MEDICAL = 'medical';
     case PERSONAL = 'personal';
     case SHOPPING = 'shopping';
     case SUBSCRIPTION = 'subscription';
@@ -39,6 +40,6 @@ enum ExpenseTypeEnum: string
      */
     public static function allRelationships(): array
     {
-        return array_map(fn ($item) => Str::camel(Str::plural($item->value)), ExpenseTypeEnum::cases());
+        return array_map(fn ($item) => Str::camel(Str::plural($item->value) . ".expenseType"), ExpenseTypeEnum::cases());
     }
 }
