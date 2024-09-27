@@ -213,7 +213,7 @@ provide<FormContextType>(FormContext, {
 </script>
 
 <template>
-    <form @submit.prevent="validateSubmit">
+    <form :action="action" :method="method" @submit.prevent="validateSubmit">
         <Alert
             v-if="form.hasErrors"
             type="error"
