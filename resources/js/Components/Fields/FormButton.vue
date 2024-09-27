@@ -58,7 +58,7 @@ const setIcon = () => {
     >
         <span class="flex flex-row items-center justify-center space-x-2">
             <component v-if="icon" :is="setIcon()" class="size-4" />
-            <span><slot /></span>
+            <span v-if="$slots.default"><slot /></span>
         </span>
     </button>
 </template>
