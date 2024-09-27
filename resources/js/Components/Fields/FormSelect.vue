@@ -134,5 +134,7 @@ const handleSelection = (value: string) => {
                 </div>
             </div>
         </div>
+
+        <span v-if="error" class="text-sm text-red-600">{{ error }}</span>
     </div>
 </template>
