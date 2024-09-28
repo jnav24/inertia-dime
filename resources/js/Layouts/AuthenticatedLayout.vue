@@ -9,6 +9,7 @@ import Typography from '@/Components/Elements/Typography.vue';
 import Chart from '@/Components/Icons/solid/Chart.vue';
 import Home from '@/Components/Icons/solid/Home.vue';
 import Reports from '@/Components/Icons/solid/Reports.vue';
+import NotificationProvider from '@/Providers/NotificationProvider.vue';
 
 const showingNavigationDropdown = ref(false);
 </script>
@@ -191,7 +192,9 @@ const showingNavigationDropdown = ref(false);
 
             <!-- Page Content -->
             <main>
-                <slot />
+                <NotificationProvider>
+                    <slot />
+                </NotificationProvider>
             </main>
         </div>
     </div>
