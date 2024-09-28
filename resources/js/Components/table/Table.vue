@@ -15,8 +15,9 @@ type Column<T> = {
     sortable?: boolean;
 };
 
-type Emits = {
+type Emits<T> = {
     (e: 'on-action', v: { type: 'delete'; ids: string[] }): void;
+    (e: 'column-event', v: { type: string; obj: T });
 };
 
 type Props<T> = {
@@ -112,7 +113,11 @@ const getColSpan = (col?: number) => {
                     <ColumnBasic :value="parseNested(item, column.content)" />
                 </template>
                 <template v-else>
-                    <component :is="column.content.component" v-bind="column.content.props(item)" />
+                    <component
+                        :is="column.content.component"
+                        v-bind="column.content.props(item)"
+                        @action-event="$emit('column-event', $event)"
+                    />
                 </template>
             </div>
         </TableRow>
