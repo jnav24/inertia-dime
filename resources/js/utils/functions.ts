@@ -19,11 +19,15 @@ export const parseNested = <R extends object>(item: R, value: string): string =>
     }, item) as string;
 };
 
-export const getDollarAmount = (val: number) => {
+export const convertToDollar = (cents?: number) => {
+    return !cents ? '' : (cents / 100).toString();
+};
+
+export const convertToCurrency = (val: number, currency = 'USD') => {
     const formatter = new Intl.NumberFormat('en-US', {
         style: 'currency',
-        currency: 'USD',
+        currency,
     });
 
-    return formatter.format(val / 100);
+    return formatter.format(convertToDollar(val));
 };
