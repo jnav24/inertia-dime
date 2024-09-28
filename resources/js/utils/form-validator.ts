@@ -126,7 +126,7 @@ const validators: Record<keyof ValidatorType, Validator> = {
 
     required: {
         message: () => 'Field is required',
-        validate: (val: string) => !!val.trim(),
+        validate: (val: string) => !!val.toString().trim(),
     },
 
     symbol: {
