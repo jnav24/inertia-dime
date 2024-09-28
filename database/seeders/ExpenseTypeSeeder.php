@@ -15,7 +15,7 @@ class ExpenseTypeSeeder extends Seeder
     public function run(): void
     {
         $types = [
-            ExpenseTypeEnum::BANK->value => ['Checking', 'Saving', 'Money Market Account (MMA)', 'Certificate of Deposit (CD)'],
+            ExpenseTypeEnum::BANK->value => ['Checking', 'Savings', 'Money Market Account (MMA)', 'Certificate of Deposit (CD)'],
             ExpenseTypeEnum::CHILDCARE->value => ['Babysitter', 'Nanny', 'Daycare', 'Allowance', 'Toys', 'Games', 'Child Support', 'Extracurricular Activities'],
             ExpenseTypeEnum::CREDIT_CARD->value => ['Mastercard', 'Visa', 'Discover', 'American Express', 'Store'],
             ExpenseTypeEnum::EDUCATION->value => ['Tuition', 'Books and Supplies'],
