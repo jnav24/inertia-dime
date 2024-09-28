@@ -20,7 +20,7 @@ const amount = computed(() => convertToDollar(props.expense?.data.amount));
             label="Account Type"
             item-label="name"
             item-value="id"
-            :value="expense?.expense_type_id"
+            :value="expense?.expense.id"
             :rules="['required']"
         />
     </div>
