@@ -4,6 +4,7 @@ import FadeTransition from '@/Components/modals/FadeTransition.vue';
 import TransitionOverlay from '@/Components/modals/TransitionOverlay.vue';
 import SlideTransition from '@/Components/modals/SlideTransition.vue';
 import FormButton from '@/Components/Fields/FormButton.vue';
+import Close from '@/Components/Icons/outline/Close.vue';
 
 type Emits = {
     (e: 'close-modal'): void;
@@ -54,11 +55,15 @@ onBeforeUnmount(() => {
                     <span class="hidden sm:inline-block sm:h-screen sm:align-middle" />
                     &#8203;
                     <section
-                        class="relative z-10 inline-block overflow-x-hidden rounded-lg bg-white text-left align-bottom shadow-xl dark:bg-dm-secondary sm:my-8 sm:align-middle"
+                        class="relative z-10 inline-block rounded-lg bg-white text-left align-bottom shadow-xl dark:bg-dm-secondary sm:my-8 sm:align-middle"
                         role="dialog"
                         aria-modal="true"
                         aria-labelledby="modal-content"
                     >
+                        <Close
+                            @click="closeModal()"
+                            classes="size-5 absolute top-4 right-4 text-gray-400 cursor-pointer"
+                        />
                         <slot />
                         <FormButton v-if="!hideCloseButton" @click="closeModal()">
                             Close
