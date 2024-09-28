@@ -14,5 +14,5 @@ import ExpenseFormConfirmation from '@/Components/Forms/ExpenseFormConfirmation.
     </div>
 
     <ExpenseFormConfirmation />
-    <ExpenseFormActions />
+    <ExpenseFormActions @close="$emit('close')" />
 </template>

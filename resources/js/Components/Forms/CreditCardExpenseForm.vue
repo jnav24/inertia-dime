@@ -1,8 +1,15 @@
 <script setup lang="ts">
+import { computed } from 'vue';
+import { convertToDollar } from '@/utils/functions';
+import { ExpenseFormEmits, GainExpenseFormProps } from '@/types/expenses';
 import FormInput from '@/Components/Fields/FormInput.vue';
 import ExpenseFormActions from '@/Components/Forms/ExpenseFormActions.vue';
 import FormSelect from '@/Components/Fields/FormSelect.vue';
 import ExpenseFormConfirmation from '@/Components/Forms/ExpenseFormConfirmation.vue';
+
+defineEmits<ExpenseFormEmits>();
+const props = defineProps<GainExpenseFormProps>();
+const amount = computed(() => convertToDollar(props.expense?.data.amount));
 </script>
 
 <template>
@@ -23,5 +30,5 @@ import ExpenseFormConfirmation from '@/Components/Forms/ExpenseFormConfirmation.
     </div>
 
     <ExpenseFormConfirmation />
-    <ExpenseFormActions />
+    <ExpenseFormActions @close="$emit('close')" />
 </template>

@@ -12,5 +12,5 @@ import FormSelect from '@/Components/Fields/FormSelect.vue';
         <FormInput label="Pay Date" :rules="['required', 'float:2']" />
     </div>
 
-    <ExpenseFormActions />
+    <ExpenseFormActions @close="$emit('close')" />
 </template>

@@ -20,5 +20,5 @@ defineProps<ExpenseFormProps>();
     </div>
 
     <ExpenseFormConfirmation />
-    <ExpenseFormActions />
+    <ExpenseFormActions @close="$emit('close')" />
 </template>
