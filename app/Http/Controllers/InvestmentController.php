@@ -14,13 +14,14 @@ class InvestmentController extends Controller
     {
         $validated = $request->validated();
 
-        if ($validated['is_template']) {
+        if ($validated['template']) {
             InvestmentTemplate::create([
                 'data' => new ExpenseGainDto(
                     name: $validated['name'],
                     amount: convertToCents($validated['amount']),
                 ),
                 'expense_type_id' => $validated['account_type'],
+                'budget_template_id' => auth()->user()->budgetTemplate->id,
             ]);
 
             return redirect()->route('budget.template.index');

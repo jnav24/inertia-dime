@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Data\ExpenseGainDto;
 use App\Http\Requests\GainExpenseRequest;
-use App\Models\Banks;
 use App\Models\BankTemplate;
 
 class BankController extends Controller
@@ -13,13 +12,14 @@ class BankController extends Controller
     {
         $validated = $request->validated();
 
-        if ($validated['is_template']) {
+        if ($validated['template']) {
             BankTemplate::create([
                 'data' => new ExpenseGainDto(
                     name: $validated['name'],
                     amount: convertToCents($validated['amount']),
                 ),
                 'expense_type_id' => $validated['account_type'],
+                'budget_template_id' => auth()->user()->budgetTemplate->id,
             ]);
 
             return redirect()->route('budget.template.index');
