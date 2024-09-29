@@ -5,16 +5,17 @@ namespace App\Http\Controllers;
 use App\Data\ExpenseGainDto;
 use App\Http\Requests\GainExpenseRequest;
 use App\Models\Banks;
-use App\Models\BankTemplate;
+use App\Models\InvestmentTemplate;
+use Illuminate\Http\Request;
 
-class BankController extends Controller
+class InvestmentController extends Controller
 {
     public function store(GainExpenseRequest $request)
     {
         $validated = $request->validated();
 
         if ($validated['is_template']) {
-            BankTemplate::create([
+            InvestmentTemplate::create([
                 'data' => new ExpenseGainDto(
                     name: $validated['name'],
                     amount: convertToCents($validated['amount']),
@@ -25,7 +26,6 @@ class BankController extends Controller
             return redirect()->route('budget.template.index');
         }
 
-        // Banks::create($request->validated());
         return redirect()->route('budget.template.index');
     }
 
@@ -34,7 +34,7 @@ class BankController extends Controller
         $validated = $request->validated();
 
         if ($validated['template']) {
-            $template = BankTemplate::where('uuid', $uuid)->first();
+            $template = InvestmentTemplate::where('uuid', $uuid)->first();
             $template->update([
                 'data' => new ExpenseGainDto(
                     name: $validated['name'],
