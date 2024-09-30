@@ -2,7 +2,7 @@
 import FormLabel from '@/Components/Fields/FormLabel.vue';
 import type { RulesType } from '@/types/form';
 import ChevronDown from '@/Components/Icons/outline/ChevronDown.vue';
-import { computed, ref, watch } from 'vue';
+import { computed, ref, watchEffect } from 'vue';
 import useForm from '@/Composables/useForm';
 
 type Emits = {
@@ -61,11 +61,11 @@ const getPlaceholder = computed(() => {
     return props.placeholder;
 });
 
-watch(selected, (value) => {
-    if (!value) {
+watchEffect(() => {
+    if (!selected.value) {
         setTimeout(() => dropDownItems.value?.classList.add('h-0', 'py-0'), 300);
     } else {
-        dropDownItems.value?.classList.remove('h-auto', 'py-1');
+        dropDownItems.value?.classList.remove('h-0', 'py-0');
     }
 });
 
