@@ -122,7 +122,7 @@ const handleSelection = (value: string) => {
                     'translate-y-12 opacity-100': selected,
                     'translate-y-0 opacity-0': !selected,
                 }"
-                :ref="dropDownItems"
+                ref="dropDownItems"
             >
                 <div
                     class="p-2 text-sm hover:bg-gray-200"
