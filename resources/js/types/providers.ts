@@ -1,7 +1,7 @@
 export const NotificationContext = Symbol('FormContext');
 
 export type NotificationContextType = {
-    addNotification: (notify: Notification) => void;
+    addNotification: (notify: NotificationProps) => void;
 };
 
 export type NotificationProps = {
