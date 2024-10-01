@@ -13,6 +13,7 @@ const props = withDefaults(
     { action: '', method: 'post', valid: undefined },
 );
 const emit = defineEmits<{
+    (e: 'afterSubmit'): void;
     (e: 'handleSubmit', event: Event): void;
     (e: 'update:valid', event: boolean): void;
     (e: 'handleError', event: Record<string, string>): void;
@@ -192,6 +193,7 @@ const validateSubmit = (e: Event) => {
                 },
             );
             isSubmitting.value = false;
+            emit('afterSubmit');
             return true;
         }
 
