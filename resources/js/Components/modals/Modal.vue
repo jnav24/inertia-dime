@@ -32,6 +32,12 @@ watchEffect(() => {
     timeoutId = setTimeout(
         () => {
             state.value = props.show;
+            const wrapper = document.getElementsByTagName('body')?.[0];
+            if (props.show) {
+                wrapper.classList.add('overflow-hidden');
+            } else {
+                wrapper.classList?.remove('overflow-hidden');
+            }
         },
         !props.show ? 500 : 0,
     );
