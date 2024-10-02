@@ -20,7 +20,14 @@ class EncryptedExpenseSpend implements CastsAttributes
     {
         $item = json_decode(Crypt::decryptString($value), true);
 
-        return new ExpenseSpendDto(name: $item['name'], amount: $item['amount'], due_date: $item['due_date']);
+        return new ExpenseSpendDto(
+            name: $item['name'],
+            amount: $item['amount'],
+            due_date: $item['due_date'] ?? null,
+            confirmation: $item['confirmation'] ?? null,
+            paid_date: $item['paid_date'] ?? null,
+            notes: $item['notes'] ?? null,
+        );
     }
 
     /**
