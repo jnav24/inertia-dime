@@ -6,7 +6,7 @@ class BaseExpenseDto
 {
     public function __construct(
         public string $name,
-        public int $amount,
+        public float $amount,
     )
     {}
 }

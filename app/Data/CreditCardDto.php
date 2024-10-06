@@ -6,14 +6,14 @@ class CreditCardDto extends ExpenseSpendDto
 {
     public function __construct(
         string $name,
-        int $amount,
+        float $amount,
         int $due_date,
-        public ?int $apr = null,
-        public ?int $balance = null,
+        public ?float $apr = null,
+        public ?float $balance = null,
         public ?int $exp_month = null,
         public ?int $exp_year = null,
         public ?int $last_4 = null,
-        public ?int $limit = null,
+        public ?float $limit = null,
     )
     {
         parent::__construct($name, $amount, $due_date);
