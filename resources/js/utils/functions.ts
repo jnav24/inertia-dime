@@ -20,7 +20,7 @@ export const parseNested = <R extends object>(item: R, value: string): string =>
 };
 
 export const convertToDollar = (cents?: number) => {
-    return !cents ? '' : (cents / 100).toString();
+    return (cents || 0)?.toFixed(2);
 };
 
 export const convertToCurrency = (val: number, currency = 'USD') => {
