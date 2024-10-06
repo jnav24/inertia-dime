@@ -18,7 +18,7 @@ class InvestmentController extends Controller
             InvestmentTemplate::create([
                 'data' => new ExpenseGainDto(
                     name: $validated['name'],
-                    amount: convertToCents($validated['amount']),
+                    amount: $validated['amount'],
                 ),
                 'expense_type_id' => $validated['account_type'],
                 'budget_template_id' => auth()->user()->budgetTemplate->id,
@@ -39,7 +39,7 @@ class InvestmentController extends Controller
             $template->update([
                 'data' => new ExpenseGainDto(
                     name: $validated['name'],
-                    amount: convertToCents($validated['amount']),
+                    amount: $validated['amount'],
                 ),
                 'expense_type_id' => $validated['account_type'],
             ]);

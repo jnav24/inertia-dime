@@ -16,17 +16,18 @@ class BankController extends Controller
             BankTemplate::create([
                 'data' => new ExpenseGainDto(
                     name: $validated['name'],
-                    amount: convertToCents($validated['amount']),
+                    amount: $validated['amount'],
                 ),
                 'expense_type_id' => $validated['account_type'],
                 'budget_template_id' => auth()->user()->budgetTemplate->id,
             ]);
 
-            return redirect()->route('budget.template.index');
+            return redirect()->route('budget.template.index')
+                ->with('success', 'Bank Template was successfully created');
         }
 
         // Banks::create($request->validated());
-        return redirect()->route('budget.template.index');
+        return redirect()->back();
     }
 
     public function update(GainExpenseRequest $request, string $uuid)
@@ -38,7 +39,7 @@ class BankController extends Controller
             $template->update([
                 'data' => new ExpenseGainDto(
                     name: $validated['name'],
-                    amount: convertToCents($validated['amount']),
+                    amount: $validated['amount'],
                 ),
                 'expense_type_id' => $validated['account_type'],
             ]);
@@ -46,14 +47,19 @@ class BankController extends Controller
             return redirect()->route('budget.template.index');
         }
 
-        dump($uuid);
-        dd($validated);
+        return redirect()->back();
     }
 
     public function destroy(string $uuid)
     {
-//        $banks->delete();
-//
-//        return response()->json();
+        $template = BankTemplate::where('uuid', $uuid)->first();
+
+        if (empty($template)) {
+            // $template = Bank::where('uuid', $uuid)->first();
+        }
+
+        $template?->delete();
+
+        return redirect()->back();
     }
 }
