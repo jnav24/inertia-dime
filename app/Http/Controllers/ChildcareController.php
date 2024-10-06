@@ -23,7 +23,8 @@ class ChildcareController extends Controller
                 'budget_template_id' => auth()->user()->budgetTemplate->id,
             ]);
 
-            return redirect()->route('budget.template.index');
+            return redirect()->route('budget.template.index')
+                ->with('message', 'Childcare template was created successfully');
         }
 
         return redirect()->back();
@@ -44,7 +45,8 @@ class ChildcareController extends Controller
                 'expense_type_id' => $validated['account_type'],
             ]);
 
-            return redirect()->route('budget.template.index');
+            return redirect()->route('budget.template.index')
+                ->with('message', 'Childcare template was updated successfully');
         }
 
         return redirect()->back();

@@ -23,7 +23,7 @@ class BankController extends Controller
             ]);
 
             return redirect()->route('budget.template.index')
-                ->with('success', 'Bank Template was successfully created');
+                ->with('success', 'Bank template was created successfully');
         }
 
         // Banks::create($request->validated());
@@ -44,7 +44,8 @@ class BankController extends Controller
                 'expense_type_id' => $validated['account_type'],
             ]);
 
-            return redirect()->route('budget.template.index');
+            return redirect()->route('budget.template.index')
+                ->with('success', 'Bank template was updated successfully');
         }
 
         return redirect()->back();
