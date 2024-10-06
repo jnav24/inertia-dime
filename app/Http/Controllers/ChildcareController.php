@@ -34,7 +34,7 @@ class ChildcareController extends Controller
         $validated = $request->validated();
 
         if ($validated['template']) {
-            $template = ChildcareTemplate::where('uuid', $uuid)->first();
+            $template = ChildcareTemplate::where('uuid', $uuid)->firstOrFail();
             $template->update([
                 'data' => new ExpenseSpendDto(
                     name: $validated['name'],

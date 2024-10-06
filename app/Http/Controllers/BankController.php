@@ -35,7 +35,7 @@ class BankController extends Controller
         $validated = $request->validated();
 
         if ($validated['template']) {
-            $template = BankTemplate::where('uuid', $uuid)->first();
+            $template = BankTemplate::where('uuid', $uuid)->firstOrFail();
             $template->update([
                 'data' => new ExpenseGainDto(
                     name: $validated['name'],
