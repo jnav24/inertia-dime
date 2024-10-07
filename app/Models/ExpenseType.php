@@ -7,6 +7,7 @@ use App\Traits\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 
 class ExpenseType extends Model
 {
@@ -35,6 +36,6 @@ class ExpenseType extends Model
     public static function grouped()
     {
         return static::cached()
-            ->groupBy(fn ($item) => $item->type);
+            ->groupBy(fn ($item) => Str::plural($item->type));
     }
 }
