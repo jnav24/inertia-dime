@@ -8,7 +8,7 @@ enum ExpenseTypeEnum: string
 {
     case BANK = 'bank';
     case CHILDCARE = 'childcare';
-    case CREDIT_CARD = 'credit card';
+    case CREDIT_CARD = 'creditCards';
     case EDUCATION = 'education';
     case ENTERTAINMENT = 'entertainment';
     case FOOD = 'food';
