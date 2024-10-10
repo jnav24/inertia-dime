@@ -36,6 +36,7 @@ class ExpenseType extends Model
     public static function grouped()
     {
         return static::cached()
-            ->groupBy(fn ($item) => Str::plural($item->type));
+            ->groupBy(fn ($item) => Str::plural($item->type))
+            ->sortKeys();
     }
 }
