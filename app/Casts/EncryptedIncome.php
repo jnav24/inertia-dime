@@ -3,6 +3,7 @@
 namespace App\Casts;
 
 use App\Data\IncomeDto;
+use Carbon\Carbon;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -20,7 +21,7 @@ class EncryptedIncome implements CastsAttributes
     {
         $item = json_decode(Crypt::decryptString($value), true);
 
-        return new IncomeDto(name: $item['name'], amount: $item['amount'], initial_pay_date: $item['initial_pay_date']);
+        return new IncomeDto(name: $item['name'], amount: $item['amount'], pay_date: Carbon::parse($item['pay_date']));
     }
 
     /**
