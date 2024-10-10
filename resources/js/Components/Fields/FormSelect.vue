@@ -61,6 +61,8 @@ const getPlaceholder = computed(() => {
     return props.placeholder;
 });
 
+const disableField = computed(() => props.isDisabled || !props.items?.length);
+
 watchEffect(() => {
     if (!selected.value) {
         setTimeout(() => dropDownItems.value?.classList.add('h-0', 'py-0'), 300);
@@ -70,13 +72,13 @@ watchEffect(() => {
 });
 
 const handleBlur = () => {
-    if (!props.isDisabled) {
+    if (!disableField.value) {
         selected.value = false;
     }
 };
 
 const handleClick = () => {
-    if (!props.isDisabled) {
+    if (!disableField.value) {
         selected.value = !selected.value;
     }
 };
@@ -97,11 +99,11 @@ const handleSelection = (value: string) => {
         <div
             class="relative mt-2 flex transform items-center justify-between rounded-md border border-solid px-2 py-2 outline-none"
             :class="{
-                'border-red-600 bg-white text-red-600': error && !isDisabled,
+                'border-red-600 bg-white text-red-600': error && !disableField,
                 'dark:bg-dark-main cursor-pointer border-gray-300 bg-white text-gray-600 transition duration-300 hover:border-gray-600 hover:text-gray-700 focus:border-primary dark:border-gray-700':
-                    !error && !isDisabled,
+                    !error && !disableField,
                 'cursor-text border-gray-300 bg-gray-200 text-gray-500 dark:border-gray-600 dark:bg-gray-800':
-                    isDisabled,
+                    disableField,
                 'z-50': selected,
                 'z-0': !selected,
             }"
