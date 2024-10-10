@@ -27,6 +27,7 @@ class ExpenseTypeSeeder extends Seeder
             ExpenseTypeEnum::INVESTMENT->value => ['Stocks', 'Crypto', '401k', 'Traditional IRA', 'Roth IRA', 'SEP IRA', 'Mutual Funds', 'Brokerage', 'Restricted Stock', 'Annuities', 'Bonds', 'Certificate of Deposit (CD)', 'Commodities', 'Exchange-Traded Fund (ETF)', 'Options'],
             ExpenseTypeEnum::LOAN->value => ['Auto', 'Personal', 'Business', 'Equity', 'Credit-Builder', 'Payday', 'Pawn', 'Student'],
             ExpenseTypeEnum::MEDICAL->value => ['Preventive', 'Doctor Visit', 'Insurance', 'Copay', 'Deductible', 'Prescription', 'Surgery', 'Emergency Room', 'Outstanding Bill', 'Therapy', 'Hospital', 'Laboratory', 'Over-the-Counter'],
+            ExpenseTypeEnum::MISCELLANEOUS->value => ['Empty Type'],
             ExpenseTypeEnum::PERSONAL->value => ['Dry Cleaning', 'Gym & Fitness', 'Hair', 'Laundry', 'Manicure', 'Pedicure', 'Spa & Massage'],
             ExpenseTypeEnum::SHOPPING->value => ['Books & Literature', 'Clothing', 'Electronics', 'Furniture', 'Games', 'Media', 'Products', 'Shoes', 'Software', 'Sporting Goods'],
             ExpenseTypeEnum::SUBSCRIPTION->value => ['Auto-Ship', 'Curated', 'Access', 'Software'],
