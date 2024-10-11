@@ -3,16 +3,30 @@ import FormInput from '@/Components/Fields/FormInput.vue';
 import ExpenseFormActions from '@/Components/Forms/ExpenseFormActions.vue';
 import FormSelect from '@/Components/Fields/FormSelect.vue';
 import ExpenseFormConfirmation from '@/Components/Forms/ExpenseFormConfirmation.vue';
+import { CommonExpenseFormProps, ExpenseFormEmits } from '@/types/expenses';
+import { computed } from 'vue';
+import { convertToDollar } from '@/utils/functions';
+import { dueDates } from '@/utils/helpers';
+
+defineEmits<ExpenseFormEmits>();
+const props = defineProps<CommonExpenseFormProps>();
+const amount = computed(() => convertToDollar(props.expense?.data.amount));
 </script>
 
 <template>
     <div class="mb-6 grid grid-cols-2 gap-4">
-        <FormInput label="Name" :rules="['required', 'min:3']" />
-        <FormInput label="Amount" :rules="['required', 'float:2']" />
-        <FormSelect :items="[]" label="Account Type" value="" :rules="['required']" />
-        <FormInput label="Due On" />
+        <FormInput label="Template" hidden :value="!!isTemplate" />
+        <FormInput label="Account Type" hidden :value="types[0].id" />
+        <FormInput label="Name" :rules="['required', 'min:3']" :value="expense?.data.name" />
+        <FormInput label="Amount" :rules="['required', 'float:2']" :value="amount" />
+        <FormSelect
+            v-if="isTemplate"
+            :items="dueDates"
+            label="Due Date"
+            :value="expense?.data.due_date ?? 1"
+        />
     </div>
 
-    <ExpenseFormConfirmation />
+    <ExpenseFormConfirmation v-if="!isTemplate" :expense="expense" />
     <ExpenseFormActions @close="$emit('close')" />
 </template>
