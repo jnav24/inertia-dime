@@ -5,7 +5,7 @@ defineEmits<{ (e: 'close'): void }>();
 </script>
 
 <template>
-    <div class="space-x-2 border-t border-lm-stroke pt-4 text-right">
+    <div class="mt-4 space-x-2 border-t border-lm-stroke pt-4 text-right">
         <FormButton @click="$emit('close')">Cancel</FormButton>
         <FormButton color="primary" submit>Submit</FormButton>
     </div>
