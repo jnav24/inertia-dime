@@ -11,7 +11,7 @@ class GainExpenseRequest extends FormRequest
         return [
             'name' => 'required|min:3',
             'amount' => 'required|decimal:2',
-            'initial_pay_date' => 'date',
+            'pay_date' => 'date_format:Y-m-d',
             'template' => 'bool',
             'account_type' => 'uuid'
         ];
