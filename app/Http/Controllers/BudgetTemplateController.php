@@ -2,17 +2,27 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ExpenseTypeEnum;
 use App\Http\Resources\BudgetTemplateResource;
+use App\Http\Resources\ExpenseTypeResource;
 use App\Models\BudgetTemplate;
+use App\Models\ExpenseType;
+use App\Traits\ExpenseTypes;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class BudgetTemplateController extends Controller
 {
+    use ExpenseTypes;
+
     public function index()
     {
-        // return BudgetTemplateResource::collection(BudgetTemplate::all());
-        return Inertia::render('BudgetTemplate', []);
+        $template = auth()->user()->budgetTemplate()->withExpenses()->first();
+        return Inertia::render('BudgetTemplate', [
+            'budgetTemplate' => new BudgetTemplateResource($template),
+            'expenses' => ExpenseTypeEnum::cases(),
+            'types' => ExpenseType::grouped()->map(fn ($object) => ExpenseTypeResource::collection($object)),
+        ]);
     }
 
     public function store(Request $request)
