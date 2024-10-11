@@ -11,6 +11,7 @@ use App\Models\GiftTemplate;
 use App\Models\HousingTemplate;
 use App\Models\LoanTemplate;
 use App\Models\MedicalTemplate;
+use App\Models\MiscellaneousTemplate;
 use App\Models\PersonalTemplate;
 use App\Models\ShoppingTemplate;
 use App\Models\SubscriptionTemplate;
@@ -53,6 +54,10 @@ class CommonExpenseService
         'medical' => [
             'budget' => '',
             'template' => MedicalTemplate::class,
+        ],
+        'miscellaneous' => [
+            'budget' => '',
+            'template' => MiscellaneousTemplate::class,
         ],
         'personal' => [
             'budget' => '',
