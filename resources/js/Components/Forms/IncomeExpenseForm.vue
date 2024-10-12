@@ -2,14 +2,14 @@
 import FormInput from '@/Components/Fields/FormInput.vue';
 import ExpenseFormActions from '@/Components/Forms/ExpenseFormActions.vue';
 import FormSelect from '@/Components/Fields/FormSelect.vue';
-import { ExpenseFormEmits, GainExpenseFormProps } from '@/types/expenses';
+import { ExpenseFormEmits, IncomeExpenseFormProps } from '@/types/expenses';
 import { computed } from 'vue';
 import { convertToDollar } from '@/utils/functions';
 import FormDatePicker from '@/Components/Fields/FormDatePicker.vue';
 import { getDefaultDate } from '@/utils/helpers';
 
 defineEmits<ExpenseFormEmits>();
-const props = defineProps<GainExpenseFormProps>();
+const props = defineProps<IncomeExpenseFormProps>();
 const amount = computed(() => convertToDollar(props.expense?.data.amount));
 </script>
 

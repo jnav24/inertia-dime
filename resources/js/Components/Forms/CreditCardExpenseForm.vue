@@ -2,14 +2,14 @@
 import { computed } from 'vue';
 import { convertToDollar } from '@/utils/functions';
 import { dueDates } from '@/utils/helpers';
-import { ExpenseFormEmits, GainExpenseFormProps } from '@/types/expenses';
+import { ExpenseFormEmits, CreditCardExpenseFormProps } from '@/types/expenses';
 import FormInput from '@/Components/Fields/FormInput.vue';
 import ExpenseFormActions from '@/Components/Forms/ExpenseFormActions.vue';
 import FormSelect from '@/Components/Fields/FormSelect.vue';
 import ExpenseFormConfirmation from '@/Components/Forms/ExpenseFormConfirmation.vue';
 
 defineEmits<ExpenseFormEmits>();
-const props = defineProps<GainExpenseFormProps>();
+const props = defineProps<CreditCardExpenseFormProps>();
 const amount = computed(() => convertToDollar(props.expense?.data.amount));
 const balance = computed(() => convertToDollar(props.expense?.data.balance));
 const limit = computed(() => convertToDollar(props.expense?.data.limit));
