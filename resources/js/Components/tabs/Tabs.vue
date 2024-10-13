@@ -47,7 +47,14 @@ provide<TabContextType>(TabContext, {
                     type="button"
                 >
                     <Typography variant="body2">
-                        {{ tab }}
+                        <span
+                            :class="{
+                                'transition-all duration-300 ease-in-out hover:text-primary':
+                                    selectedTab !== tab,
+                            }"
+                        >
+                            {{ tab }}
+                        </span>
                     </Typography>
                 </button>
             </div>
@@ -58,7 +65,7 @@ provide<TabContextType>(TabContext, {
             ></div>
         </div>
 
-        <div class="mt-6 bg-red-300">
+        <div class="mt-6">
             <slot />
         </div>
     </section>
