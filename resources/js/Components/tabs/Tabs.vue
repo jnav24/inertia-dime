@@ -60,7 +60,7 @@ provide<TabContextType>(TabContext, {
             </div>
 
             <div
-                class="absolute bottom-0 h-1 rounded bg-dm-primary transition-all duration-300 ease-in-out"
+                class="absolute bottom-0 h-1 rounded bg-dm-primary transition-all duration-200 ease-in-out"
                 :style="tabIndicatorStyles"
             ></div>
         </div>
