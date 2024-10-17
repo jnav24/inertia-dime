@@ -1,12 +1,8 @@
 <script setup lang="ts">
 import Typography from '@/Components/Elements/Typography.vue';
+import { ColumnBadgeProps } from '@/utils/helpers';
 
-type Props = {
-    color?: 'success' | 'danger' | 'default';
-    value: string;
-};
-
-withDefaults(defineProps<Props>(), { color: 'default' });
+withDefaults(defineProps<ColumnBadgeProps>(), { color: 'default' });
 </script>
 
 <template>

@@ -5,6 +5,11 @@ import ColumnBasic from '@/Components/table/ColumnBasic.vue';
 import ColumnActions from '@/Components/table/ColumnActions.vue';
 import ColumnBadge from '@/Components/table/ColumnBadge.vue';
 
+export type ColumnBadgeProps = {
+    color?: 'success' | 'danger' | 'default';
+    value: string;
+};
+
 export const validation: Record<string, RulesType | Array<keyof RulesType>> = {
     password: ['required', 'min:12', 'mixedCase', 'symbol', 'has-int'],
 };
