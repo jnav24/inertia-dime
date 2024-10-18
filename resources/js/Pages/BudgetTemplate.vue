@@ -11,11 +11,13 @@ import Plus from '@/Components/Icons/outline/Plus.vue';
 import { columns } from '@/utils/helpers';
 import { toTitleCase } from '@/utils/functions';
 import { PageProps } from '@/types/providers';
+import { UserVehicle } from '@/types/expenses';
 
 type Props = PageProps & {
     budgetTemplate: any;
     expenses: any;
     types: any;
+    vehicles: UserVehicle[];
 };
 
 const props = defineProps<Props>();
@@ -26,7 +28,6 @@ const showModal = ref(false);
 const selectedItem = ref('');
 
 const defaultCategory = computed(() => categories.value?.[0] ?? 'banks');
-const formSubmitted = computed(() => props.flash.message && !props.errors);
 
 onMounted(() => {
     categories.value = Object.keys(props.types);
@@ -57,10 +58,6 @@ watch(showModal, (v) => {
     if (!v) {
         formData.value = undefined;
     }
-});
-
-watchEffect(() => {
-    console.log('watching...', props.flash, props.errors);
 });
 </script>
 

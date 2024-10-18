@@ -76,8 +76,18 @@ export type UserVehicleExpenseFormProps = ExpenseFormProps & {
             mileage: number;
         };
         expense: ExpenseType;
-        // @todo add relation to user_vehicles
+        vehicle: UserVehicle;
     };
+};
+
+type UserVehicle = {
+    color: string;
+    id: string;
+    is_active: boolean;
+    license: string | null;
+    make: string;
+    model: string;
+    year: number;
 };
 
 type ExpenseType = {
