@@ -30,7 +30,13 @@ const userVehicles = computed(() => {
 
 <template>
     <div class="mb-6 grid grid-cols-2 gap-4">
-        <FormSelect :items="userVehicles" label="Vehicle" value="" :rules="['required']" />
+        <FormInput label="Template" hidden :value="!!isTemplate" />
+        <FormSelect
+            :items="userVehicles"
+            label="Vehicle"
+            :value="expense?.vehicle.id"
+            :rules="['required']"
+        />
         <FormInput label="Amount" :rules="['required', 'float:2']" :value="amount" />
         <FormSelect
             :items="types"
