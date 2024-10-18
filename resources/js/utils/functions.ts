@@ -31,3 +31,5 @@ export const convertToCurrency = (val: number, currency = 'USD') => {
 
     return formatter.format(convertToDollar(val));
 };
+
+export const toKebabCase = (value: string) => value.toLowerCase().replace(/\s+/g, '-');

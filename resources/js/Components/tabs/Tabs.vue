@@ -1,7 +1,11 @@
 <script setup lang="ts">
-import { computed, provide, reactive, ref } from 'vue';
-import Typography from '@/Components/Elements/Typography.vue';
+import { computed, nextTick, provide, reactive, ref } from 'vue';
+import { usePage } from '@inertiajs/vue3';
 import { TabContext, TabContextType } from '@/types/tabs';
+import Typography from '@/Components/Elements/Typography.vue';
+import { toKebabCase, toTitleCase } from '@/utils/functions';
+
+const { props } = usePage();
 
 const tabs = reactive<Record<string, HTMLButtonElement | null>>({});
 const selectedTab = ref('');
@@ -21,6 +25,8 @@ const tabIndicatorStyles = computed(() => {
 
 const addTab = (tab: string) => {
     if (!tabs[tab]) {
+        tab = toTitleCase(tab);
+
         if (!tabKeys.value.length) {
             selectedTab.value = tab;
         }
@@ -28,6 +34,20 @@ const addTab = (tab: string) => {
         tabs[tab] = null;
     }
 };
+
+const handleTabChange = (tab: string) => {
+    selectedTab.value = tab;
+    const params = { tab: toKebabCase(tab) };
+    window.history.pushState(params, '', route('profile.edit', params));
+};
+
+nextTick(() => {
+    const { tab } = props.ziggy.query;
+
+    if (tab) {
+        selectedTab.value = toTitleCase(tab);
+    }
+});
 
 provide<TabContextType>(TabContext, {
     activeTab,
@@ -42,7 +62,7 @@ provide<TabContextType>(TabContext, {
                 <button
                     v-for="(tab, idx) in tabKeys"
                     :key="idx"
-                    @click="selectedTab = tab"
+                    @click="handleTabChange(tab)"
                     :ref="(el) => (tabs[tab] = el)"
                     type="button"
                 >
