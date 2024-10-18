@@ -40,12 +40,9 @@ enum ExpenseTypeEnum: string
      */
     public static function allRelationships(): array
     {
-        return array_map(function ($item) {
-            if ($item->value === ExpenseTypeEnum::MISCELLANEOUS->value) {
-                return Str::plural($item->value);
-            }
-
-            return Str::camel(Str::plural($item->value) . ".expenseType");
-        }, ExpenseTypeEnum::cases());
+        return [
+            ...array_map(fn ($item) => Str::camel(Str::plural($item->value) . ".expenseType"), ExpenseTypeEnum::cases()),
+            'vehicles.userVehicle'
+        ];
     }
 }

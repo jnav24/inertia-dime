@@ -15,6 +15,7 @@ class TemplateResource extends JsonResource
             'id' => $this->uuid,
             'data' => $this->data,
             'expense' => new ExpenseTypeResource($this->whenLoaded('expenseType')),
+            'vehicle' => new UserVehicleResource($this->whenLoaded('userVehicle')),
         ];
     }
 }

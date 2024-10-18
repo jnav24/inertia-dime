@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\ExpenseTypeEnum;
 use App\Http\Resources\BudgetTemplateResource;
 use App\Http\Resources\ExpenseTypeResource;
+use App\Http\Resources\UserVehicleResource;
 use App\Models\BudgetTemplate;
 use App\Models\ExpenseType;
 use App\Traits\ExpenseTypes;
@@ -22,6 +23,9 @@ class BudgetTemplateController extends Controller
             'budgetTemplate' => new BudgetTemplateResource($template),
             'expenses' => ExpenseTypeEnum::cases(),
             'types' => ExpenseType::grouped()->map(fn ($object) => ExpenseTypeResource::collection($object)),
+            'vehicles' => UserVehicleResource::collection(
+                auth()->user()->userVehicles()->get(),
+            ),
         ]);
     }
 
