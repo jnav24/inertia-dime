@@ -9,7 +9,7 @@ return new class extends Migration {
     {
         Schema::create('user_vehicles', function (Blueprint $table) {
             $table->id();
-            $table->uuid();
+            $table->uuid()->unique();
             $table->foreignId('user_id');
             $table->text('data');
             $table->timestamps();
