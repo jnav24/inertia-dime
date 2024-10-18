@@ -12,6 +12,7 @@ import MiscellaneousExpenseForm from '@/Components/Forms/MiscellaneousExpenseFor
 import VehicleExpenseForm from '@/Components/Forms/VehicleExpenseForm.vue';
 import BudgetForm from '@/Components/Fields/BudgetForm.vue';
 import { NotificationContext, NotificationContextType } from '@/types/providers';
+import UserVehicleForm from '@/Components/Forms/UserVehicleForm.vue';
 
 type Props = {
     expense: string;
@@ -48,6 +49,7 @@ const routes = {
     taxes: route('expense.tax.store'),
     travel: route('expense.travel.store'),
     utilities: route('expense.utility.store'),
+    'user vehicles': route('user-vehicle.store'),
     vehicles: route('expense.bank.store'),
 };
 
@@ -122,6 +124,11 @@ watch(
                     :is-template="isTemplate"
                     @close="closeModal()"
                     :types="types"
+                />
+                <UserVehicleForm
+                    v-else-if="'user vehicles' === expense"
+                    :data="formData"
+                    @close="closeModal()"
                 />
                 <CommonExpenseForm
                     v-else
