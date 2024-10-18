@@ -57,4 +57,9 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(BudgetTemplate::class);
     }
+
+    public function userVehicles(): HasMany
+    {
+        return $this->hasMany(UserVehicle::class);
+    }
 }

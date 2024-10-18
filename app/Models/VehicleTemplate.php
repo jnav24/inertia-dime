@@ -39,6 +39,11 @@ class VehicleTemplate extends Model
         return $this->belongsTo(related: ExpenseType::class, ownerKey: 'uuid');
     }
 
+    public function userVehicle(): BelongsTo
+    {
+        return $this->belongsTo(related: UserVehicle::class, ownerKey: 'uuid');
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
