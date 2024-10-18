@@ -88,7 +88,29 @@ export const columns = {
     taxes: commonSpendColumn,
     travel: commonSpendColumn,
     utilities: commonSpendColumn,
-    vehicles: [],
+    vehicles: [
+        {
+            content: {
+                component: ColumnBasic,
+                props: (obj) => ({
+                    value: `${obj.vehicle.year} ${obj.vehicle.make} ${obj.vehicle.model}`,
+                }),
+            },
+            label: 'Vehicle',
+            colspan: 3,
+        },
+        ...commonColumn.filter((item) => item.label !== 'Name'),
+        {
+            content: {
+                component: ColumnBasic,
+                props: (obj) => ({ value: convertToCurrency(parseNested(obj, 'data.balance')) }),
+            },
+            label: 'Balance',
+            colspan: 2,
+        },
+        { content: 'data.due_date', label: 'Due Date', colspan: 2 },
+        { content: { component: ColumnActions, props: (obj) => ({ obj }) }, label: '' },
+    ],
 };
 
 export const dueDates = Array.from(Array(31).keys()).map((num: number) => ({
