@@ -18,7 +18,7 @@ class VehicleTemplate extends Model
         'data',
         'budget_template_id',
         'expense_type_id',
-        'user_id',
+        'user_vehicle_id',
     ];
 
     protected function casts(): array
