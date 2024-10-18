@@ -9,6 +9,7 @@ use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\InvestmentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserVehicleController;
+use App\Http\Controllers\VehicleController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -100,6 +101,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         Route::post('/expense/utility', [CommonExpenseController::class, 'store'])->name('expense.utility.store');
         Route::patch('/expense/utility/{uuid}', [CommonExpenseController::class, 'update'])->name('expense.utility.update');
+
+        Route::post('/expense/vehicle', [VehicleController::class, 'store'])->name('expense.vehicle.store');
+        Route::patch('/expense/vehicle/{uuid}', [VehicleController::class, 'update'])->name('expense.vehicle.update');
     });
 });
 

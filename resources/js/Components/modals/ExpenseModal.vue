@@ -50,7 +50,7 @@ const routes = {
     travel: route('expense.travel.store'),
     utilities: route('expense.utility.store'),
     'user vehicles': route('user-vehicle.store'),
-    vehicles: route('expense.bank.store'),
+    vehicles: route('expense.vehicle.store'),
 };
 
 const submitRoute = computed(() => {
