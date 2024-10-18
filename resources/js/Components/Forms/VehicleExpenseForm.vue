@@ -7,20 +7,30 @@ import { ExpenseFormEmits, UserVehicleExpenseFormProps } from '@/types/expenses'
 import { computed, ref } from 'vue';
 import { convertToDollar } from '@/utils/functions';
 import { dueDates } from '@/utils/helpers';
+import { usePage } from '@inertiajs/vue3';
 
 defineEmits<ExpenseFormEmits>();
 const props = defineProps<UserVehicleExpenseFormProps>();
+
+const page = usePage();
+
 const typeSelected = ref('');
 const amount = computed(() => convertToDollar(props.expense?.data.amount));
 const balance = computed(() => convertToDollar(props.expense?.data.balance));
 const isMileage = computed(() => {
     return props.types.find((item) => item.id === typeSelected.value)?.slug === 'gas';
 });
+const userVehicles = computed(() => {
+    return (page.props?.vehicles?.data ?? []).map((vehicle) => ({
+        value: vehicle.id,
+        label: `${vehicle.year} ${vehicle.make} ${vehicle.model}`,
+    }));
+});
 </script>
 
 <template>
     <div class="mb-6 grid grid-cols-2 gap-4">
-        <FormSelect :items="[]" label="Vehicle" value="" :rules="['required']" />
+        <FormSelect :items="userVehicles" label="Vehicle" value="" :rules="['required']" />
         <FormInput label="Amount" :rules="['required', 'float:2']" :value="amount" />
         <FormSelect
             :items="types"
