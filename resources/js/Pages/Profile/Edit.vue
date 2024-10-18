@@ -8,10 +8,13 @@ import AuthenticatedContentLayout from '@/Layouts/AuthenticatedContentLayout.vue
 import Tabs from '@/Components/tabs/Tabs.vue';
 import TabItem from '@/Components/tabs/TabItem.vue';
 import Card from '@/Components/Elements/Card.vue';
+import Mfa from '@/Components/settings/Mfa.vue';
+import Vehicles from '@/Components/settings/Vehicles.vue';
 
 defineProps<{
     mustVerifyEmail?: boolean;
     status?: string;
+    vehicles: { data: any[] };
 }>();
 </script>
 
@@ -46,9 +49,13 @@ defineProps<{
                         </Card>
 
                         <Card>
-                            <h2>MFA</h2>
+                            <Mfa />
                         </Card>
                     </section>
+                </TabItem>
+
+                <TabItem title="Vehicles">
+                    <Vehicles :vehicles="vehicles.data" />
                 </TabItem>
             </Tabs>
         </AuthenticatedContentLayout>
