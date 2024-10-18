@@ -10,12 +10,15 @@ import TabItem from '@/Components/tabs/TabItem.vue';
 import Card from '@/Components/Elements/Card.vue';
 import Mfa from '@/Components/settings/Mfa.vue';
 import Vehicles from '@/Components/settings/Vehicles.vue';
+import { PageProps } from '@/types/providers';
 
-defineProps<{
+type Props = PageProps & {
     mustVerifyEmail?: boolean;
     status?: string;
     vehicles: { data: any[] };
-}>();
+};
+
+defineProps<Props>();
 </script>
 
 <template>
@@ -55,7 +58,7 @@ defineProps<{
                 </TabItem>
 
                 <TabItem title="Vehicles">
-                    <Vehicles :vehicles="vehicles.data" />
+                    <Vehicles :notify="flash.message" :vehicles="vehicles.data" />
                 </TabItem>
             </Tabs>
         </AuthenticatedContentLayout>

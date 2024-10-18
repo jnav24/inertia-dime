@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { inject, ref, watch } from 'vue';
 import Typography from '@/Components/Elements/Typography.vue';
 import Table from '@/Components/table/Table.vue';
 import FormButton from '@/Components/Fields/FormButton.vue';
@@ -8,12 +8,14 @@ import ExpenseModal from '@/Components/modals/ExpenseModal.vue';
 import ColumnActions from '@/Components/table/ColumnActions.vue';
 import ColumnBadge from '@/Components/table/ColumnBadge.vue';
 import { ColumnBadgeProps } from '@/utils/helpers';
+import { NotificationContext, NotificationContextType } from '@/types/providers';
 
 type Props = {
+    notify?: string;
     vehicles: any[];
 };
 
-defineProps<Props>();
+const props = defineProps<Props>();
 
 const columns = [
     { content: 'year', label: 'Year', colspan: 1 },
@@ -42,6 +44,8 @@ const columns = [
     },
 ];
 
+const notificationContext = inject<NotificationContextType>(NotificationContext);
+
 const showModal = ref(false);
 const formData = ref(undefined);
 
@@ -57,6 +61,19 @@ const handleColumnEvent = (e: { type: string; obj: any }) => {
             break;
     }
 };
+
+watch(
+    () => props.notify,
+    (v) => {
+        if (v) {
+            notificationContext?.addNotification({
+                title: 'Success',
+                message: v,
+                type: 'success',
+            });
+        }
+    },
+);
 </script>
 
 <template>
