@@ -8,6 +8,7 @@ use App\Http\Controllers\CreditCardController;
 use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\InvestmentController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserVehicleController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -38,6 +39,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ->name('budget.template.index');
         Route::patch('/budgets/template/{uuid}', [BudgetTemplateController::class, 'update'])
             ->name('budget.template.update');
+
+        Route::post('/user-vehicle', [UserVehicleController::class, 'store'])->name('user-vehicle.store');
+        Route::patch('/user-vehicle/{uuid}', [UserVehicleController::class, 'update'])->name('user-vehicle.update');
 
         // save expenses
         Route::post('/expense/banks', [BankController::class, 'store'])->name('expense.bank.store');
