@@ -14,8 +14,9 @@ import TrendDown from '@/Components/Icons/outline/TrendDown.vue';
 import CreateBudgetModal from '@/Components/modals/CreateBudgetModal.vue';
 import ColumnActions from '@/Components/table/ColumnActions.vue';
 import AppLink from '@/Components/Elements/AppLink.vue';
+import { Budget } from '@/types/budget';
 
-defineProps<{ budgets: any[] }>();
+defineProps<{ budgets: Budget[] }>();
 
 const showModal = ref(false);
 const selectedYear = ref('2024');
@@ -95,7 +96,7 @@ const handleColumnEvent = (e: { type: string; obj: any }) => {
                     { content: 'name', label: 'Name', colspan: 3 },
                     { content: 'name', label: 'Saved', colspan: 3 },
                     {
-                        content: { component: ColumnActions, props: (obj) => ({ obj }) },
+                        content: { component: ColumnActions, props: (obj: Budget) => ({ obj }) },
                         label: 'Actions',
                         colspan: 1,
                     },
