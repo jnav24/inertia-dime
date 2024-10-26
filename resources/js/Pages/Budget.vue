@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import { ref } from 'vue';
+import { Head } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import AuthenticatedContentLayout from '@/Layouts/AuthenticatedContentLayout.vue';
-import { Head } from '@inertiajs/vue3';
 import FormButton from '@/Components/Fields/FormButton.vue';
 import Plus from '@/Components/Icons/outline/Plus.vue';
 import PencilSquare from '@/Components/Icons/outline/PencilSquare.vue';
@@ -10,15 +11,24 @@ import FormSelect from '@/Components/Fields/FormSelect.vue';
 import Typography from '@/Components/Elements/Typography.vue';
 import TrendUp from '@/Components/Icons/outline/TrendUp.vue';
 import TrendDown from '@/Components/Icons/outline/TrendDown.vue';
+import CreateBudgetModal from '@/Components/modals/CreateBudgetModal.vue';
+import ColumnActions from '@/Components/table/ColumnActions.vue';
+import AppLink from '@/Components/Elements/AppLink.vue';
 
 defineProps<{ budgets: any[] }>();
 
-const redirectToTemplatePage = () => {
-    console.log('redirecting...');
-};
+const showModal = ref(false);
+const selectedYear = ref('2024');
 
-const createBudget = () => {
-    console.log('creating budget....');
+const handleColumnEvent = (e: { type: string; obj: any }) => {
+    switch (e.type) {
+        case 'edit':
+            console.log('redirect to edit budget', e);
+            break;
+        case 'delete':
+            console.log('open delete confirm', e);
+            break;
+    }
 };
 </script>
 
@@ -26,12 +36,17 @@ const createBudget = () => {
     <Head title="Budgets" />
 
     <AuthenticatedLayout>
+        <CreateBudgetModal v-model:show="showModal" />
+
         <template #header> Budgets </template>
         <template #call-to-action>
-            <FormButton @onclick="redirectToTemplatePage()" :icon="PencilSquare">
-                Edit Template
-            </FormButton>
-            <FormButton color="primary" @onclick="createBudget()" :icon="Plus">
+            <AppLink :href="route('budget.template.index')" as="button">
+                <span class="flex flex-row items-center justify-center space-x-2">
+                    <PencilSquare classes="w-4" />
+                    <span>Edit Template</span>
+                </span>
+            </AppLink>
+            <FormButton color="primary" @onclick="showModal = true" :icon="Plus">
                 New Budget
             </FormButton>
         </template>
@@ -40,7 +55,7 @@ const createBudget = () => {
             <template v-if="budgets.length">
                 <div class="grid grid-cols-3 gap-4">
                     <div
-                        class="border-lm-stroke bg-lm-secondary dark:border-dm-stroke flex items-center justify-between rounded-lg border px-4 py-8 dark:bg-dm-secondary"
+                        class="flex items-center justify-between rounded-lg border border-lm-stroke bg-lm-secondary px-4 py-8 dark:border-dm-stroke dark:bg-dm-secondary"
                     >
                         <div class="flex items-center space-x-4">
                             <TrendUp classes="size-10 text-primary" />
@@ -52,7 +67,7 @@ const createBudget = () => {
                         <Typography tag="p" variant="h1">$2,000</Typography>
                     </div>
                     <div
-                        class="border-lm-stroke bg-lm-secondary dark:border-dm-stroke flex items-center justify-between rounded-lg border px-4 py-8 dark:bg-dm-secondary"
+                        class="flex items-center justify-between rounded-lg border border-lm-stroke bg-lm-secondary px-4 py-8 dark:border-dm-stroke dark:bg-dm-secondary"
                     >
                         <div class="flex items-center space-x-4">
                             <TrendDown classes="size-10 text-danger" />
@@ -68,18 +83,22 @@ const createBudget = () => {
                 <div class="my-8 w-36">
                     <FormSelect
                         label="Select Year"
-                        :items="[{ label: '2024', value: 2024 }]"
-                        value="2024"
+                        :items="[{ label: '2024', value: '2024' }]"
+                        v-model:value="selectedYear"
                     />
                 </div>
             </template>
 
             <Table
                 :columns="[
+                    { content: 'name', label: '', colspan: 2 },
                     { content: 'name', label: 'Name', colspan: 3 },
                     { content: 'name', label: 'Saved', colspan: 3 },
-                    { content: 'budget_cycle', label: 'Title', colspan: 2 },
-                    { content: 'budget_cycle', label: 'Actions', colspan: 2 },
+                    {
+                        content: { component: ColumnActions, props: (obj) => ({ obj }) },
+                        label: 'Actions',
+                        colspan: 1,
+                    },
                 ]"
                 :empty="{
                     title: 'No Budgets Found',
@@ -87,6 +106,7 @@ const createBudget = () => {
                 }"
                 :items="budgets"
                 :paginate="{ current: 1, options: [12], selected: 12 }"
+                @column-event="handleColumnEvent($event)"
             />
         </AuthenticatedContentLayout>
     </AuthenticatedLayout>
