@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Data\ExpenseGainDto;
 use App\Http\Requests\GainExpenseRequest;
 use App\Models\BankTemplate;
+use App\Models\BudgetTemplate;
 
 class BankController extends Controller
 {
@@ -35,7 +36,11 @@ class BankController extends Controller
         $validated = $request->validated();
 
         if ($validated['template']) {
-            $template = BankTemplate::where('uuid', $uuid)->firstOrFail();
+            $budget = BudgetTemplate::query()
+                ->with(['banks' => fn ($bank) => $bank->where('uuid', $uuid)])
+                ->where('user_id', auth()->user()->id)
+                ->firstOrFail();
+            $template = $budget->banks->first();
             $template->update([
                 'data' => new ExpenseGainDto(
                     name: $validated['name'],
