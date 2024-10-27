@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\BudgetResource;
 use App\Models\Budget;
+use App\Models\BudgetAggregation;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -11,7 +13,19 @@ class BudgetController extends Controller
 {
     public function index()
     {
-        // BudgetResource::collection(Budget::all())
+        $aggregations = auth()
+            ->user()
+            ->aggregations()
+            ->get()
+            ->groupBy(
+                fn (BudgetAggregation $aggregation) => Carbon::parse($aggregation->budget_cycle)->format('Y')
+            );
+
+        $budgets = auth()
+            ->user()
+            ->budgets()
+            ->get();
+
         return Inertia::render('Budget', [
             'budgets' => [],
         ]);
