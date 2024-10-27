@@ -14,9 +14,15 @@ import TrendDown from '@/Components/Icons/outline/TrendDown.vue';
 import CreateBudgetModal from '@/Components/modals/CreateBudgetModal.vue';
 import ColumnActions from '@/Components/table/ColumnActions.vue';
 import AppLink from '@/Components/Elements/AppLink.vue';
-import { Budget } from '@/types/budget';
+import { Budget, BudgetAggregation } from '@/types/budget';
+import { PageProps } from '@/types/providers';
 
-defineProps<{ budgets: Budget[] }>();
+type Props = PageProps & {
+    aggregations: BudgetAggregation;
+    budgets: Budget[];
+};
+
+defineProps<Props>();
 
 const showModal = ref(false);
 const selectedYear = ref('2024');
@@ -37,7 +43,7 @@ const handleColumnEvent = (e: { type: string; obj: any }) => {
     <Head title="Budgets" />
 
     <AuthenticatedLayout>
-        <CreateBudgetModal v-model:show="showModal" />
+        <CreateBudgetModal :aggregations="aggregations" v-model:show="showModal" />
 
         <template #header> Budgets </template>
         <template #call-to-action>
