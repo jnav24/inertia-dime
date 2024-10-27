@@ -48,6 +48,11 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
+    public function aggregations(): HasMany
+    {
+        return $this->hasMany(BudgetAggregation::class);
+    }
+
     public function budgets(): HasMany
     {
         return $this->hasMany(Budget::class);
