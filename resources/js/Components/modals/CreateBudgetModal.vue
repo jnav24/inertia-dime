@@ -80,7 +80,7 @@ onMounted(() => {
                     class="flex flex-row items-end justify-end space-x-2 rounded-b-lg border-t-2 border-lm-stroke p-4"
                 >
                     <FormButton @click="$emit('update:show', false)">Cancel</FormButton>
-                    <FormButton color="primary" @click="$emit('update:show', false)">
+                    <FormButton color="primary" @click="$emit('update:show', false)" submit>
                         New Budget
                     </FormButton>
                 </div>
