@@ -45,4 +45,9 @@ enum ExpenseTypeEnum: string
             'vehicles.userVehicle'
         ];
     }
+
+    public static function allExpenses(): array
+    {
+        return array_map(fn ($item) => Str::plural($item->value), ExpenseTypeEnum::cases());
+    }
 }
