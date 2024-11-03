@@ -29,7 +29,8 @@ class CreditCardController extends Controller
                 'budget_template_id' => auth()->user()->budgetTemplate->id,
             ]);
 
-            return redirect()->route('budget.template.index');
+            return redirect()->route('budget.template.index')
+                ->with('message', 'Credit card was saved successfully');
         }
 
         return redirect()->back();
@@ -56,7 +57,8 @@ class CreditCardController extends Controller
                 'expense_type_id' => $validated['account_type'],
             ]);
 
-            return redirect()->route('budget.template.index');
+            return redirect()->route('budget.template.index')
+                ->with('message', 'Credit card was updated successfully');
         }
 
         return redirect()->back();
