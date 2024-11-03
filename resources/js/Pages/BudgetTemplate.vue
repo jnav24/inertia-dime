@@ -3,7 +3,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import FormButton from '@/Components/Fields/FormButton.vue';
 import ExpenseModal from '@/Components/modals/ExpenseModal.vue';
-import { computed, onMounted, ref, watch, watchEffect } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import AuthenticatedContentLayout from '@/Layouts/AuthenticatedContentLayout.vue';
 import Sidebar from '@/Components/Elements/Sidebar.vue';
 import Table from '@/Components/table/Table.vue';
@@ -22,7 +22,7 @@ type Props = PageProps & {
 
 const props = defineProps<Props>();
 
-const categories = ref([]);
+const categories = ref<string[]>([]);
 const formData = ref(undefined);
 const showModal = ref(false);
 const selectedItem = ref('');
@@ -47,8 +47,8 @@ const handleColumnEvent = (e: { type: string; obj: any }) => {
 };
 
 const category = computed(() => {
-    const categories = {
-        'credit cards': 'creditCards',
+    const categories: Record<string, string> = {
+        creditCards: 'credit cards',
     };
 
     return categories[selectedItem.value] ?? selectedItem.value;
@@ -67,9 +67,9 @@ watch(showModal, (v) => {
     <AuthenticatedLayout>
         <ExpenseModal
             v-model:show="showModal"
-            :expense="selectedItem"
+            :expense="category"
             :form-data="formData"
-            :notify="flash.message"
+            :notify="flash.message ?? ''"
             :types="types[selectedItem]?.data ?? []"
         />
 
@@ -95,7 +95,7 @@ watch(showModal, (v) => {
                             content: 'Click the button above to add an expense.',
                         }"
                         :paginate="{ options: [15], selected: 15, current: 1 }"
-                        :items="budgetTemplate.data.expenses[category]"
+                        :items="budgetTemplate.data.expenses[selectedItem]"
                         @column-event="handleColumnEvent($event)"
                     />
                 </div>

@@ -18,6 +18,7 @@ type Props = {
     expense: string;
     formData: any;
     notify?: string;
+    show: boolean;
     types: any[];
 };
 
@@ -29,7 +30,7 @@ const notificationContext = inject<NotificationContextType>(NotificationContext)
 const page = usePage();
 const isTemplate = page.url.includes('template');
 
-const routes = {
+const routes: Record<string, string> = {
     banks: route('expense.bank.store'),
     childcares: route('expense.childcare.store'),
     'credit cards': route('expense.credit_cards.store'),
@@ -87,7 +88,7 @@ watch(
 
             <BudgetForm
                 :action="submitRoute.route"
-                :method="submitRoute.method"
+                :method="submitRoute.method as 'post' | 'patch'"
                 @after-submit="closeModal()"
             >
                 <GainExpenseForm
