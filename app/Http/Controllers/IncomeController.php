@@ -25,7 +25,7 @@ class IncomeController extends Controller
             ]);
 
             return redirect()->route('budget.template.index')
-                ->with('success', 'Expense was created successfully');
+                ->with('message', 'Expense was created successfully');
         }
 
         return redirect()->back();
@@ -47,7 +47,7 @@ class IncomeController extends Controller
             ]);
 
             return redirect()->route('budget.template.index')
-                ->with('success', 'Expense was updated successfully');
+                ->with('message', 'Expense was updated successfully');
         }
 
         return redirect()->back();
