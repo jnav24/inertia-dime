@@ -17,6 +17,7 @@ class MiscellaneousTemplate extends Model
         'uuid',
         'data',
         'budget_template_id',
+        'expense_type_id',
     ];
 
     protected function casts(): array
@@ -30,5 +31,10 @@ class MiscellaneousTemplate extends Model
     public function budgetTemplate(): BelongsTo
     {
         return $this->belongsTo(BudgetTemplate::class);
+    }
+
+    public function expenseType(): BelongsTo
+    {
+        return $this->belongsTo(related: ExpenseType::class, ownerKey: 'uuid');
     }
 }

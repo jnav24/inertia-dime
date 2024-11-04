@@ -12,6 +12,7 @@ return new class extends Migration {
             $table->uuid()->unique();
             $table->text('data');
             $table->foreignId('budget_template_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('expense_type_id')->constrained(table: 'expense_types', column: 'uuid')->cascadeOnDelete();
             $table->timestamps();
             $table->softDeletes();
         });
