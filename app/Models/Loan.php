@@ -3,13 +3,14 @@
 namespace App\Models;
 
 use App\Casts\EncryptedExpenseSpend;
+use App\Traits\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Loan extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, HasUuids;
 
     protected $fillable = [
         'uuid',
