@@ -18,7 +18,7 @@ class VehicleController extends Controller
                 amount: $validated['amount'],
                 balance: $validated['balance'],
                 due_date: $validated['due_date'],
-                mileage: $validated['mileage'],
+                mileage: $validated['mileage'] ?? null,
                 confirmation: $validated['confirmation'] ?? null,
                 notes: $validated['notes'] ?? null,
                 paid_date: $validated['paid_date'] ?? null,
