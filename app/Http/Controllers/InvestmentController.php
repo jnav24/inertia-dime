@@ -24,7 +24,8 @@ class InvestmentController extends Controller
                 'budget_template_id' => auth()->user()->budgetTemplate->id,
             ]);
 
-            return redirect()->route('budget.template.index');
+            return redirect()->route('budget.template.index')
+                ->with('message', 'Investment was created successfully');
         }
 
         return redirect()->route('budget.template.index');
@@ -44,7 +45,8 @@ class InvestmentController extends Controller
                 'expense_type_id' => $validated['account_type'],
             ]);
 
-            return redirect()->route('budget.template.index');
+            return redirect()->route('budget.template.index')
+                ->with('message', 'Investment was updated successfully');
         }
 
         dump($uuid);
