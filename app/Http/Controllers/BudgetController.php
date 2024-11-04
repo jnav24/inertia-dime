@@ -63,7 +63,9 @@ class BudgetController extends Controller
     public function show(string $uuid)
     {
         $budget = auth()->user()->budgets()->where('uuid', $uuid)->firstOrFail();
-        return new BudgetResource($budget);
+        return Inertia::render('BudgetShow', [
+            'budget' => new BudgetResource($budget),
+        ]);
     }
 
     public function update(Request $request, Budget $budget)
