@@ -31,6 +31,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::group(['prefix' => 'dashboard'], function () {
         Route::get('/budgets', [BudgetController::class, 'index'])
             ->name('budget.index');
+        Route::get('/budgets/{uuid}', [BudgetController::class, 'show'])
+            ->name('budget.show');
         Route::post('/budgets', [BudgetController::class, 'store'])
             ->name('budget.store');
         Route::patch('/budgets/{uuid}', [BudgetController::class, 'update'])
