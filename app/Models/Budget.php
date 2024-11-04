@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\HasUuids;
+use App\Traits\WithExpenses;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Budget extends Model
 {
-    use HasFactory, HasUuids, SoftDeletes;
+    use HasFactory, HasUuids, SoftDeletes, WithExpenses;
 
     protected $fillable = [
         'name',
