@@ -29,6 +29,11 @@ Route::get('/dashboard', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::group(['prefix' => 'dashboard'], function () {
+        Route::get('/budgets/template', [BudgetTemplateController::class, 'index'])
+            ->name('budget.template.index');
+        Route::patch('/budgets/template/{uuid}', [BudgetTemplateController::class, 'update'])
+            ->name('budget.template.update');
+
         Route::get('/budgets', [BudgetController::class, 'index'])
             ->name('budget.index');
         Route::get('/budgets/{uuid}', [BudgetController::class, 'show'])
@@ -37,11 +42,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ->name('budget.store');
         Route::patch('/budgets/{uuid}', [BudgetController::class, 'update'])
             ->name('budget.update');
-
-        Route::get('/budgets/template', [BudgetTemplateController::class, 'index'])
-            ->name('budget.template.index');
-        Route::patch('/budgets/template/{uuid}', [BudgetTemplateController::class, 'update'])
-            ->name('budget.template.update');
 
         Route::post('/user-vehicle', [UserVehicleController::class, 'store'])->name('user-vehicle.store');
         Route::patch('/user-vehicle/{uuid}', [UserVehicleController::class, 'update'])->name('user-vehicle.update');
