@@ -18,6 +18,7 @@ class BudgetAggregation extends Model
         'data',
         'uuid',
         'budget_id',
+        'user_id',
     ];
 
     protected function casts(): array
