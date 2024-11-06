@@ -1,15 +1,21 @@
 import { Expenses } from '@/types/expenses';
 
-enum BudgetAggregationEnum {
+export enum BudgetAggregationEnum {
     EARNED = 'earned',
     SAVED = 'saved',
     SPENT = 'spent',
 }
 
+type Aggregation = {
+    id: string;
+    data: { value: number; type: BudgetAggregationEnum }[];
+};
+
 export type Budget = {
-    id: uuid;
+    id: string;
     name: string;
     budget_cycle: string;
+    aggregation: Aggregation;
     expenses: Expenses;
 };
 
