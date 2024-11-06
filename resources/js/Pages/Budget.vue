@@ -19,7 +19,7 @@ import { PageProps } from '@/types/providers';
 
 type Props = PageProps & {
     aggregations: BudgetAggregation;
-    budgets: Budget[];
+    budgets: { data: Budget[] };
 };
 
 defineProps<Props>();
@@ -59,7 +59,7 @@ const handleColumnEvent = (e: { type: string; obj: any }) => {
         </template>
 
         <AuthenticatedContentLayout>
-            <template v-if="budgets.length">
+            <template v-if="budgets.data.length">
                 <div class="grid grid-cols-3 gap-4">
                     <div
                         class="flex items-center justify-between rounded-lg border border-lm-stroke bg-lm-secondary px-4 py-8 dark:border-dm-stroke dark:bg-dm-secondary"
@@ -111,7 +111,7 @@ const handleColumnEvent = (e: { type: string; obj: any }) => {
                     title: 'No Budgets Found',
                     content: 'Click on the `New Budget` button, above, to add a budget.',
                 }"
-                :items="budgets"
+                :items="budgets.data"
                 :paginate="{ current: 1, options: [12], selected: 12 }"
                 @column-event="handleColumnEvent($event)"
             />
