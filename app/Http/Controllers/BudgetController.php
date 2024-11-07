@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\BudgetAggregationResource;
 use App\Http\Resources\BudgetResource;
 use App\Models\Budget;
 use App\Models\BudgetAggregation;
@@ -20,23 +21,18 @@ class BudgetController extends Controller
             ->groupBy(
                 fn (BudgetAggregation $aggregation) => Carbon::parse($aggregation->budget_cycle)->format('Y')
             )
-            ->sortKeys();
+            ->sortKeys()
+            ->map(fn ($aggregation) => BudgetAggregationResource::collection($aggregation));
 
         $budgets = auth()
             ->user()
             ->budgets()
+            ->withExpenses()
+            ->with('aggregation')
             ->get();
 
         return Inertia::render('Budget', [
-            'aggregations' => [
-                '2024' => [
-                    '10' => [
-                        'earned' => '',
-                        'saved' => '',
-                        'spent' => '',
-                    ],
-                ],
-            ],
+            'aggregations' => $aggregations,
             'budgets' => BudgetResource::collection($budgets),
         ]);
     }
