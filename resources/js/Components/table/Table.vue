@@ -1,23 +1,16 @@
 <script setup lang="ts">
-import { computed, ConcreteComponent, reactive, ref, watchEffect } from 'vue';
+import { computed, reactive, ref, watchEffect } from 'vue';
 import TableEmpty, { Props as TableEmptyProps } from '@/Components/table/TableEmpty.vue';
 import FormCheckbox from '@/Components/Fields/FormCheckbox.vue';
 import TableRow from '@/Components/table/TableRow.vue';
 import TablePagination from '@/Components/table/TablePagination.vue';
 import { parseNested } from '@/utils/functions';
 import ColumnBasic from '@/Components/table/ColumnBasic.vue';
-
-type Column<T> = {
-    content: string | { props: Record<string, string | number>; component: ConcreteComponent };
-    label: string;
-    searchable?: boolean;
-    colspan?: number;
-    sortable?: boolean;
-};
+import { Column } from '@/types/table';
 
 type Emits<T> = {
     (e: 'on-action', v: { type: 'delete'; ids: string[] }): void;
-    (e: 'column-event', v: { type: string; obj: T });
+    (e: 'column-event', v: { type: string; obj: T }): void;
 };
 
 type Props<T> = {
@@ -29,14 +22,16 @@ type Props<T> = {
     empty?: TableEmptyProps;
 };
 
-defineEmits<Emits>();
-const props = withDefaults(defineProps<Props>(), {
-    paginate: { current: 1, options: [10, 25, 50], selected: 10 },
-});
+defineEmits<Emits<any>>();
+const props = defineProps<Props<any>>();
 
 const allChecked = ref(false);
 const checkedItems = ref<string[]>([]);
-const paginateState = reactive({ ...props.paginate });
+const paginateState = reactive({
+    current: props.paginate?.current ?? 1,
+    options: props.paginate?.options ?? [10, 25, 50],
+    selected: props.paginate?.selected ?? 10,
+});
 
 watchEffect(() => {
     if (allChecked.value) {
@@ -70,6 +65,12 @@ const getColSpan = (col?: number) => {
     const idx = `${col || 1}` as keyof typeof widthClasses;
     return widthClasses[idx] || 'w-full';
 };
+
+const setAllChecked = (v: boolean) => (allChecked.value = v);
+
+const toggleCheckedItem = (v: number) => {
+    // @todo
+};
 </script>
 
 <template>
@@ -84,7 +85,7 @@ const getColSpan = (col?: number) => {
         >
             <FormCheckbox
                 :defaultChecked="allChecked"
-                @handleUpdate="allChecked.value = $event"
+                @handleUpdate="setAllChecked($event)"
                 label=""
                 v-if="selectable"
             />
@@ -97,15 +98,13 @@ const getColSpan = (col?: number) => {
 
         <TableRow
             v-for="(item, index) in paginateItems"
-            :key="(item as T & { id: string }).id ?? index"
+            :key="item?.id ?? index"
             class="contact-row justify-between"
         >
             <FormCheckbox
                 v-if="selectable"
-                :defaultChecked="
-                    allChecked || checkedItems.includes((item as T & { id: string }).id ?? index)
-                "
-                @handleUpdate="toggleCheckedItem((item as T & { id: string })?.id ?? index)"
+                :defaultChecked="allChecked || checkedItems.includes(item?.id ?? index)"
+                @handleUpdate="toggleCheckedItem(item?.id ?? index)"
                 label=""
             />
             <div :class="getColSpan(column.colspan)" v-for="(column, int) in columns" :key="int">
