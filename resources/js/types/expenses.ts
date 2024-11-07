@@ -97,7 +97,7 @@ type GainExpense = {
     expense: ExpenseType;
 };
 
-type IncomeExpense = {
+export type IncomeExpense = {
     id: string;
     data: {
         name: string;
@@ -117,7 +117,7 @@ type CommonExpense = {
     expense: ExpenseType;
 };
 
-type VehicleExpense = {
+export type VehicleExpense = {
     id: string;
     data: ExpenseFormActionProps & {
         amount: number;
@@ -128,3 +128,10 @@ type VehicleExpense = {
     expense: ExpenseType;
     vehicle: UserVehicle;
 };
+
+export type ValueOfExpense =
+    | GainExpense
+    | CommonExpense
+    | CreditCardExpense
+    | IncomeExpense
+    | VehicleExpense;
