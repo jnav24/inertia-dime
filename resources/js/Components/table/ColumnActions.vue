@@ -2,13 +2,14 @@
 import FormButton from '@/Components/Fields/FormButton.vue';
 import Pencil from '@/Components/Icons/outline/Pencil.vue';
 import Trash from '@/Components/Icons/outline/Trash.vue';
+import { Expenses, ValueOfExpense } from '@/types/expenses';
 
 type Props = {
-    obj: any;
+    obj: Expenses[keyof Expenses];
 };
 
 defineEmits<{ (e: 'action-event', v: { type: string; obj: any }): void }>();
-defineProps<Props>();
+defineProps<ValueOfExpense>();
 </script>
 
 <template>

@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import Typography from '@/Components/Elements/Typography.vue';
+import { ColumnBasicProps } from '@/types/table';
 
-defineProps<{ value: string }>();
+defineProps<ColumnBasicProps>();
 </script>
 
 <template>

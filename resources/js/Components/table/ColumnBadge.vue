@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Typography from '@/Components/Elements/Typography.vue';
-import { ColumnBadgeProps } from '@/utils/helpers';
+import type { ColumnBadgeProps } from '@/types/table';
 
 withDefaults(defineProps<ColumnBadgeProps>(), { color: 'default' });
 </script>
