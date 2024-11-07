@@ -56,7 +56,7 @@ export type UserVehicleExpenseFormProps = ExpenseFormProps & {
     expense?: VehicleExpense;
 };
 
-type UserVehicle = {
+export type UserVehicle = {
     color: string;
     id: string;
     is_active: boolean;

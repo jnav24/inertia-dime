@@ -16,13 +16,13 @@ type ColumnProps = ColumnBasicProps | ColumnBadgeProps;
 
 export type ColumnComponent<T> = DefineComponent<ColumnProps | T, {}, any>;
 
+export type ColumnComponentObject<T> = {
+    props: (obj: T) => ColumnProps | { obj: T };
+    component: ColumnComponent<T>;
+};
+
 export type Column<T> = {
-    content:
-        | string
-        | {
-              props: ColumnProps | ((obj: T) => ColumnProps | T);
-              component: ColumnComponent<T>;
-          };
+    content: string | ColumnComponentObject<T>;
     label: string;
     searchable?: boolean;
     colspan?: number;

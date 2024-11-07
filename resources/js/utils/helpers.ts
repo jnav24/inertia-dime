@@ -39,7 +39,7 @@ const commonSpendColumn: Column<ValueOfExpense>[] = [
     {
         content: {
             component: ColumnActions as ColumnComponent<ValueOfExpense>,
-            props: (obj) => obj,
+            props: (obj) => ({ obj }),
         },
         label: '',
     },
@@ -51,7 +51,7 @@ export const columns: Record<string, Column<ValueOfExpense>[]> = {
         {
             content: {
                 component: ColumnActions as ColumnComponent<ValueOfExpense>,
-                props: (obj) => obj,
+                props: (obj) => ({ obj }),
             },
             label: '',
         },
@@ -75,7 +75,7 @@ export const columns: Record<string, Column<ValueOfExpense>[]> = {
         {
             content: {
                 component: ColumnActions as ColumnComponent<ValueOfExpense>,
-                props: (obj) => obj,
+                props: (obj) => ({ obj }),
             },
             label: '',
         },
@@ -103,7 +103,7 @@ export const columns: Record<string, Column<ValueOfExpense>[]> = {
         {
             content: {
                 component: ColumnActions as ColumnComponent<ValueOfExpense>,
-                props: (obj) => obj,
+                props: (obj) => ({ obj }),
             },
             label: '',
         },
@@ -113,7 +113,7 @@ export const columns: Record<string, Column<ValueOfExpense>[]> = {
         {
             content: {
                 component: ColumnActions as ColumnComponent<ValueOfExpense>,
-                props: (obj) => obj,
+                props: (obj) => ({ obj }),
             },
             label: '',
         },
@@ -156,7 +156,7 @@ export const columns: Record<string, Column<ValueOfExpense>[]> = {
         {
             content: {
                 component: ColumnActions as ColumnComponent<ValueOfExpense>,
-                props: (obj) => obj,
+                props: (obj) => ({ obj }),
             },
             label: '',
         },
