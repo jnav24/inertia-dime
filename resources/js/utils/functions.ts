@@ -20,7 +20,7 @@ export const parseNested = <R extends object>(item: R, value: string): string =>
 };
 
 export const convertToDollar = (cents?: number) => {
-    return (cents || 0)?.toFixed(2);
+    return (cents || 0)?.toFixed(2) ?? '0.00';
 };
 
 export const convertToCurrency = (val: number, currency = 'USD') => {
@@ -29,7 +29,7 @@ export const convertToCurrency = (val: number, currency = 'USD') => {
         currency,
     });
 
-    return formatter.format(convertToDollar(val));
+    return formatter.format(Number(convertToDollar(val)));
 };
 
 export const toKebabCase = (value: string) => value.toLowerCase().replace(/\s+/g, '-');
