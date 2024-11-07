@@ -27,7 +27,6 @@ class BudgetController extends Controller
         $budgets = auth()
             ->user()
             ->budgets()
-            ->withExpenses()
             ->with('aggregation')
             ->get();
 
