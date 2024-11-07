@@ -6,7 +6,7 @@ export enum BudgetAggregationEnum {
     SPENT = 'spent',
 }
 
-type Aggregation = {
+export type Aggregation = {
     id: string;
     data: { value: number; type: BudgetAggregationEnum }[];
 };
@@ -19,7 +19,4 @@ export type Budget = {
     expenses: Expenses;
 };
 
-export type BudgetAggregation = Record<
-    string,
-    Record<string, Record<BudgetAggregationEnum, number>>
->;
+export type BudgetAggregation = Record<string, Record<'data', Aggregation[]>>;
