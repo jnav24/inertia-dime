@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { Head } from '@inertiajs/vue3';
+import { Inertia } from '@inertiajs/inertia';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import AuthenticatedContentLayout from '@/Layouts/AuthenticatedContentLayout.vue';
 import FormButton from '@/Components/Fields/FormButton.vue';
@@ -14,23 +15,34 @@ import TrendDown from '@/Components/Icons/outline/TrendDown.vue';
 import CreateBudgetModal from '@/Components/modals/CreateBudgetModal.vue';
 import ColumnActions from '@/Components/table/ColumnActions.vue';
 import AppLink from '@/Components/Elements/AppLink.vue';
-import { Budget, BudgetAggregation } from '@/types/budget';
+import { Budget, BudgetAggregation, BudgetAggregationEnum } from '@/types/budget';
 import { PageProps } from '@/types/providers';
+import ColumnBasic from '@/Components/table/ColumnBasic.vue';
+import { formatTimeZone } from '@/utils/timestamp';
+import { convertToCurrency } from '@/utils/functions';
+import ColumnTrend from '@/Components/table/ColumnTrend.vue';
 
 type Props = PageProps & {
     aggregations: BudgetAggregation;
     budgets: { data: Budget[] };
 };
 
-defineProps<Props>();
+const props = defineProps<Props>();
 
 const showModal = ref(false);
 const selectedYear = ref('2024');
 
+const highestSaved = computed(() => {
+    const savedList = props.aggregations[selectedYear.value].data.map((aggregation) => {
+        return aggregation.data.find((agg) => agg.type === BudgetAggregationEnum.SAVED)?.value ?? 0;
+    });
+    return Math.max(...savedList);
+});
+
 const handleColumnEvent = (e: { type: string; obj: any }) => {
     switch (e.type) {
         case 'edit':
-            console.log('redirect to edit budget', e);
+            Inertia.visit(route('budget.show', { uuid: e.obj.id }));
             break;
         case 'delete':
             console.log('open delete confirm', e);
@@ -98,9 +110,41 @@ const handleColumnEvent = (e: { type: string; obj: any }) => {
 
             <Table
                 :columns="[
-                    { content: 'name', label: '', colspan: 2 },
-                    { content: 'name', label: 'Name', colspan: 3 },
-                    { content: 'name', label: 'Saved', colspan: 3 },
+                    {
+                        content: {
+                            component: ColumnTrend,
+                            props: (obj: Budget) => ({
+                                aggregation: obj.aggregation,
+                                highestSaved,
+                            }),
+                        },
+                        label: '',
+                        colspan: 2,
+                    },
+                    {
+                        content: {
+                            component: ColumnBasic,
+                            props: (obj: Budget) => ({
+                                value: formatTimeZone('MMMM', 'UTC', obj.budget_cycle),
+                            }),
+                        },
+                        label: 'Name',
+                        colspan: 3,
+                    },
+                    {
+                        content: {
+                            component: ColumnBasic,
+                            props: (obj: Budget) => ({
+                                value: convertToCurrency(
+                                    obj.aggregation.data.find(
+                                        (agg) => agg.type === BudgetAggregationEnum.SAVED,
+                                    )?.value ?? 0,
+                                ),
+                            }),
+                        },
+                        label: 'Saved',
+                        colspan: 3,
+                    },
                     {
                         content: { component: ColumnActions, props: (obj: Budget) => ({ obj }) },
                         label: 'Actions',
