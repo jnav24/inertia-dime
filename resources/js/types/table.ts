@@ -12,7 +12,7 @@ export type ColumnTrendProps = {
     highestSaved: number;
 };
 
-type ColumnProps = ColumnBasicProps | ColumnBadgeProps;
+type ColumnProps = ColumnBasicProps | ColumnBadgeProps | ColumnTrendProps;
 
 export type ColumnComponent<T> = DefineComponent<ColumnProps | T, {}, any>;
 
