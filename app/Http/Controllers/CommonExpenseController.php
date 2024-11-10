@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Data\ExpenseSpendDto;
 use App\Http\Requests\CommonExpenseRequest;
+use App\Models\Budget;
 use App\Services\CommonExpenseService;
 
 class CommonExpenseController extends Controller
@@ -14,6 +15,14 @@ class CommonExpenseController extends Controller
     public function store(CommonExpenseRequest $request)
     {
         $validated = $request->validated();
+        $id = [];
+
+        if (! $validated['template'] && $uuid = extractUuid($request->header('referer'))) {
+            $budget = Budget::where('uuid', $uuid)->firstOrFail();
+            $id['budget_id'] = $budget->id;
+        } else {
+            $id['budget_template_id'] = auth()->user()->budgetTemplate->id;
+        }
 
         $this->commonExpenseService->getModel($request, $validated['template'])::create([
             'data' => new ExpenseSpendDto(
@@ -25,7 +34,7 @@ class CommonExpenseController extends Controller
                 notes: $validated['notes'] ?? null,
             ),
             'expense_type_id' => $validated['account_type'],
-            'budget_template_id' => auth()->user()->budgetTemplate->id, // @todo if template, budget_template_id, else, budget_id
+            ...$id,
         ]);
 
         return redirect()->back()
