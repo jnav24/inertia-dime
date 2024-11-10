@@ -14,9 +14,9 @@ class CommonExpenseRequest extends FormRequest
             'due_date' => 'int|max:31',
             'template' => 'bool',
             'account_type' => 'uuid',
-            'confirmation' => 'string|max:255',
-            'paid_date' => 'date',
-            'notes' => 'string',
+            'confirmation' => 'nullable|string|max:255',
+            'paid_date' => 'nullable|date',
+            'notes' => 'nullable|string',
         ];
     }
 

@@ -19,14 +19,17 @@ class CommonExpenseController extends Controller
             'data' => new ExpenseSpendDto(
                 name: $validated['name'],
                 amount: $validated['amount'],
-                due_date: $validated['due_date'],
+                due_date: $validated['due_date'] ?? null,
+                confirmation: $validated['confirmation'] ?? null,
+                paid_date: $validated['paid_date'] ?? null,
+                notes: $validated['notes'] ?? null,
             ),
             'expense_type_id' => $validated['account_type'],
             'budget_template_id' => auth()->user()->budgetTemplate->id, // @todo if template, budget_template_id, else, budget_id
         ]);
 
         return redirect()->back()
-            ->with('message', 'Expense was created successfully');
+            ->with('message', $validated['name'] . ' was created successfully');
     }
 
     public function update(CommonExpenseRequest $request, string $uuid)
@@ -40,12 +43,15 @@ class CommonExpenseController extends Controller
             'data' => new ExpenseSpendDto(
                 name: $validated['name'],
                 amount: $validated['amount'],
-                due_date: $validated['due_date'],
+                due_date: $validated['due_date'] ?? null,
+                confirmation: $validated['confirmation'] ?? null,
+                paid_date: $validated['paid_date'] ?? null,
+                notes: $validated['notes'] ?? null,
             ),
             'expense_type_id' => $validated['account_type'],
         ]);
 
         return redirect()->back()
-            ->with('message', 'Expense was updated successfully');
+            ->with('message', $validated['name'] . ' was updated successfully');
     }
 }
