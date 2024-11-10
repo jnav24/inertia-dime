@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\BudgetAggregationResource;
 use App\Http\Resources\BudgetResource;
+use App\Http\Resources\ExpenseTypeResource;
 use App\Models\Budget;
 use App\Models\BudgetAggregation;
 use Carbon\Carbon;
@@ -60,6 +61,7 @@ class BudgetController extends Controller
         $budget = auth()->user()->budgets()->withExpenses()->where('uuid', $uuid)->firstOrFail();
         return Inertia::render('BudgetShow', [
             'budget' => new BudgetResource($budget),
+            'types' => ExpenseType::grouped()->map(fn ($object) => ExpenseTypeResource::collection($object)),
         ]);
     }
 
