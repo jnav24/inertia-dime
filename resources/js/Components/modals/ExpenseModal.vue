@@ -70,7 +70,11 @@ watch(
         if (v) {
             notificationContext?.addNotification({
                 title: 'Success',
-                message: v,
+                message:
+                    v
+                        .match(/[^0-9]+/g)
+                        ?.pop()
+                        ?.trim() ?? '',
                 type: 'success',
             });
         }

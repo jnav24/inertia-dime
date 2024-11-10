@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Tighten\Ziggy\Ziggy;
@@ -36,7 +37,14 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'flash' => [
-                'message' => fn () => $request->session()->get('message')
+                'message' => function () use ($request) {
+                    if ($request->session()->has('message')) {
+                        $ts = (new Carbon())->timestamp;
+                        return "{$request->session()->get('message')} {$ts}";
+                    }
+
+                    return null;
+                },
             ],
             'ziggy' => fn () => [
                 ...(new Ziggy)->toArray(),
