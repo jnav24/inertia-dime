@@ -21,9 +21,9 @@ const amount = computed(() => convertToDollar(props.expense?.data.amount));
         <FormInput label="Amount" :rules="['required', 'float:2']" :value="amount" />
         <FormSelect
             v-if="isTemplate"
-            :items="dueDates"
+            :items="dueDates as unknown as Record<string, string>[]"
             label="Due Date"
-            :value="expense?.data.due_date ?? 1"
+            :value="(expense?.data.due_date ?? 1).toString()"
         />
     </div>
 

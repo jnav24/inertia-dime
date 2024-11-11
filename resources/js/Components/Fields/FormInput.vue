@@ -16,7 +16,7 @@ const props = withDefaults(
         readOnly?: boolean;
         rules?: RulesType | Array<keyof RulesType>;
         validateOnInit?: boolean;
-        value?: string;
+        value?: string | boolean | number;
     }>(),
     { onBlur: true, validateOnInit: false, value: undefined },
 );
