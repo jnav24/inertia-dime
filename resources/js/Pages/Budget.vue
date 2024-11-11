@@ -21,6 +21,7 @@ import ColumnBasic from '@/Components/table/ColumnBasic.vue';
 import { formatTimeZone } from '@/utils/timestamp';
 import { convertToCurrency } from '@/utils/functions';
 import ColumnTrend from '@/Components/table/ColumnTrend.vue';
+import { Column, ColumnComponent } from '@/types/table';
 
 type Props = PageProps & {
     aggregations: BudgetAggregation;
@@ -49,6 +50,50 @@ const handleColumnEvent = (e: { type: string; obj: any }) => {
             break;
     }
 };
+
+const columns: Column<Budget>[] = [
+    {
+        label: '',
+        content: {
+            component: ColumnTrend as ColumnComponent<Budget>,
+            props: (obj) => ({
+                aggregation: obj.aggregation,
+                highestSaved: highestSaved.value,
+            }),
+        },
+    },
+    {
+        content: {
+            component: ColumnBasic as ColumnComponent<Budget>,
+            props: (obj) => ({
+                value: formatTimeZone('MMMM', 'UTC', obj.budget_cycle),
+            }),
+        },
+        label: 'Name',
+        colspan: 3,
+    },
+    {
+        content: {
+            component: ColumnBasic as ColumnComponent<Budget>,
+            props: (obj) => ({
+                value: convertToCurrency(
+                    obj.aggregation.data.find((agg) => agg.type === BudgetAggregationEnum.SAVED)
+                        ?.value ?? 0,
+                ),
+            }),
+        },
+        label: 'Saved',
+        colspan: 3,
+    },
+    {
+        content: {
+            component: ColumnActions as ColumnComponent<Budget>,
+            props: (obj) => ({ obj }),
+        },
+        label: 'Actions',
+        colspan: 1,
+    },
+];
 </script>
 
 <template>
@@ -109,48 +154,7 @@ const handleColumnEvent = (e: { type: string; obj: any }) => {
             </template>
 
             <Table
-                :columns="[
-                    {
-                        content: {
-                            component: ColumnTrend,
-                            props: (obj: Budget) => ({
-                                aggregation: obj.aggregation,
-                                highestSaved,
-                            }),
-                        },
-                        label: '',
-                        colspan: 2,
-                    },
-                    {
-                        content: {
-                            component: ColumnBasic,
-                            props: (obj: Budget) => ({
-                                value: formatTimeZone('MMMM', 'UTC', obj.budget_cycle),
-                            }),
-                        },
-                        label: 'Name',
-                        colspan: 3,
-                    },
-                    {
-                        content: {
-                            component: ColumnBasic,
-                            props: (obj: Budget) => ({
-                                value: convertToCurrency(
-                                    obj.aggregation.data.find(
-                                        (agg) => agg.type === BudgetAggregationEnum.SAVED,
-                                    )?.value ?? 0,
-                                ),
-                            }),
-                        },
-                        label: 'Saved',
-                        colspan: 3,
-                    },
-                    {
-                        content: { component: ColumnActions, props: (obj: Budget) => ({ obj }) },
-                        label: 'Actions',
-                        colspan: 1,
-                    },
-                ]"
+                :columns="columns"
                 :empty="{
                     title: 'No Budgets Found',
                     content: 'Click on the `New Budget` button, above, to add a budget.',
