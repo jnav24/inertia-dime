@@ -15,14 +15,6 @@ class CommonExpenseController extends Controller
     public function store(CommonExpenseRequest $request)
     {
         $validated = $request->validated();
-        $id = [];
-
-        if (! $validated['template'] && $uuid = extractUuid($request->header('referer'))) {
-            $budget = Budget::where('uuid', $uuid)->firstOrFail();
-            $id['budget_id'] = $budget->id;
-        } else {
-            $id['budget_template_id'] = auth()->user()->budgetTemplate->id;
-        }
 
         $this->commonExpenseService->getModel($request, $validated['template'])::create([
             'data' => new ExpenseSpendDto(
@@ -34,7 +26,7 @@ class CommonExpenseController extends Controller
                 notes: $validated['notes'] ?? null,
             ),
             'expense_type_id' => $validated['account_type'],
-            ...$id,
+            ...$this->commonExpenseService->getBudgetRelationship($request, $validated['template']),
         ]);
 
         return redirect()->back()
