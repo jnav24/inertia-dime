@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Casts\EncryptedExpenseSpend;
 use App\Traits\HasUuids;
+use App\Traits\WithBudgetTemplate;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class TravelTemplate extends Model
 {
-    use SoftDeletes, HasFactory, HasUuids;
+    use SoftDeletes, HasFactory, HasUuids, WithBudgetTemplate;
 
     protected $fillable = [
         'uuid',
