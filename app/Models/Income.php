@@ -4,13 +4,14 @@ namespace App\Models;
 
 use App\Casts\EncryptedIncome;
 use App\Traits\HasUuids;
+use App\Traits\WithBudget;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Income extends Model
 {
-    use SoftDeletes, HasUuids;
+    use SoftDeletes, HasUuids, WithBudget;
 
     protected $fillable = [
         'uuid',
