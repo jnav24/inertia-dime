@@ -36,12 +36,12 @@ class Vehicle extends Model
 
     public function expenseType(): BelongsTo
     {
-        return $this->belongsTo(ExpenseType::class);
+        return $this->belongsTo(ExpenseType::class, ownerKey: 'uuid');
     }
 
     public function userVehicle(): BelongsTo
     {
-        return $this->belongsTo(UserVehicle::class);
+        return $this->belongsTo(UserVehicle::class, ownerKey: 'uuid');
     }
 
     public function user(): BelongsTo

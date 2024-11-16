@@ -7,6 +7,7 @@ use App\Traits\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class UserVehicle extends Model
@@ -30,5 +31,10 @@ class UserVehicle extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function vehicle(): HasOne
+    {
+        return $this->hasOne(Vehicle::class, 'user_vehicle_id', 'uuid');
     }
 }

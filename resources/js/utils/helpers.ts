@@ -26,7 +26,7 @@ const commonColumn: Column<ValueOfExpense>[] = [
     {
         content: {
             component: ColumnBadge as ColumnComponent<ValueOfExpense>,
-            props: (obj) => ({ value: obj.expense.name }),
+            props: (obj) => ({ value: obj.expense?.name ?? '' }),
         },
         label: 'Type',
         colspan: 3,
