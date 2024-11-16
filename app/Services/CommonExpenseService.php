@@ -21,6 +21,8 @@ use App\Models\Gift;
 use App\Models\GiftTemplate;
 use App\Models\Housing;
 use App\Models\HousingTemplate;
+use App\Models\Income;
+use App\Models\IncomeTemplate;
 use App\Models\Loan;
 use App\Models\LoanTemplate;
 use App\Models\Medical;
@@ -83,7 +85,10 @@ class CommonExpenseService
             'budget' => Housing::class,
             'template' => HousingTemplate::class,
         ],
-        'income' => [],
+        'income' => [
+            'budget' => Income::class,
+            'template' => IncomeTemplate::class,
+        ],
         'investment' => [],
         'loan' => [
             'budget' => Loan::class,

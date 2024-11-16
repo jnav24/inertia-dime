@@ -4,52 +4,51 @@ namespace App\Http\Controllers;
 
 use App\Data\IncomeDto;
 use App\Http\Requests\GainExpenseRequest;
-use App\Models\IncomeTemplate;
+use App\Services\CommonExpenseService;
 use Carbon\Carbon;
 
 class IncomeController extends Controller
 {
+    public function __construct(protected CommonExpenseService $commonExpenseService)
+    {}
+
     public function store(GainExpenseRequest $request)
     {
         $validated = $request->validated();
 
-        if ($validated['template']) {
-            IncomeTemplate::create([
-                'data' => new IncomeDto(
-                    name: $validated['name'],
-                    amount: $validated['amount'],
-                    pay_date: Carbon::parse($validated['pay_date']),
-                ),
-                'expense_type_id' => $validated['account_type'],
-                'budget_template_id' => auth()->user()->budgetTemplate->id,
-            ]);
+        $this->commonExpenseService->getModel($request, $validated['template'])::create([
+            'data' => new IncomeDto(
+                name: $validated['name'],
+                amount: $validated['amount'],
+                pay_date: Carbon::parse($validated['pay_date']),
+            ),
+            'expense_type_id' => $validated['account_type'],
+            ...$this->commonExpenseService->getBudgetRelationship($request, $validated['template']),
+        ]);
 
-            return redirect()->route('budget.template.index')
-                ->with('message', 'Expense was created successfully');
-        }
-
-        return redirect()->back();
+        return redirect()->back()
+            ->with('message', $validated['name'] . ' was created successfully');
     }
 
     public function update(GainExpenseRequest $request, string $uuid)
     {
         $validated = $request->validated();
 
-        if ($validated['template']) {
-            $template = IncomeTemplate::where('uuid', $uuid)->firstOrFail();
-            $template->update([
-                'data' => new IncomeDto(
-                    name: $validated['name'],
-                    amount: $validated['amount'],
-                    pay_date: Carbon::parse($validated['pay_date']),
-                ),
-                'expense_type_id' => $validated['account_type'],
-            ]);
+        $template = $this->commonExpenseService->getModel($request, $validated['template'])::query()
+            ->withBudget()
+            ->where('uuid', $uuid)
+            ->firstOrFail();
 
-            return redirect()->route('budget.template.index')
-                ->with('message', 'Expense was updated successfully');
-        }
+        $template->update([
+            'data' => new IncomeDto(
+                name: $validated['name'],
+                amount: $validated['amount'],
+                pay_date: Carbon::parse($validated['pay_date']),
+            ),
+            'expense_type_id' => $validated['account_type'],
+        ]);
 
-        return redirect()->back();
+        return redirect()->back()
+            ->with('message', $validated['name'] . ' was updated successfully');
     }
 }
