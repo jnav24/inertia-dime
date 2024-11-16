@@ -6,51 +6,50 @@ use App\Data\ExpenseGainDto;
 use App\Http\Requests\GainExpenseRequest;
 use App\Models\Banks;
 use App\Models\InvestmentTemplate;
+use App\Services\CommonExpenseService;
 use Illuminate\Http\Request;
 
 class InvestmentController extends Controller
 {
+    public function __construct(protected CommonExpenseService $commonExpenseService)
+    {}
+
     public function store(GainExpenseRequest $request)
     {
         $validated = $request->validated();
 
-        if ($validated['template']) {
-            InvestmentTemplate::create([
-                'data' => new ExpenseGainDto(
-                    name: $validated['name'],
-                    amount: $validated['amount'],
-                ),
-                'expense_type_id' => $validated['account_type'],
-                'budget_template_id' => auth()->user()->budgetTemplate->id,
-            ]);
+        $this->commonExpenseService->getModel($request, $validated['template'])::create([
+            'data' => new ExpenseGainDto(
+                name: $validated['name'],
+                amount: $validated['amount'],
+            ),
+            'expense_type_id' => $validated['account_type'],
+            ...$this->commonExpenseService->getBudgetRelationship($request, $validated['template']),
+        ]);
 
-            return redirect()->route('budget.template.index')
-                ->with('message', 'Investment was created successfully');
-        }
-
-        return redirect()->route('budget.template.index');
+        return redirect()->back()
+            ->with('message', $validated['name'] . ' was created successfully');
     }
 
     public function update(GainExpenseRequest $request, string $uuid)
     {
         $validated = $request->validated();
 
-        if ($validated['template']) {
-            $template = InvestmentTemplate::where('uuid', $uuid)->first();
-            $template->update([
-                'data' => new ExpenseGainDto(
-                    name: $validated['name'],
-                    amount: $validated['amount'],
-                ),
-                'expense_type_id' => $validated['account_type'],
-            ]);
+        $template = $this->commonExpenseService->getModel($request, $validated['template'])::query()
+            ->withBudget()
+            ->where('uuid', $uuid)
+            ->firstOrFail();
 
-            return redirect()->route('budget.template.index')
-                ->with('message', 'Investment was updated successfully');
-        }
+        $template->update([
+            'data' => new ExpenseGainDto(
+                name: $validated['name'],
+                amount: $validated['amount'],
+            ),
+            'expense_type_id' => $validated['account_type'],
+        ]);
 
-        dump($uuid);
-        dd($validated);
+        return redirect()->back()
+            ->with('message', $validated['name'] . ' was updated successfully');
     }
 
     public function destroy(string $uuid)

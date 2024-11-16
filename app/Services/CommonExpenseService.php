@@ -23,6 +23,8 @@ use App\Models\Housing;
 use App\Models\HousingTemplate;
 use App\Models\Income;
 use App\Models\IncomeTemplate;
+use App\Models\Investment;
+use App\Models\InvestmentTemplate;
 use App\Models\Loan;
 use App\Models\LoanTemplate;
 use App\Models\Medical;
@@ -89,7 +91,10 @@ class CommonExpenseService
             'budget' => Income::class,
             'template' => IncomeTemplate::class,
         ],
-        'investment' => [],
+        'investment' => [
+            'budget' => Investment::class,
+            'template' => InvestmentTemplate::class,
+        ],
         'loan' => [
             'budget' => Loan::class,
             'template' => LoanTemplate::class,
