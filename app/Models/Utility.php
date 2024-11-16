@@ -35,6 +35,6 @@ class Utility extends Model
 
     public function expenseType(): BelongsTo
     {
-        return $this->belongsTo(ExpenseType::class);
+        return $this->belongsTo(ExpenseType::class, ownerKey: 'uuid');
     }
 }
