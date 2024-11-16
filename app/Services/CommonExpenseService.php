@@ -43,6 +43,8 @@ use App\Models\Travel;
 use App\Models\TravelTemplate;
 use App\Models\Utility;
 use App\Models\UtilityTemplate;
+use App\Models\Vehicle;
+use App\Models\VehicleTemplate;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -131,7 +133,10 @@ class CommonExpenseService
             'budget' => Utility::class,
             'template' => UtilityTemplate::class,
         ],
-        'vehicle' => [],
+        'vehicle' => [
+            'budget' => Vehicle::class,
+            'template' => VehicleTemplate::class,
+        ],
     ];
 
     public function getModel(Request $request, bool $template)
