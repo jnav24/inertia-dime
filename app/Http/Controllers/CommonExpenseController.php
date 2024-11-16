@@ -38,7 +38,9 @@ class CommonExpenseController extends Controller
         $validated = $request->validated();
 
         $template = $this->commonExpenseService->getModel($request, $validated['template'])::query()
-            ->where('uuid', $uuid)->firstOrFail();
+            ->withBudget()
+            ->where('uuid', $uuid)
+            ->firstOrFail();
 
         $template->update([
             'data' => new ExpenseSpendDto(
