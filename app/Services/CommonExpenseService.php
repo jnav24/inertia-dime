@@ -2,10 +2,13 @@
 
 namespace App\Services;
 
+use App\Data\BudgetAggregationDto;
+use App\Enums\BudgetAggregationEnum;
 use App\Enums\ExpenseTypeEnum;
 use App\Models\Bank;
 use App\Models\BankTemplate;
 use App\Models\Budget;
+use App\Models\BudgetAggregation;
 use App\Models\BudgetTemplate;
 use App\Models\Childcare;
 use App\Models\ChildcareTemplate;
@@ -196,6 +199,23 @@ class CommonExpenseService
         }
 
         return ['budget_template_id' => auth()->user()->budgetTemplate->id];
+    }
+
+    public function saveAggregations(BudgetTemplate $template, Budget $budget)
+    {
+        $earned = $this->getAggregationSum(['incomes'], $template);
+        $spent = $this->getAggregationSum([], $template);
+        $saved = $earned - $spent;
+
+        BudgetAggregation::create([
+            'data' => collect([
+                new BudgetAggregationDto(value: $earned, type: BudgetAggregationEnum::EARNED),
+                new BudgetAggregationDto(value: $spent, type: BudgetAggregationEnum::SPENT),
+                new BudgetAggregationDto(value: $saved, type: BudgetAggregationEnum::SAVED),
+            ]),
+            'user_id' => auth()->user()->id,
+            'budget_id' => $budget->id,
+        ]);
     }
 
     private function getKey(Request $request)
