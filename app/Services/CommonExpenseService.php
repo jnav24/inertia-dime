@@ -204,7 +204,7 @@ class CommonExpenseService
     public function saveAggregations(BudgetTemplate $template, Budget $budget)
     {
         $earned = $this->getAggregationSum(['incomes'], $template);
-        $spent = $this->getAggregationSum([], $template);
+        $spent = $this->getAggregationSum(['childcares', 'creditCards', 'education', 'medicals'], $template);
         $saved = $earned - $spent;
 
         BudgetAggregation::create([
@@ -228,5 +228,14 @@ class CommonExpenseService
         }
 
         abort(Response::HTTP_BAD_REQUEST, 'Unable to get model');
+    }
+
+    private function getAggregationSum(array $types, BudgetTemplate $template): float
+    {
+        return array_reduce($types, function ($result, $type) use ($template) {
+            return $result + $template->{$type}->reduce(function ($res, $expense) {
+                return $res + $expense->data->amount;
+            }, 0.0);
+        }, 0.0);
     }
 }
