@@ -203,8 +203,8 @@ class CommonExpenseService
 
     public function saveAggregations(BudgetTemplate $template, Budget $budget)
     {
-        $earned = $this->getAggregationSum(['incomes'], $template);
-        $spent = $this->getAggregationSum(['childcares', 'creditCards', 'education', 'medicals'], $template);
+        $earned = $this->getAggregationSum(ExpenseTypeEnum::earned(), $template);
+        $spent = $this->getAggregationSum(ExpenseTypeEnum::spend(), $template);
         $saved = $earned - $spent;
 
         BudgetAggregation::create([

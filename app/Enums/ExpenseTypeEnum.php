@@ -50,4 +50,20 @@ enum ExpenseTypeEnum: string
     {
         return array_map(fn ($item) => Str::plural($item->value), ExpenseTypeEnum::cases());
     }
+
+    public static function earned(): array
+    {
+        return array_map(fn ($item) => Str::plural($item->value), [ExpenseTypeEnum::INCOME]);
+    }
+
+    public static function saved(): array
+    {
+        return array_map(fn ($item) => Str::plural($item->value), [ExpenseTypeEnum::BANK, ExpenseTypeEnum::INVESTMENT]);
+    }
+
+    public static function spend(): array
+    {
+        $omit = [...ExpenseTypeEnum::earned(), ...ExpenseTypeEnum::saved()];
+        return array_filter(ExpenseTypeEnum::allExpenses(), fn ($item) => ! in_array($item, $omit));
+    }
 }
