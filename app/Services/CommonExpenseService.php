@@ -207,14 +207,15 @@ class CommonExpenseService
         $spent = $this->getAggregationSum(ExpenseTypeEnum::spend(), $template);
         $saved = $earned - $spent;
 
-        BudgetAggregation::create([
-            'data' => collect([
-                new BudgetAggregationDto(value: $earned, type: BudgetAggregationEnum::EARNED),
-                new BudgetAggregationDto(value: $spent, type: BudgetAggregationEnum::SPENT),
-                new BudgetAggregationDto(value: $saved, type: BudgetAggregationEnum::SAVED),
-            ]),
-            'user_id' => auth()->user()->id,
-            'budget_id' => $budget->id,
+        BudgetAggregation::updateOrCreate([
+            ['user_id' => auth()->user()->id, 'budget_id' => $budget->id],
+            [
+                'data' => collect([
+                    new BudgetAggregationDto(value: $earned, type: BudgetAggregationEnum::EARNED),
+                    new BudgetAggregationDto(value: $spent, type: BudgetAggregationEnum::SPENT),
+                    new BudgetAggregationDto(value: $saved, type: BudgetAggregationEnum::SAVED),
+                ]),
+            ],
         ]);
     }
 
