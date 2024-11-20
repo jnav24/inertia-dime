@@ -201,14 +201,14 @@ class CommonExpenseService
         return ['budget_template_id' => auth()->user()->budgetTemplate->id];
     }
 
-    public function saveAggregations(BudgetTemplate $template, Budget $budget)
+    public function saveAggregations(Budget $budget, ?BudgetTemplate $template = null)
     {
-        $earned = $this->getAggregationSum(ExpenseTypeEnum::earned(), $template);
-        $spent = $this->getAggregationSum(ExpenseTypeEnum::spend(), $template);
+        $earned = $this->getAggregationSum(ExpenseTypeEnum::earned(), $template ?? $budget);
+        $spent = $this->getAggregationSum(ExpenseTypeEnum::spend(), $template ?? $budget);
         $saved = $earned - $spent;
 
-        BudgetAggregation::updateOrCreate([
-            ['user_id' => auth()->user()->id, 'budget_id' => $budget->id],
+        BudgetAggregation::updateOrCreate(
+            ['user_id' => $budget->user_id, 'budget_id' => $budget->id],
             [
                 'data' => collect([
                     new BudgetAggregationDto(value: $earned, type: BudgetAggregationEnum::EARNED),
@@ -216,7 +216,7 @@ class CommonExpenseService
                     new BudgetAggregationDto(value: $saved, type: BudgetAggregationEnum::SAVED),
                 ]),
             ],
-        ]);
+        );
     }
 
     private function getKey(Request $request)
@@ -231,7 +231,7 @@ class CommonExpenseService
         abort(Response::HTTP_BAD_REQUEST, 'Unable to get model');
     }
 
-    private function getAggregationSum(array $types, BudgetTemplate $template): float
+    private function getAggregationSum(array $types, BudgetTemplate|Budget $template): float
     {
         return array_reduce($types, function ($result, $type) use ($template) {
             return $result + $template->{$type}->reduce(function ($res, $expense) {
