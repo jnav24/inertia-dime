@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Jobs\AggregateJob;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,7 +21,7 @@ class Aggregate
         $uuid = extractUuid($request->header('referer'));
 
         if (! empty($uuid) && in_array($request->method(), ['POST', 'PATCH'])) {
-            dd('Call Aggregate Job');
+            AggregateJob::dispatch(uuid: $uuid, user: auth()->user());
         }
 
         return $response;

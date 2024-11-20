@@ -3,11 +3,11 @@
 namespace App\Jobs;
 
 use App\Models\Budget;
+use App\Models\User;
 use App\Services\CommonExpenseService;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Support\Facades\Log;
 
 class AggregateJob implements ShouldQueue, ShouldBeUnique
 {
@@ -18,14 +18,14 @@ class AggregateJob implements ShouldQueue, ShouldBeUnique
     /**
      * Create a new job instance.
      */
-    public function __construct(public string $uuid)
+    public function __construct(public string $uuid, public User $user)
     {
         $this->service = app(CommonExpenseService::class);
     }
 
     public function uniqueId(): string
     {
-        return $this->uuid;
+        return md5("{$this->user->id}|{$this->uuid}");
     }
 
     /**
@@ -36,10 +36,11 @@ class AggregateJob implements ShouldQueue, ShouldBeUnique
         $budget = Budget::query()
             ->withExpenses()
             ->where('uuid', $this->uuid)
+            ->where('user_id', $this->user->id)
             ->first();
 
         if (! empty($budget)) {
-            Log::debug("Budget: ");
+            $this->service->saveAggregations($budget);
         }
     }
 }
