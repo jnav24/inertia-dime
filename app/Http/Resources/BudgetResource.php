@@ -15,7 +15,7 @@ class BudgetResource extends JsonResource
             'id' => $this->uuid,
             'name' => $this->name,
             'budget_cycle' => $this->budget_cycle,
-            'aggregation' => new BudgetAggregationResource($this->whenLoaded('aggregation')),
+            'aggregation' => new AggregationResource($this->whenLoaded('aggregation')),
             'expenses' => [
                 'banks' => TemplateResource::collection($this->whenLoaded('banks')),
                 'childcares' => TemplateResource::collection($this->whenLoaded('childcares')),
