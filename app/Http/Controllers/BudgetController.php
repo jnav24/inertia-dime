@@ -15,24 +15,34 @@ class BudgetController extends Controller
 {
     public function index()
     {
-        $aggregations = auth()
-            ->user()
-            ->aggregations()
-            ->get()
-            ->groupBy(
-                fn (BudgetAggregation $aggregation) => Carbon::parse($aggregation->budget_cycle)->format('Y')
-            )
-            ->sortKeys()
-            ->map(fn ($aggregation) => BudgetAggregationResource::collection($aggregation));
-
         $budgets = auth()
             ->user()
             ->budgets()
             ->with('aggregation')
             ->get();
 
+        $aggregations = $budgets
+            ->map(function (Budget $budget) {
+                return collect([
+                    "budget_cycle" => $budget->budget_cycle,
+                    "id" => $budget->aggregation->uuid,
+                    ...$budget->aggregation->data->reduce(function ($result, $aggregation) {
+                        $result[$aggregation->type->value] = $aggregation->value;
+                        return $result;
+                    }, [])
+                ]);
+            })
+            ->groupBy(function ($aggregation) {
+                return Carbon::parse($aggregation["budget_cycle"])->format("Y");
+            })
+            ->map(function ($group) {
+                return $group->keyBy(function ($agg) {
+                    return Carbon::parse($agg["budget_cycle"])->format("n");
+                });
+            });
+
         return Inertia::render('Budget', [
-            'aggregations' => $aggregations,
+            'aggregations' => ['data' => $aggregations],
             'budgets' => BudgetResource::collection($budgets),
         ]);
     }
