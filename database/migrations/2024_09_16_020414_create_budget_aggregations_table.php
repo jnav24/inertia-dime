@@ -16,6 +16,8 @@ return new class extends Migration
             $table->foreignId('budget_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
             $table->softDeletes();
+
+            $table->unique(['user_id', 'budget_id', 'user_budget_unique']);
         });
     }
 
