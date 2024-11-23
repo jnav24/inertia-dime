@@ -15,7 +15,7 @@ import TrendDown from '@/Components/Icons/outline/TrendDown.vue';
 import CreateBudgetModal from '@/Components/modals/CreateBudgetModal.vue';
 import ColumnActions from '@/Components/table/ColumnActions.vue';
 import AppLink from '@/Components/Elements/AppLink.vue';
-import { Budget, BudgetAggregation, BudgetAggregationEnum } from '@/types/budget';
+import { Budget, SortedAggregation, BudgetAggregationEnum } from '@/types/budget';
 import { PageProps } from '@/types/providers';
 import ColumnBasic from '@/Components/table/ColumnBasic.vue';
 import { formatTimeZone } from '@/utils/timestamp';
@@ -24,7 +24,7 @@ import ColumnTrend from '@/Components/table/ColumnTrend.vue';
 import { Column, ColumnComponent } from '@/types/table';
 
 type Props = PageProps & {
-    aggregations: BudgetAggregation;
+    aggregations: SortedAggregation;
     budgets: { data: Budget[] };
 };
 
@@ -34,9 +34,9 @@ const showModal = ref(false);
 const selectedYear = ref('2024');
 
 const highestSaved = computed(() => {
-    const savedList = props.aggregations[selectedYear.value].data.map((aggregation) => {
-        return aggregation.data.find((agg) => agg.type === BudgetAggregationEnum.SAVED)?.value ?? 0;
-    });
+    const savedList = Object.values(props.aggregations[selectedYear.value]).map(
+        (obj) => obj.data[BudgetAggregationEnum.SAVED],
+    );
     return Math.max(...savedList);
 });
 
@@ -76,10 +76,7 @@ const columns: Column<Budget>[] = [
         content: {
             component: ColumnBasic as ColumnComponent<Budget>,
             props: (obj) => ({
-                value: convertToCurrency(
-                    obj.aggregation.data.find((agg) => agg.type === BudgetAggregationEnum.SAVED)
-                        ?.value ?? 0,
-                ),
+                value: convertToCurrency(obj.aggregation.data[BudgetAggregationEnum.SAVED] ?? 0),
             }),
         },
         label: 'Saved',

@@ -9,9 +9,7 @@ import { BudgetAggregationEnum } from '@/types/budget';
 const props = defineProps<ColumnTrendProps>();
 
 const saved = computed(() => {
-    return (
-        props.aggregation.data.find((item) => item.type === BudgetAggregationEnum.SAVED)?.value ?? 0
-    );
+    return props.aggregation.data[BudgetAggregationEnum.SAVED] ?? 0;
 });
 </script>
 
