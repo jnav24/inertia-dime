@@ -4,7 +4,7 @@ import Typography from '@/Components/Elements/Typography.vue';
 import FormButton from '@/Components/Fields/FormButton.vue';
 import BudgetForm from '@/Components/Fields/BudgetForm.vue';
 import FormSelect from '@/Components/Fields/FormSelect.vue';
-import { BudgetAggregation } from '@/types/budget';
+import { SortedAggregation } from '@/types/budget';
 import { onMounted, ref } from 'vue';
 import { getAllMonths } from '@/utils/timestamp';
 
@@ -13,7 +13,7 @@ type Emits = {
 };
 
 type Props = {
-    aggregations: BudgetAggregation;
+    aggregations: SortedAggregation;
     show: boolean;
 };
 
@@ -29,28 +29,26 @@ const setDefaultValues = () => {
     const d = new Date();
     const year = d.getFullYear().toString();
     const nextYear = (Number(year) + 1).toString();
-    let allYears = Object.keys(props.aggregations ?? {});
+    let allYears = Object.keys(props.aggregations.data ?? {});
 
     for (let month = d.getMonth() + 1; month <= 12; month++) {
         if (!props.aggregations[year]?.[month.toString()]) {
-            if (
-                month === 12 &&
-                props.aggregations[year.toString()]?.['12'] &&
-                !props.aggregations[nextYear]
-            ) {
-                defaultMonth.value = '01';
-                defaultYear.value = nextYear;
-                allYears = [nextYear, ...allYears];
-                break;
-            }
-
             if (!allYears.includes(year)) {
                 allYears = [year, ...allYears].sort().reverse();
             }
 
             defaultMonth.value = month.toString().padStart(2, '0');
             defaultYear.value = year;
-            break;
+        }
+
+        if (
+            month === 12 &&
+            props.aggregations[year.toString()]?.['12'] &&
+            !props.aggregations[nextYear]
+        ) {
+            defaultMonth.value = '01';
+            defaultYear.value = nextYear;
+            allYears = [nextYear, ...allYears];
         }
     }
 
