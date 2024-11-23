@@ -31,7 +31,11 @@ type Props = PageProps & {
 const props = defineProps<Props>();
 
 const showModal = ref(false);
-const selectedYear = ref('2024');
+const selectedYear = ref(new Date().getFullYear().toString());
+
+const allYears = computed(() =>
+    Object.keys(props.aggregations).map((year) => ({ label: year, value: year })),
+);
 
 const highestSaved = computed(() => {
     const savedList = Object.values(props.aggregations[selectedYear.value]).map(
@@ -144,7 +148,7 @@ const columns: Column<Budget>[] = [
                 <div class="my-8 w-36">
                     <FormSelect
                         label="Select Year"
-                        :items="[{ label: '2024', value: '2024' }]"
+                        :items="allYears"
                         v-model:value="selectedYear"
                     />
                 </div>
