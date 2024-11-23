@@ -8,7 +8,8 @@ export enum BudgetAggregationEnum {
 
 export type Aggregation = {
     id: string;
-    data: { value: number; type: BudgetAggregationEnum }[];
+    budget_cycle?: string;
+    data: Record<BudgetAggregationEnum, number>;
 };
 
 export type Budget = {
@@ -19,4 +20,8 @@ export type Budget = {
     expenses: Expenses;
 };
 
-export type BudgetAggregation = Record<string, Record<'data', Aggregation[]>>;
+export type SortedAggregation = {
+    [year: string]: {
+        [month: string]: Required<Aggregation>;
+    };
+};
