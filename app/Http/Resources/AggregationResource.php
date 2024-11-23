@@ -18,8 +18,10 @@ class AggregationResource extends JsonResource
     {
         return [
             'id' => $this->uuid,
-            'data' => $this->data,
-            'budget' => new BudgetResource($this->whenLoaded('budget')),
+            'data' => $this->data?->reduce(function ($result, $aggregation) {
+                $result[$aggregation->type->value] = $aggregation->value;
+                return $result;
+            }, []),
         ];
     }
 }
