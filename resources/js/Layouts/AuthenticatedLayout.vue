@@ -49,7 +49,10 @@ const showingNavigationDropdown = ref(false);
                                     <span>Budgets</span>
                                 </NavLink>
 
-                                <NavLink :href="route('dashboard')">
+                                <NavLink
+                                    :href="route('report.index')"
+                                    :active="route().current('report.index')"
+                                >
                                     <Reports classes="mr-2 size-4" />
                                     <span>Reports</span>
                                 </NavLink>
