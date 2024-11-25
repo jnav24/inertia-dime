@@ -16,7 +16,7 @@ class CreditCardController extends Controller
     {
         $validated = $request->validated();
 
-        $this->commonExpenseService->getModel($request, $validated['template'])::create([
+        $this->commonExpenseService->getModelByRequest($request, $validated['template'])::create([
             'data' => new CreditCardDto(
                 name: $validated['name'],
                 amount: $validated['amount'],
@@ -40,7 +40,7 @@ class CreditCardController extends Controller
     {
         $validated = $request->validated();
 
-        $template = $this->commonExpenseService->getModel($request, $validated['template'])::query()
+        $template = $this->commonExpenseService->getModelByRequest($request, $validated['template'])::query()
             ->withBudget()
             ->where('uuid', $uuid)
             ->firstOrFail();

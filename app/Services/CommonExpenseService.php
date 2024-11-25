@@ -142,15 +142,16 @@ class CommonExpenseService
         ],
     ];
 
-    public function getModel(Request $request, bool $template)
+    public function getModelByRequest(Request $request, bool $template)
     {
         $key = $this->getKey($request);
+        return $this->getModel($key, $template);
+    }
 
-        if (empty($this->models[$key]) || empty($model = $this->models[$key][$template ? 'template' : 'budget'])) {
-            abort(Response::HTTP_BAD_REQUEST, 'Model not found');
-        }
-
-        return $model;
+    public function getModelByString(string $value, ?bool $template = false)
+    {
+        $key = Str::singular($value);
+        return $this->getModel($key, $template);
     }
 
     public function saveExpenses(BudgetTemplate $template, array $validated): Budget
@@ -238,5 +239,14 @@ class CommonExpenseService
                 return $res + $expense->data->amount;
             }, 0.0);
         }, 0.0);
+    }
+
+    private function getModel(string $key, bool $template)
+    {
+        if (empty($this->models[$key]) || empty($model = $this->models[$key][$template ? 'template' : 'budget'])) {
+            abort(Response::HTTP_BAD_REQUEST, 'Model not found');
+        }
+
+        return $model;
     }
 }

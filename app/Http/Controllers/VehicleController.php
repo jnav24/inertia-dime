@@ -16,7 +16,7 @@ class VehicleController extends Controller
     {
         $validated = $request->validated();
 
-        $this->commonExpenseService->getModel($request, $validated['template'])::create([
+        $this->commonExpenseService->getModelByRequest($request, $validated['template'])::create([
             'data' => new VehicleDto(
                 amount: $validated['amount'],
                 balance: $validated['balance'],
@@ -39,7 +39,7 @@ class VehicleController extends Controller
     {
         $validated = $request->validated();
 
-        $template = $this->commonExpenseService->getModel($request, $validated['template'])::query()
+        $template = $this->commonExpenseService->getModelByRequest($request, $validated['template'])::query()
             ->withBudget()
             ->where('uuid', $uuid)
             ->firstOrFail();
