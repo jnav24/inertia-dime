@@ -27,6 +27,21 @@ const expenseTypes = computed(() => {
     return Object.keys(props.types).map((item) => ({ label: toTitleCase(item), value: item }));
 });
 
+const labels = computed(() => Object.keys(props.results));
+
+const datasets = computed(() => {
+    return [
+        {
+            label: 'Dataset 1',
+            data: Object.values(props.results).map((data) => {
+                return data.reduce((result, current) => result + current.data.amount, 0);
+            }),
+            borderColor: '#36A2EB',
+            backgroundColor: '#9BD0F5',
+        },
+    ];
+});
+
 const form = reactive({
     expense: '',
     type: '',
@@ -90,7 +105,7 @@ onMounted(() => {});
                             </div>
                         </div>
                     </div>
-                    <LineChart :labels="[]" :data="[]" />
+                    <LineChart :labels="labels" :data="datasets" hide-legend />
                     <div class="grid grid-cols-5 divide-x pt-8">
                         <div class="pl-4">
                             <Typography variant="caption">Starting Balance</Typography>
