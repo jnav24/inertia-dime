@@ -66,7 +66,7 @@ export type UserVehicle = {
     year: number;
 };
 
-type ExpenseType = {
+export type ExpenseType = {
     id: string;
     name: string;
     slug: string;

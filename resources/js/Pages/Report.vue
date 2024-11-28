@@ -10,45 +10,132 @@ import FormButton from '@/Components/Fields/FormButton.vue';
 import LineChart from '@/Components/Charts/LineChart.vue';
 import Table from '@/Components/table/Table.vue';
 import { PageProps } from '@/types/providers';
-import { computed, onMounted, reactive } from 'vue';
-import { toTitleCase } from '@/utils/functions';
+import { computed, reactive } from 'vue';
+import { convertToCurrency, toTitleCase, ucFirst } from '@/utils/functions';
 import Typography from '@/Components/Elements/Typography.vue';
 import ArrowUp from '@/Components/Icons/outline/ArrowUp.vue';
+import { ChartDatasetCustomTypesPerDataset } from 'chart.js/auto';
+import ArrowDown from '@/Components/Icons/outline/ArrowDown.vue';
+import { formatDate } from '@/utils/timestamp';
+import ColumnBasic from '@/Components/table/ColumnBasic.vue';
+import { Column, ColumnComponent } from '@/types/table';
+import { Expenses, ExpenseType } from '@/types/expenses';
+
+type ExpenseData = {
+    amount: number;
+    name: string;
+};
+
+type Report = {
+    id: string;
+    budget_cycle: string;
+    data: ExpenseData;
+};
+
+type ExpenseForm = {
+    expense: keyof Expenses;
+    type: string;
+    year: string;
+};
 
 type Props = PageProps & {
     aggregations: { label: string; value: string }[];
-    results: any;
-    types: any;
+    results: Record<string, Array<Report>>;
+    types: Record<keyof Expenses, Record<'data', Array<ExpenseType>>>;
 };
 
 const props = defineProps<Props>();
+
+const getTotal = (data: Report[]) =>
+    data.reduce((result, current) => result + current.data.amount, 0);
 
 const expenseTypes = computed(() => {
     return Object.keys(props.types).map((item) => ({ label: toTitleCase(item), value: item }));
 });
 
+const reportData = computed(() => Object.values(props.results).flat());
+
 const labels = computed(() => Object.keys(props.results));
+
+const totals = computed(() => labels.value.map((month) => getTotal(props.results?.[month] ?? [])));
 
 const datasets = computed(() => {
     return [
         {
             label: 'Dataset 1',
-            data: Object.values(props.results).map((data) => {
-                return data.reduce((result, current) => result + current.data.amount, 0);
-            }),
-            borderColor: '#36A2EB',
-            backgroundColor: '#9BD0F5',
+            data: totals.value,
+            borderColor: '#264653',
+            backgroundColor: '#389894',
         },
-    ];
+    ] as ChartDatasetCustomTypesPerDataset[];
 });
 
-const form = reactive({
-    expense: '',
+const averageBalance = computed(() => yearTotal.value / totals.value.length ?? 0.0);
+const startingBalance = computed(() => totals.value?.[0] ?? 0.0);
+const endingBalance = computed(() => totals.value?.[totals.value.length - 1] ?? 0.0);
+const lowestBalance = computed(() => Math.min(...totals.value) ?? 0.0);
+const highestBalance = computed(() => Math.max(...totals.value) ?? 0.0);
+const yearTotal = computed(() => getTotal(reportData.value));
+const yearTotalPercentage = computed(() => {
+    const percentage = Math.round(
+        ((totals.value?.[totals.value?.length - 1] - totals.value?.[0]) / totals.value?.[0]) * 100,
+    );
+    return isNaN(percentage) ? 0 : percentage;
+});
+
+const form = reactive<ExpenseForm>({
+    expense: 'banks',
     type: '',
     year: new Date().getFullYear().toString(),
 });
 
-onMounted(() => {});
+const columns: Column<Report>[] = [
+    {
+        label: 'Name',
+        content: 'data.name',
+        colspan: 4,
+    },
+    {
+        label: 'Amount',
+        content: {
+            component: ColumnBasic as ColumnComponent<Report>,
+            props: (obj: Report) => ({
+                value: convertToCurrency(obj.data.amount),
+            }),
+        },
+        colspan: 2,
+    },
+    {
+        label: 'Date',
+        content: {
+            component: ColumnBasic as ColumnComponent<Report>,
+            props: (obj: Report) => ({
+                value: formatDate('MMM yyyy', obj.budget_cycle),
+            }),
+        },
+        colspan: 2,
+    },
+    {
+        label: 'Expense',
+        content: {
+            component: ColumnBasic as ColumnComponent<Report>,
+            props: (_obj: Report) => ({
+                value: ucFirst(form.expense),
+            }),
+        },
+        colspan: 2,
+    },
+    {
+        label: 'Type',
+        content: {
+            component: ColumnBasic as ColumnComponent<Report>,
+            props: (_obj: Report) => ({
+                value: props.types[form.expense]?.data.find((t) => t.id === form.type)?.name ?? '',
+            }),
+        },
+        colspan: 2,
+    },
+];
 </script>
 
 <template>
@@ -67,7 +154,7 @@ onMounted(() => {});
                                 :items="expenseTypes"
                                 :value="form.expense"
                                 :rules="['required']"
-                                @handle-selection="form.expense = `${$event}`"
+                                @handle-selection="form.expense = `${$event}` as keyof Expenses"
                             />
                             <FormSelect
                                 label="Year"
@@ -81,6 +168,7 @@ onMounted(() => {});
                                 item-label="name"
                                 item-value="id"
                                 :value="form.type"
+                                @handle-selection="form.type = `${$event}`"
                             />
                             <FormInput label="Keywords" value="" />
                             <div class="pt-8">
@@ -90,17 +178,35 @@ onMounted(() => {});
                     </BudgetForm>
                 </Card>
 
-                <Card>
+                <Card v-if="labels.length > 0">
                     <div class="pb-8">
                         <Typography variant="caption">YTD Gain/Loss</Typography>
                         <div class="flex items-center space-x-2">
-                            <Typography variant="h1">$100,000.00</Typography>
+                            <Typography variant="h1">{{ convertToCurrency(yearTotal) }}</Typography>
                             <div
-                                class="flex items-center space-x-1 rounded-lg bg-primary/25 px-2 py-1"
+                                class="flex items-center space-x-1 rounded-lg px-2 py-1"
+                                :class="{
+                                    'bg-primary/25': yearTotalPercentage >= 0,
+                                    'bg-danger/25': yearTotalPercentage < 0,
+                                }"
                             >
-                                <ArrowUp classes="text-primary size-4" />
+                                <ArrowUp
+                                    v-if="yearTotalPercentage >= 0"
+                                    classes="text-primary size-4"
+                                />
+                                <ArrowDown
+                                    v-if="yearTotalPercentage < 0"
+                                    classes="text-danger size-4"
+                                />
                                 <Typography variant="caption">
-                                    <span class="text-primary">25%</span>
+                                    <span
+                                        :class="{
+                                            'text-primary': yearTotalPercentage >= 0,
+                                            'text-danger': yearTotalPercentage < 0,
+                                        }"
+                                    >
+                                        {{ yearTotalPercentage }}%
+                                    </span>
                                 </Typography>
                             </div>
                         </div>
@@ -109,41 +215,38 @@ onMounted(() => {});
                     <div class="grid grid-cols-5 divide-x pt-8">
                         <div class="pl-4">
                             <Typography variant="caption">Starting Balance</Typography>
-                            <Typography variant="body1">$100,000.00</Typography>
+                            <Typography variant="body1">{{
+                                convertToCurrency(startingBalance)
+                            }}</Typography>
                         </div>
                         <div class="pl-4">
                             <Typography variant="caption">Ending Balance</Typography>
-                            <Typography variant="body1">$100,000.00</Typography>
+                            <Typography variant="body1">{{
+                                convertToCurrency(endingBalance)
+                            }}</Typography>
                         </div>
                         <div class="pl-4">
                             <Typography variant="caption">Average Per Month</Typography>
-                            <Typography variant="body1">$100,000.00</Typography>
+                            <Typography variant="body1">{{
+                                convertToCurrency(averageBalance)
+                            }}</Typography>
                         </div>
                         <div class="pl-4">
-                            <Typography variant="caption">Lowest Month</Typography>
-                            <Typography variant="body1">$100,000.00</Typography>
+                            <Typography variant="caption">Lowest Balance</Typography>
+                            <Typography variant="body1">{{
+                                convertToCurrency(lowestBalance)
+                            }}</Typography>
                         </div>
                         <div class="pl-4">
-                            <Typography variant="caption">Highest Month</Typography>
-                            <Typography variant="body1">$100,000.00</Typography>
+                            <Typography variant="caption">Highest Balance</Typography>
+                            <Typography variant="body1">{{
+                                convertToCurrency(highestBalance)
+                            }}</Typography>
                         </div>
                     </div>
                 </Card>
 
-                <ul class="hidden">
-                    <li>highest month</li>
-                    <li>lowest month</li>
-                    <li>average per month</li>
-                    <li>total</li>
-                    <li>starting balance</li>
-                    <li>ending balance</li>
-                </ul>
-
-                <Table
-                    :columns="[]"
-                    :items="[]"
-                    :empty="{ title: 'Some Title', content: 'Some content goes here' }"
-                />
+                <Table :columns="columns" :items="reportData" />
             </section>
         </AuthenticatedContentLayout>
     </AuthenticatedLayout>
