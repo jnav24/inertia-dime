@@ -58,7 +58,7 @@ defineProps<Props>();
                 </TabItem>
 
                 <TabItem title="Vehicles">
-                    <Vehicles :notify="flash.message" :vehicles="vehicles.data" />
+                    <Vehicles :notify="flash.message ?? undefined" :vehicles="vehicles.data" />
                 </TabItem>
             </Tabs>
         </AuthenticatedContentLayout>
