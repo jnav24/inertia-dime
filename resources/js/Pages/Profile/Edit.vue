@@ -13,6 +13,7 @@ import Vehicles from '@/Components/settings/Vehicles.vue';
 import { PageProps } from '@/types/providers';
 
 type Props = PageProps & {
+    hasMfa: boolean;
     mustVerifyEmail?: boolean;
     status?: string;
     vehicles: { data: any[] };
@@ -52,7 +53,7 @@ defineProps<Props>();
                         </Card>
 
                         <Card>
-                            <Mfa />
+                            <Mfa :has-mfa="hasMfa" />
                         </Card>
                     </section>
                 </TabItem>
