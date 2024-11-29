@@ -24,8 +24,12 @@ class ProfileController extends Controller
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => session('status'),
             'vehicles' => UserVehicleResource::collection(
-                UserVehicle::where('user_id', auth()->user()->id)->withTrashed()->get()
+                UserVehicle::query()
+                    ->where('user_id', auth()->user()?->id)
+                    ->withTrashed()
+                    ->get()
             ),
+            'hasMfa' => false,
         ]);
     }
 
@@ -34,13 +38,13 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $request->user()?->fill($request->validated());
 
-        if ($request->user()->isDirty('email')) {
+        if ($request->user()?->isDirty('email')) {
             $request->user()->email_verified_at = null;
         }
 
-        $request->user()->save();
+        $request->user()?->save();
 
         return Redirect::route('profile.edit');
     }
@@ -58,7 +62,7 @@ class ProfileController extends Controller
 
         Auth::logout();
 
-        $user->delete();
+        $user?->delete();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
