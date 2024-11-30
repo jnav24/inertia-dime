@@ -17,7 +17,7 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->unique(['user_id', 'budget_id', 'user_budget_unique']);
+            $table->unique(['user_id', 'budget_id']);
         });
     }
 
