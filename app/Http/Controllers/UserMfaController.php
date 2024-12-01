@@ -35,4 +35,19 @@ class UserMfaController extends Controller
 
         return redirect()->back();
     }
+
+    public function destroy(): RedirectResponse
+    {
+        auth()->user()?->forceFill([
+            'mfa_secret' => null,
+            'mfa_recovery_codes' => null,
+        ])?->save();
+
+        /** @var string $key */
+        $key = config('session.mfa');
+
+        session()->forget($key);
+
+        return redirect()->back();
+    }
 }

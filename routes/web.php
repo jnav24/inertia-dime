@@ -122,6 +122,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::post('/profile/mfa', [UserMfaController::class, 'store'])->name('profile.mfa.store');
+    Route::delete('/profile/mfa', [UserMfaController::class, 'destroy'])->name('profile.mfa.destroy');
 });
 
 require __DIR__.'/auth.php';
