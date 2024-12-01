@@ -12,6 +12,7 @@ type Props = {
     label: string;
     validateOnInit?: boolean;
     rules?: RulesType | Array<keyof RulesType>;
+    submit?: boolean;
     toggle: boolean;
 };
 
@@ -45,7 +46,7 @@ const handleUpdate = () => {
                 'border-gray-200 bg-gray-200': !isChecked,
             }"
             style="height: 2.15rem"
-            type="button"
+            :type="submit ? 'submit' : 'button'"
         >
             <span
                 class="inline-block h-8 w-8 transform rounded-full bg-white transition duration-100 ease-in-out"

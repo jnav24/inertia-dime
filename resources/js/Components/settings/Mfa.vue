@@ -24,8 +24,8 @@ defineProps<Props>();
         </div>
 
         <div>
-            <BudgetForm>
-                <FormToggle :toggle="hasMfa" label="mfa" />
+            <BudgetForm :action="route('profile.mfa.store')">
+                <FormToggle :toggle="hasMfa" label="mfa" submit />
             </BudgetForm>
         </div>
     </div>
