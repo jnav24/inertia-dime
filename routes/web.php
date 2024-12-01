@@ -9,6 +9,7 @@ use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\InvestmentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\UserMfaController;
 use App\Http\Controllers\UserVehicleController;
 use App\Http\Controllers\VehicleController;
 use Illuminate\Foundation\Application;
@@ -119,6 +120,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::post('/profile/mfa', [UserMfaController::class, 'store'])->name('profile.mfa.store');
 });
 
 require __DIR__.'/auth.php';
