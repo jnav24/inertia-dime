@@ -214,4 +214,17 @@ return [
 
     'partitioned' => env('SESSION_PARTITIONED_COOKIE', false),
 
+    /*
+    |--------------------------------------------------------------------------
+    | MFA Token
+    |--------------------------------------------------------------------------
+    |
+    | This option is the session name for the MFA Token which gets set when
+    | a user turns MFA on and deletes when MFA is disabled. There is a
+    | MFAToken middleware that checks for this in the session.
+    |
+    */
+
+    'mfa' => 'dime_mfa',
+
 ];
