@@ -24,7 +24,10 @@ defineProps<Props>();
         </div>
 
         <div>
-            <BudgetForm :action="route('profile.mfa.store')">
+            <BudgetForm
+                :action="route(hasMfa ? 'profile.mfa.destroy' : 'profile.mfa.store')"
+                :method="hasMfa ? 'delete' : 'post'"
+            >
                 <FormToggle :toggle="hasMfa" label="mfa" submit />
             </BudgetForm>
         </div>

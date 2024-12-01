@@ -29,7 +29,7 @@ class ProfileController extends Controller
                     ->withTrashed()
                     ->get()
             ),
-            'hasMfa' => false,
+            'hasMfa' => ! empty(auth()->user()->mfa_secret),
         ]);
     }
 
