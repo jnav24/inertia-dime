@@ -227,4 +227,17 @@ return [
 
     'mfa' => 'dime_mfa',
 
+    /*
+    |--------------------------------------------------------------------------
+    | Display MFA
+    |--------------------------------------------------------------------------
+    |
+    | This option is only set in the session when a user turns on MFA.
+    | When enabled, the recovery codes and QR Code will be show
+    | in the UI. After confirmation, this will be forgotten.
+    |
+    */
+
+    'display_mfa' => 'display_dime_mfa',
+
 ];
