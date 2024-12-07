@@ -56,7 +56,7 @@ const styles = () => {
             if (props.variant === 'caption') {
                 classes.push('text-sm');
             } else {
-                classes.push('text-base');
+                classes.push(props.variant === 'body1' ? 'text-base' : 'text-[0.9375rem]');
             }
             break;
     }
