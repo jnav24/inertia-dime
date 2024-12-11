@@ -11,9 +11,11 @@ import Card from '@/Components/Elements/Card.vue';
 import Mfa from '@/Components/settings/Mfa.vue';
 import Vehicles from '@/Components/settings/Vehicles.vue';
 import { PageProps } from '@/types/providers';
+import { MFASetup } from '@/types/mfa';
 
 type Props = PageProps & {
     hasMfa: boolean;
+    mfa: null | MFASetup;
     mustVerifyEmail?: boolean;
     status?: string;
     vehicles: { data: any[] };
@@ -53,7 +55,7 @@ defineProps<Props>();
                         </Card>
 
                         <Card>
-                            <Mfa :has-mfa="hasMfa" />
+                            <Mfa :has-mfa="hasMfa" :mfa="mfa" />
                         </Card>
                     </section>
                 </TabItem>
@@ -62,6 +64,8 @@ defineProps<Props>();
                     <Vehicles :notify="flash.message ?? undefined" :vehicles="vehicles.data" />
                 </TabItem>
             </Tabs>
+
+            <pre>{{ mfa }}</pre>
         </AuthenticatedContentLayout>
     </AuthenticatedLayout>
 </template>
