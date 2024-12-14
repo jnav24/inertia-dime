@@ -1,6 +1,6 @@
 import { usePage } from '@inertiajs/vue3';
 import { PageProps } from '@/types/providers';
-import { computed, reactive, watch } from 'vue';
+import { computed, reactive, toRefs, watch, watchEffect } from 'vue';
 
 /**
  * This does not really convert an object to an enum.
@@ -62,7 +62,71 @@ export default function useHttp({
     });
     const hasData = computed(() => state.data && Object.keys(state.data).length);
 
-    const getResponse = async () => {};
+    const trimSlashes = (str: string) => {
+        if (str.startsWith('/')) {
+            str = str.slice(1, str.length);
+        }
+
+        if (str.endsWith('/')) {
+            str = str.slice(0, -1);
+        }
+
+        return str;
+    };
+
+    const getURL = () => {
+        const url = `${ziggy.url}/${trimSlashes(path)}`;
+
+        if (method === 'get') {
+            return `${url}?${new URLSearchParams(params)}`;
+        }
+
+        return url;
+    };
+
+    const getOptions = (): RequestInit => {
+        const csrf = document?.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+        const options: RequestInit = {
+            method,
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrf ?? '',
+                ...headers,
+            },
+        };
+
+        if (method !== 'get') {
+            return { ...options, body: JSON.stringify(params) };
+        }
+
+        return options;
+    };
+
+    const getResponse = async () => {
+        try {
+            state.isLoading = true;
+
+            const response = await fetch(getURL(), getOptions());
+
+            state.isError = !response.ok;
+            state.isSuccess = response.ok;
+            state.data = await response.json();
+        } catch (err: unknown) {
+            let errors = ['Something unexpected had occurred'];
+
+            if (err instanceof Error) {
+                errors = [err.message];
+            }
+
+            state.isError = true;
+            state.isSuccess = false;
+            state.errors = errors;
+        } finally {
+            state.isFetching = false;
+            state.isLoading = false;
+        }
+    };
 
     const refetch = () => {
         if (state.isFetching) return null;
@@ -87,16 +151,14 @@ export default function useHttp({
                 state.isLoading = !hasData.value;
             }
         },
+        { immediate: true },
     );
 
-    watch(
-        () => state.isFetching,
-        (isFetching) => {
-            if (isFetching) {
-                void getResponse();
-            }
-        },
-    );
+    watchEffect(() => {
+        if (state.isFetching) {
+            void getResponse();
+        }
+    });
 
-    return { ...state, refetch, reset };
+    return { ...toRefs(state), refetch, reset };
 }
