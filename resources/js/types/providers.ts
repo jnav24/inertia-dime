@@ -1,3 +1,5 @@
+import { ErrorBag, Errors } from '@inertiajs/inertia';
+
 export const NotificationContext = Symbol('FormContext');
 
 export type NotificationContextType = {
@@ -12,7 +14,7 @@ export type NotificationProps = {
 
 export type PageProps = {
     auth: { id: number; name: string; email: string; email_verified_at: string };
-    errors: Record<string, string>;
+    errors: Errors & ErrorBag;
     flash: { message: string | null };
     ziggy: {
         url: string;
