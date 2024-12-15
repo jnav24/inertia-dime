@@ -1,6 +1,6 @@
 import { usePage } from '@inertiajs/vue3';
 import { PageProps } from '@/types/providers';
-import { computed, reactive, toRefs, watch, watchEffect } from 'vue';
+import { computed, onMounted, reactive, ref, toRefs, watch, watchEffect } from 'vue';
 
 /**
  * This does not really convert an object to an enum.
@@ -60,6 +60,9 @@ export default function useHttp({
         isLoading: false,
         isSuccess: false,
     });
+
+    const urlParams = ref({});
+
     const hasData = computed(() => state.data && Object.keys(state.data).length);
 
     const trimSlashes = (str: string) => {
@@ -78,7 +81,7 @@ export default function useHttp({
         const url = `${ziggy.url}/${trimSlashes(path)}`;
 
         if (method === 'get') {
-            return `${url}?${new URLSearchParams(params)}`;
+            return `${url}?${new URLSearchParams(urlParams.value)}`;
         }
 
         return url;
@@ -97,7 +100,7 @@ export default function useHttp({
         };
 
         if (method !== 'get') {
-            return { ...options, body: JSON.stringify(params) };
+            return { ...options, body: JSON.stringify(urlParams.value) };
         }
 
         return options;
@@ -128,8 +131,13 @@ export default function useHttp({
         }
     };
 
-    const refetch = () => {
+    const refetch = (params?: Record<string, any>) => {
         if (state.isFetching) return null;
+
+        if (params) {
+            urlParams.value = params;
+        }
+
         state.isFetching = true;
         state.isLoading = !hasData.value;
     };
@@ -158,6 +166,10 @@ export default function useHttp({
         if (state.isFetching) {
             void getResponse();
         }
+    });
+
+    onMounted(() => {
+        urlParams.value = params;
     });
 
     return { ...toRefs(state), refetch, reset };
