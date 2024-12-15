@@ -4,6 +4,11 @@ import useForm from '@/Composables/useForm';
 import type { RulesType } from '@/types/form';
 import { onMounted, ref } from 'vue';
 
+type Emits = {
+    (e: 'update:value', value: string): void;
+    (e: 'handleUpdate', value: string): void;
+};
+
 type Props = {
     inputs?: number;
     label: string;
@@ -13,7 +18,7 @@ type Props = {
     value?: string;
 };
 
-const emit = defineEmits<{ (e: 'update:value', value: string): void }>();
+const emit = defineEmits<Emits>();
 const props = withDefaults(defineProps<Props>(), { inputs: 6 });
 
 const { error, labelId, getInputValue, updateInputValue } = useForm({
@@ -72,6 +77,8 @@ const updateValue = (e: Event, i: number) => {
     const output = values.join('');
 
     updateInputValue(output);
+    emit('update:value', output);
+    emit('handleUpdate', output);
     focusInputRef(jumpTo || i + 1);
 };
 
