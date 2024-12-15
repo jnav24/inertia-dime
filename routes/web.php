@@ -123,6 +123,9 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/profile/mfa', [UserMfaController::class, 'store'])->name('profile.mfa.store');
     Route::delete('/profile/mfa', [UserMfaController::class, 'destroy'])->name('profile.mfa.destroy');
+
 });
+
+Route::post('/verify', [UserMfaController::class, 'verify'])->name('verify');
 
 require __DIR__.'/auth.php';
