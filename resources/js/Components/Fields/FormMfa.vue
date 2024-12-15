@@ -10,7 +10,7 @@ type Props = {
     readOnly?: boolean;
     rules?: RulesType | Array<keyof RulesType>;
     validateOnInit?: boolean;
-    value?: string | boolean | number;
+    value?: string;
 };
 
 const emit = defineEmits<{ (e: 'update:value', value: string): void }>();
@@ -23,7 +23,7 @@ const { error, labelId, getInputValue, updateInputValue } = useForm({
     rules: props.rules,
 });
 
-const inputRefs = ref([]);
+const inputRefs = ref<Array<HTMLInputElement>>([]);
 
 const focusInputRef = (i: number) => {
     if (inputRefs.value[i]) {
@@ -42,15 +42,16 @@ const getInputRef = (i: number) => {
 };
 
 const setInputRef = (i: number) => {
-    return (el) => {
+    return (el: HTMLInputElement) => {
         inputRefs.value[i] = el;
+        return undefined;
     };
 };
 
 const updateOnBlur = (e: FocusEvent, i: number) => {};
 
 const updateValue = (e: Event, i: number) => {
-    let extras = [];
+    let extras: string[] = [];
     let jumpTo = 0;
 
     const values = inputRefs.value.map((item) => {
@@ -62,7 +63,7 @@ const updateValue = (e: Event, i: number) => {
         }
 
         if (extras.length) {
-            item.value = extras.length ? extras.shift() : '';
+            item.value = extras.length ? (extras.shift() as string) : '';
         }
 
         return item.value;
@@ -81,7 +82,7 @@ onMounted(() => {
 
 <template>
     <div class="relative">
-        <FormLabel v-if="!placeholder" :error="error" labelId="labelId" :label="label" />
+        <FormLabel :error="error" labelId="labelId" :label="label" />
 
         <div class="relative mb-2">
             <div class="flex space-x-2">
