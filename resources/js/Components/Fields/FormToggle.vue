@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import useForm from '@/Composables/useForm';
 import type { RulesType } from '@/types/form';
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
 
 type Emits = {
     (e: 'update:toggle', v: boolean): void;
@@ -33,6 +33,16 @@ const handleUpdate = () => {
     emit('update:toggle', isChecked.value);
     emit('setToggle', isChecked.value);
 };
+
+watch(
+    () => props.toggle,
+    (nv) => {
+        const checked = !nv ? '' : 'checked';
+        if (getInputValue.value !== checked) {
+            updateInputValue(checked);
+        }
+    },
+);
 </script>
 
 <template>
