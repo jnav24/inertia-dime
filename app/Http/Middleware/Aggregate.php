@@ -18,10 +18,15 @@ class Aggregate
     {
         $response = $next($request);
 
-        $uuid = extractUuid($request->header('referer'));
+        /** @var string $referer */
+        $referer = $request->header('referer');
 
-        if (! empty($uuid) && in_array($request->method(), ['POST', 'PATCH'])) {
-            AggregateJob::dispatch(uuid: $uuid, user: auth()->user());
+        $uuid = extractUuid($referer);
+
+        $user = auth()->user();
+
+        if (is_string($uuid) && in_array($request->method(), ['POST', 'PATCH']) && ! empty($user)) {
+            AggregateJob::dispatch(uuid: $uuid, user: $user);
         }
 
         return $response;
