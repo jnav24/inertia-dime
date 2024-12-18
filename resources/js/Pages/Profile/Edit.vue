@@ -64,8 +64,6 @@ defineProps<Props>();
                     <Vehicles :notify="flash.message ?? undefined" :vehicles="vehicles.data" />
                 </TabItem>
             </Tabs>
-
-            <pre>{{ mfa }}</pre>
         </AuthenticatedContentLayout>
     </AuthenticatedLayout>
 </template>
