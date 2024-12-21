@@ -30,13 +30,9 @@ class UserMfaController extends Controller
             ),
         ])?->save();
 
-        /** @var string $key */
-        $key = config('session.mfa');
-
         /** @var string $displayKey */
         $displayKey = config('session.display_mfa');
 
-        session()->put($key, auth()->user()?->id);
         session()->put($displayKey, true);
 
         return redirect()->back();
@@ -44,17 +40,16 @@ class UserMfaController extends Controller
 
     public function destroy(): RedirectResponse
     {
-        auth()->user()?->forceFill([
-            'mfa_secret' => null,
-            'mfa_recovery_codes' => null,
-        ])?->save();
-
-        /** @var string $key */
-        $key = config('session.mfa');
-
-        session()->forget($key);
+        $this->destroyMFA();
 
         return redirect()->back();
+    }
+
+    public function destroyAPI(): JsonResponse
+    {
+        $this->destroyMFA();
+
+        return response()->json(['success' => true]);
     }
 
     public function verify(Request $request, MfaService $mfaService): JsonResponse
@@ -79,11 +74,14 @@ class UserMfaController extends Controller
             ], 422);
         }
 
-        /** @var string $key */
-        $key = config('session.mfa');
-
-        session()->put($key, $user->id);
-
         return response()->json(['success' => true]);
+    }
+
+    private function destroyMFA(): void
+    {
+        auth()->user()?->forceFill([
+            'mfa_secret' => null,
+            'mfa_recovery_codes' => null,
+        ])?->save();
     }
 }

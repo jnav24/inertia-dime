@@ -123,6 +123,7 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/profile/mfa', [UserMfaController::class, 'store'])->name('profile.mfa.store');
     Route::delete('/profile/mfa', [UserMfaController::class, 'destroy'])->name('profile.mfa.destroy');
+    Route::delete('/profile/mfa-api', [UserMfaController::class, 'destroyAPI'])->name('profile.mfa.destroy-api');
 
 });
 
