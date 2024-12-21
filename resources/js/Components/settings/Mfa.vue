@@ -14,7 +14,7 @@ type Props = {
 const props = defineProps<Props>();
 
 const mfaData = ref<null | MFASetup>(null);
-
+const isMfaActive = ref(props.hasMfa);
 const showModal = ref(false);
 
 watchEffect(() => {
@@ -22,11 +22,14 @@ watchEffect(() => {
         mfaData.value = props.mfa;
         showModal.value = true;
     }
+
+    isMfaActive.value = props.hasMfa;
 });
 
 const reset = () => {
     mfaData.value = null;
     showModal.value = false;
+    isMfaActive.value = false;
 };
 </script>
 
@@ -54,10 +57,10 @@ const reset = () => {
 
         <div>
             <BudgetForm
-                :action="route(hasMfa ? 'profile.mfa.destroy' : 'profile.mfa.store')"
-                :method="hasMfa ? 'delete' : 'post'"
+                :action="route(isMfaActive ? 'profile.mfa.destroy' : 'profile.mfa.store')"
+                :method="isMfaActive ? 'delete' : 'post'"
             >
-                <FormToggle :toggle="hasMfa" label="mfa" submit />
+                <FormToggle :toggle="isMfaActive" label="mfa" submit />
             </BudgetForm>
         </div>
     </div>
