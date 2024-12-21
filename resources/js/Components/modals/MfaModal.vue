@@ -50,6 +50,8 @@ const halfCodes = computed(() => Math.ceil(props.mfa.recovery_codes.length / 2))
 const closeModal = () => {
     emit('update:show', false);
     emit('handleUpdate', false);
+    step.value = 1;
+    verify.reset();
 };
 
 const copyRecoveryCodes = async () => {
