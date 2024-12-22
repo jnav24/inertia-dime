@@ -100,7 +100,7 @@ watchEffect(() => {
 
                 <BudgetForm>
                     <div class="mb-6 flex justify-center">
-                        <div>
+                        <div class="w-80">
                             <FormMfa
                                 label="Verification"
                                 @handleUpdate="updateCode($event)"
