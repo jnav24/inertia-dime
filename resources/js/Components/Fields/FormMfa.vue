@@ -92,7 +92,7 @@ onMounted(() => {
         <FormLabel :error="error" labelId="labelId" :label="label" />
 
         <div class="relative mb-2">
-            <div class="flex space-x-2">
+            <div class="flex justify-between">
                 <div class="w-12" v-for="(_item, idx) in inputs" :key="idx">
                     <input
                         :id="labelId"
