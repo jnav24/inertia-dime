@@ -38,6 +38,7 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('verify-mfa', [VerifyMfaController::class, 'index'])->name('verify.mfa');
+    Route::post('verify-mfa', [VerifyMfaController::class, 'index'])->name('verify.mfa');
 
     Route::get('verify-email', EmailVerificationPromptController::class)
         ->name('verification.notice');
