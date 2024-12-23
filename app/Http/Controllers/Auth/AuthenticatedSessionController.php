@@ -31,6 +31,14 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
 
+        if (! empty(auth()->user()->mfa_secret)) {
+            /** @var string $key */
+            $key = config('session.mfa');
+
+            session()->put($key, encrypt(['verified' => false, 'uid' => auth()->user()->id]));
+            return redirect()->intended(route('verify.mfa'));
+        }
+
         $request->session()->regenerate();
 
         return redirect()->intended(route('dashboard', absolute: false));
@@ -46,6 +54,11 @@ class AuthenticatedSessionController extends Controller
         $request->session()->invalidate();
 
         $request->session()->regenerateToken();
+
+        /** @var string $key */
+        $key = config('session.mfa');
+
+        session()->forget($key);
 
         return redirect('/');
     }
