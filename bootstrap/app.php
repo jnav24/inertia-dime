@@ -18,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'aggregate' => \App\Http\Middleware\Aggregate::class,
+            'mfa' => \App\Http\Middleware\MfaVerification::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
