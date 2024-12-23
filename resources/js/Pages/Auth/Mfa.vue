@@ -5,6 +5,9 @@ import FormMfa from '@/Components/Fields/FormMfa.vue';
 import { Head } from '@inertiajs/vue3';
 import FormButton from '@/Components/Fields/FormButton.vue';
 import Typography from '@/Components/Elements/Typography.vue';
+import { PageProps } from '@/types/providers';
+
+defineProps<PageProps>();
 </script>
 
 <template>
