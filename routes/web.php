@@ -27,9 +27,9 @@ Route::get('/', function () {
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth', 'mfa', 'verified'])->name('dashboard');
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'mfa', 'verified'])->group(function () {
     Route::group(['prefix' => 'dashboard'], function () {
         Route::get('/budgets/template', [BudgetTemplateController::class, 'index'])
             ->name('budget.template.index');
@@ -114,9 +114,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/reports', [ReportController::class, 'index'])->name('report.index');
         Route::post('/reports', [ReportController::class, 'index'])->name('report.index');
     });
-});
 
-Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -124,7 +122,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/profile/mfa', [UserMfaController::class, 'store'])->name('profile.mfa.store');
     Route::delete('/profile/mfa', [UserMfaController::class, 'destroy'])->name('profile.mfa.destroy');
     Route::delete('/profile/mfa-api', [UserMfaController::class, 'destroyAPI'])->name('profile.mfa.destroy-api');
-
 });
 
 Route::post('/verify', [UserMfaController::class, 'verify'])->name('verify');
