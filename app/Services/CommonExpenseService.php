@@ -44,6 +44,7 @@ use App\Models\Tax;
 use App\Models\TaxTemplate;
 use App\Models\Travel;
 use App\Models\TravelTemplate;
+use App\Models\User;
 use App\Models\Utility;
 use App\Models\UtilityTemplate;
 use App\Models\Vehicle;
@@ -59,7 +60,10 @@ use Throwable;
 
 class CommonExpenseService
 {
-    protected $models = [
+    /**
+     * @var array<string, array<string, string>>
+     */
+    protected array $models = [
         'bank' => [
             'budget' => Bank::class,
             'template' => BankTemplate::class,
@@ -142,24 +146,33 @@ class CommonExpenseService
         ],
     ];
 
-    public function getModelByRequest(Request $request, bool $template)
+    public function getModelByRequest(Request $request, bool $template): string
     {
         $key = $this->getKey($request);
         return $this->getModel($key, $template);
     }
 
-    public function getModelByString(string $value, ?bool $template = false)
+    public function getModelByString(string $value, ?bool $template = false): string
     {
         $key = Str::singular($value);
-        return $this->getModel($key, $template);
+        return $this->getModel($key, $template ?? false);
     }
 
+    /**
+     * @param BudgetTemplate $template
+     * @param array<string, string> $validated
+     * @return Budget
+     * @throws Throwable
+     */
     public function saveExpenses(BudgetTemplate $template, array $validated): Budget
     {
         try {
             DB::beginTransaction();
 
-            $budget = auth()->user()->budgets()->create([
+            /** @var User $user */
+            $user = auth()->user();
+
+            $budget = $user->budgets()->create([
                 'name' => '',
                 'budget_cycle' => Carbon::create((int) $validated['year'], (int) $validated['month']),
             ]);
@@ -170,7 +183,7 @@ class CommonExpenseService
                 }
 
                 foreach ($template->{$expense} as $data) {
-                    if (!method_exists($budget, $expense)) {
+                    if (! method_exists($budget, $expense)) {
                         continue;
                     }
 
@@ -192,17 +205,31 @@ class CommonExpenseService
         }
     }
 
+    /**
+     * @param Request $request
+     * @param bool $template
+     * @return array<string, int>
+     */
     public function getBudgetRelationship(Request $request, bool $template): array
     {
-        if (! $template && $uuid = extractUuid($request->header('referer'))) {
+        /** @var string $referrer */
+        $referrer = $request->header('referer');
+
+        if (! $template && $uuid = extractUuid($referrer)) {
             $budget = Budget::where('uuid', $uuid)->firstOrFail();
             return ['budget_id' => $budget->id];
         }
 
-        return ['budget_template_id' => auth()->user()->budgetTemplate->id];
+        /** @var User $user */
+        $user = auth()->user();
+
+        /** @var BudgetTemplate $budgetTemplate */
+        $budgetTemplate = $user->budgetTemplate;
+
+        return ['budget_template_id' => $budgetTemplate->id];
     }
 
-    public function saveAggregations(Budget $budget, ?BudgetTemplate $template = null)
+    public function saveAggregations(Budget $budget, ?BudgetTemplate $template = null): void
     {
         $earned = $this->getAggregationSum(ExpenseTypeEnum::earned(), $template ?? $budget);
         $spent = $this->getAggregationSum(ExpenseTypeEnum::spend(), $template ?? $budget);
@@ -220,7 +247,7 @@ class CommonExpenseService
         );
     }
 
-    private function getKey(Request $request)
+    private function getKey(Request $request): string
     {
         $list = explode('/', $request->path());
         $count = count($list);
@@ -232,6 +259,11 @@ class CommonExpenseService
         abort(Response::HTTP_BAD_REQUEST, 'Unable to get model');
     }
 
+    /**
+     * @param array<float> $types
+     * @param BudgetTemplate|Budget $template
+     * @return float
+     */
     private function getAggregationSum(array $types, BudgetTemplate|Budget $template): float
     {
         return array_reduce($types, function ($result, $type) use ($template) {
@@ -241,7 +273,7 @@ class CommonExpenseService
         }, 0.0);
     }
 
-    private function getModel(string $key, bool $template)
+    private function getModel(string $key, bool $template): string
     {
         if (empty($this->models[$key]) || empty($model = $this->models[$key][$template ? 'template' : 'budget'])) {
             abort(Response::HTTP_BAD_REQUEST, 'Model not found');

@@ -46,21 +46,33 @@ enum ExpenseTypeEnum: string
         ];
     }
 
+    /**
+     * @return array<string>
+     */
     public static function allExpenses(): array
     {
         return array_map(fn ($item) => Str::plural($item->value), ExpenseTypeEnum::cases());
     }
 
+    /**
+     * @return array<string>
+     */
     public static function earned(): array
     {
         return array_map(fn ($item) => Str::plural($item->value), [ExpenseTypeEnum::INCOME]);
     }
 
+    /**
+     * @return array<string>
+     */
     public static function saved(): array
     {
         return array_map(fn ($item) => Str::plural($item->value), [ExpenseTypeEnum::BANK, ExpenseTypeEnum::INVESTMENT]);
     }
 
+    /**
+     * @return array<string>
+     */
     public static function spend(): array
     {
         $omit = [...ExpenseTypeEnum::earned(), ...ExpenseTypeEnum::saved()];
