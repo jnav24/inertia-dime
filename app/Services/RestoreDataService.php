@@ -2,7 +2,11 @@
 
 namespace App\Services;
 
+use App\Data\CreditCardDto;
+use App\Models\CreditCard;
+use App\Models\CreditCardTemplate;
 use Exception;
+use Illuminate\Support\Str;
 use Throwable;
 use App\Data\ExpenseGainDto;
 use App\Models\Bank;
@@ -21,7 +25,6 @@ class RestoreDataService
 
     public function __construct()
     {
-
         $this->db = DB::build([
             'driver' => config('database.connections.mysql.driver'),
             'database' => config('database.connections.mysql.backup_database'),
@@ -51,50 +54,21 @@ class RestoreDataService
     }
 
     /**
-     * @param array<string, int> $budget
-     * @param bool $template
+     * @param array{old_id: int, new_id: int} $budget
+     * @param bool $isTemplate
      * @return void
      */
     private function restoreBanks(array $budget, bool $isTemplate = false): void
     {
-        // budget columns: name, amount, bank_type_id, budget_id, bank_template_id
-        // template columns: name, amount, bank_type_id, bank_template_id
-        $model = BankTemplate::class;
-        $columnName = 'budget_template_id';
-        $tableName = 'bank_templates';
+        $models = ['template' => BankTemplate::class, 'budget' => Bank::class];
+        $table = 'banks';
 
-        if (! $isTemplate) {
-            $model = Bank::class;
-            $columnName = 'budget_id';
-            $tableName = 'banks';
-        }
-
-        $this->db
-            ->table($tableName)
-            ->where($columnName, $budget['old_id'])
-            ->get()
-            ->each(function ($bank) use ($budget, $model, $columnName) {
-                $type = $this->db
-                    ->table('bank_types')
-                    ->where('id', $bank->bank_type_id)
-                    ->first();
-
-                $expenseType = ExpenseType::query()
-                    ->where('name', $type->name)
-                    ->orWhere('slug', $type->slug)
-                    ->first();
-
-                $model::create([
-                    $columnName => $budget['new_id'],
-                    'data' => new ExpenseGainDto(
-                        name: $bank->name,
-                        amount: $bank->amount,
-                    ),
-                    'expense_type_id' => $expenseType->id,
-                    'created_at' => $bank->created_at,
-                    'updated_at' => $bank->updated_at,
-                ]);
-            });
+        $this->restoreExpense($models, $table, $budget, $isTemplate, function ($data) {
+            return new ExpenseGainDto(
+                name: $data->name,
+                amount: $data->amount,
+            );
+        });
     }
 
     private function restoreBudgets(Collection $users): void
@@ -113,9 +87,9 @@ class RestoreDataService
                         'updated_at' => $budget->updated_at,
                     ]);
 
-                    // @todo restore all the budgets here
                     $bud = ['old_id' => $budget->id, 'new_id' => $b->id];
                     $this->restoreBanks($bud);
+                    $this->restoreCreditCards($bud);
                 });
         });
     }
@@ -134,13 +108,44 @@ class RestoreDataService
                         'updated_at' => $template->updated_at,
                     ]);
 
-                    // @todo restore all the templates here
                     $t = ['old_id' => $template->id, 'new_id' => $bt->id];
                     $this->restoreBanks($t, true);
+                    $this->restoreCreditCards($t, true);
                 });
         });
     }
 
+    /**
+     * @param array{old_id: int, new_id: int} $budget
+     * @param bool $isTemplate
+     * @return void
+     */
+    private function restoreCreditCards(array $budget, bool $isTemplate = false): void
+    {
+        $models = ['template' => CreditCardTemplate::class, 'budget' => CreditCard::class];
+        $table = 'credit_cards';
+
+        $this->restoreExpense($models, $table, $budget, $isTemplate, function ($data) {
+            return new CreditCardDto(
+                name: $data->name,
+                amount: $data->amount,
+                due_date: $data->due_date,
+                apr: $data->apr,
+                balance: $data->balance,
+                exp_month: $data->exp_month,
+                exp_year: $data->exp_year,
+                last_4: $data->last_4,
+                limit: $data->limit,
+                paid_date: $data->paid_date,
+                confirmation: $data->confirmation,
+                notes: $data->notes,
+            );
+        });
+    }
+
+    /**
+     * @return Collection<string, array<string, int>>
+     */
     private function restoreUsers(): Collection
     {
         return $this->db
@@ -158,6 +163,53 @@ class RestoreDataService
                 ]);
 
                 return ['old_id' => $user->id, 'new_id' => $u->id];
+            });
+    }
+
+    /**
+     * @param array{template: string, budget: string} $models
+     * @param string $table
+     * @param array{old_id: int, new_id: int} $budget
+     * @param bool $isTemplate
+     * @param callable $callback
+     * @return void
+     */
+    private function restoreExpense(array $models, string $table, array $budget, bool $isTemplate, callable $callback): void
+    {
+        $singularName = Str::singular($table);
+        $model = $models['template'];
+        $columnName = 'budget_template_id';
+        $tableName = $singularName . '_template';
+
+        if (! $isTemplate) {
+            $model = $models['budget'];
+            $columnName = 'budget_id';
+            $tableName = $table;
+        }
+
+        $this->db
+            ->table($tableName)
+            ->where($columnName, $budget['old_id'])
+            ->get()
+            ->each(function ($data) use ($budget, $model, $singularName, $columnName, $callback) {
+                /** @var object{name: string, slug: string} $type */
+                $type = $this->db
+                    ->table($singularName . '_types')
+                    ->where('id', $data->{$singularName . '_type_id'})
+                    ->firstOrFail();
+
+                $expenseType = ExpenseType::query()
+                    ->where('name', $type->name)
+                    ->orWhere('slug', $type->slug)
+                    ->firstOrFail();
+
+                $model::create([
+                    $columnName => $budget['new_id'],
+                    'data' => $callback($data),
+                    'expense_type_id' => $expenseType->id,
+                    'created_at' => $data->created_at,
+                    'updated_at' => $data->updated_at,
+                ]);
             });
     }
 }
