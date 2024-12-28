@@ -3,8 +3,11 @@
 namespace App\Services;
 
 use App\Data\CreditCardDto;
+use App\Data\IncomeDto;
 use App\Models\CreditCard;
 use App\Models\CreditCardTemplate;
+use App\Models\Income;
+use App\Models\IncomeTemplate;
 use Exception;
 use Illuminate\Support\Str;
 use Throwable;
@@ -90,6 +93,7 @@ class RestoreDataService
                     $bud = ['old_id' => $budget->id, 'new_id' => $b->id];
                     $this->restoreBanks($bud);
                     $this->restoreCreditCards($bud);
+                    $this->restoreIncomes($bud);
                 });
         });
     }
@@ -111,6 +115,7 @@ class RestoreDataService
                     $t = ['old_id' => $template->id, 'new_id' => $bt->id];
                     $this->restoreBanks($t, true);
                     $this->restoreCreditCards($t, true);
+                    $this->restoreIncomes($t, true);
                 });
         });
     }
@@ -211,5 +216,24 @@ class RestoreDataService
                     'updated_at' => $data->updated_at,
                 ]);
             });
+    }
+
+    /**
+     * @param array{old_id: int, new_id: int} $budget
+     * @param bool $isTemplate
+     * @return void
+     */
+    private function restoreIncomes(array $budget, bool $isTemplate = false): void
+    {
+        $models = ['template' => IncomeTemplate::class, 'budget' => Income::class];
+        $table = 'incomes';
+
+        $this->restoreExpense($models, $table, $budget, $isTemplate, function ($data) {
+            return new IncomeDto(
+                name: $data->name,
+                amount: $data->amount,
+                pay_date: $data->initial_pay_date,
+            );
+        });
     }
 }
