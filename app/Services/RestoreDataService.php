@@ -95,8 +95,10 @@ class RestoreDataService
                     $bud = ['old_id' => $budget->id, 'new_id' => $b->id];
                     $this->restoreBanks($bud);
                     $this->restoreCreditCards($bud);
+                    $this->restoreCommonExpenses($bud);
                     $this->restoreIncomes($bud);
                     $this->restoreInvestments($bud);
+                    $this->restoreVehicles($bud);
                 });
         });
     }
@@ -118,8 +120,10 @@ class RestoreDataService
                     $t = ['old_id' => $template->id, 'new_id' => $bt->id];
                     $this->restoreBanks($t, true);
                     $this->restoreCreditCards($t, true);
+                    $this->restoreCommonExpenses($t, true);
                     $this->restoreIncomes($t, true);
                     $this->restoreInvestments($t, true);
+                    $this->restoreVehicles($t, true);
                 });
         });
     }
@@ -153,6 +157,14 @@ class RestoreDataService
     }
 
     /**
+     * @param array{old_id: int, new_id: int} $budget
+     * @param bool $isTemplate
+     * @return void
+     */
+    private function restoreCommonExpenses(array $budget, bool $isTemplate = false): void
+    {}
+
+    /**
      * @return Collection<string, array<string, int>>
      */
     private function restoreUsers(): Collection
@@ -171,7 +183,11 @@ class RestoreDataService
                     'name' => $user->first_name . ' ' . $user->last_name,
                 ]);
 
-                return ['old_id' => $user->id, 'new_id' => $u->id];
+                $u = ['old_id' => $user->id, 'new_id' => $u->id];
+
+                $this->restoreUserVehicles($u);
+
+                return $u;
             });
     }
 
@@ -258,4 +274,19 @@ class RestoreDataService
             );
         });
     }
+
+    /**
+     * @param array{old_id: int, new_id: int} $user
+     * @return void
+     */
+    private function restoreUserVehicles(array $user): void
+    {}
+
+    /**
+     * @param array{old_id: int, new_id: int} $budget
+     * @param bool $isTemplate
+     * @return void
+     */
+    private function restoreVehicles(array $budget, bool $isTemplate = false): void
+    {}
 }
