@@ -4,12 +4,14 @@ namespace App\Services;
 
 use App\Data\CreditCardDto;
 use App\Data\IncomeDto;
+use App\Data\UserVehicleDto;
 use App\Models\CreditCard;
 use App\Models\CreditCardTemplate;
 use App\Models\Income;
 use App\Models\IncomeTemplate;
 use App\Models\Investment;
 use App\Models\InvestmentTemplate;
+use App\Models\UserVehicle;
 use Exception;
 use Illuminate\Support\Str;
 use Throwable;
@@ -280,7 +282,24 @@ class RestoreDataService
      * @return void
      */
     private function restoreUserVehicles(array $user): void
-    {}
+    {
+        $this->db
+            ->table('user_vehicles')
+            ->where('user_id', $user['old_id'])
+            ->get()
+            ->each(function ($data) use ($user) {
+                UserVehicle::create([
+                    'user_id' => $user['new_id'],
+                    'data' => new UserVehicleDto(
+                        color: $data['color'],
+                        make: $data['make'],
+                        model: $data['model'],
+                        year: $data['year'],
+                        license: $data['license'],
+                    ),
+                ]);
+            });
+    }
 
     /**
      * @param array{old_id: int, new_id: int} $budget
