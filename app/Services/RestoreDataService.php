@@ -8,6 +8,8 @@ use App\Models\CreditCard;
 use App\Models\CreditCardTemplate;
 use App\Models\Income;
 use App\Models\IncomeTemplate;
+use App\Models\Investment;
+use App\Models\InvestmentTemplate;
 use Exception;
 use Illuminate\Support\Str;
 use Throwable;
@@ -94,6 +96,7 @@ class RestoreDataService
                     $this->restoreBanks($bud);
                     $this->restoreCreditCards($bud);
                     $this->restoreIncomes($bud);
+                    $this->restoreInvestments($bud);
                 });
         });
     }
@@ -116,6 +119,7 @@ class RestoreDataService
                     $this->restoreBanks($t, true);
                     $this->restoreCreditCards($t, true);
                     $this->restoreIncomes($t, true);
+                    $this->restoreInvestments($t, true);
                 });
         });
     }
@@ -233,6 +237,24 @@ class RestoreDataService
                 name: $data->name,
                 amount: $data->amount,
                 pay_date: $data->initial_pay_date,
+            );
+        });
+    }
+
+    /**
+     * @param array{old_id: int, new_id: int} $budget
+     * @param bool $isTemplate
+     * @return void
+     */
+    private function restoreInvestments(array $budget, bool $isTemplate = false): void
+    {
+        $models = ['template' => InvestmentTemplate::class, 'budget' => Investment::class];
+        $table = 'investments';
+
+        $this->restoreExpense($models, $table, $budget, $isTemplate, function ($data) {
+            return new ExpenseGainDto(
+                name: $data->name,
+                amount: $data->amount,
             );
         });
     }
