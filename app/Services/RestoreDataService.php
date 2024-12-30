@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Data\CreditCardDto;
 use App\Data\IncomeDto;
 use App\Data\UserVehicleDto;
+use App\Data\VehicleDto;
 use App\Models\CreditCard;
 use App\Models\CreditCardTemplate;
 use App\Models\Income;
@@ -12,6 +13,8 @@ use App\Models\IncomeTemplate;
 use App\Models\Investment;
 use App\Models\InvestmentTemplate;
 use App\Models\UserVehicle;
+use App\Models\Vehicle;
+use App\Models\VehicleTemplate;
 use Exception;
 use Illuminate\Support\Str;
 use Throwable;
@@ -61,6 +64,27 @@ class RestoreDataService
     }
 
     /**
+     * @param Collection $data
+     * @param array{new_id: string, old_id: string, vehicles: Collection} $user
+     * @return array
+     */
+    private function getUserVehicle(Collection $data, array $user): array
+    {
+        if (empty($data->user_vehicle_id) || empty($user)) {
+            return [];
+        }
+
+        $userVehicle = $user['vehicles']
+            ->filter(fn ($vehicle) => $data->user_vehicle_id === $vehicle['old_id']);
+
+        if (empty($userVehicle)) {
+            return [];
+        }
+
+        return ['user_vehicle_id' => $userVehicle['new_id']];
+    }
+
+    /**
      * @param array{old_id: int, new_id: int} $budget
      * @param bool $isTemplate
      * @return void
@@ -95,12 +119,13 @@ class RestoreDataService
                     ]);
 
                     $bud = ['old_id' => $budget->id, 'new_id' => $b->id];
+
                     $this->restoreBanks($bud);
                     $this->restoreCreditCards($bud);
                     $this->restoreCommonExpenses($bud);
                     $this->restoreIncomes($bud);
                     $this->restoreInvestments($bud);
-                    $this->restoreVehicles($bud);
+                    $this->restoreVehicles($bud, $user);
                 });
         });
     }
@@ -120,12 +145,13 @@ class RestoreDataService
                     ]);
 
                     $t = ['old_id' => $template->id, 'new_id' => $bt->id];
+
                     $this->restoreBanks($t, true);
                     $this->restoreCreditCards($t, true);
                     $this->restoreCommonExpenses($t, true);
                     $this->restoreIncomes($t, true);
                     $this->restoreInvestments($t, true);
-                    $this->restoreVehicles($t, true);
+                    $this->restoreVehicles($t, $user, true);
                 });
         });
     }
@@ -187,7 +213,7 @@ class RestoreDataService
 
                 $u = ['old_id' => $user->id, 'new_id' => $u->id];
 
-                $this->restoreUserVehicles($u);
+                $u['vehicles'] = $this->restoreUserVehicles($u);
 
                 return $u;
             });
@@ -199,9 +225,10 @@ class RestoreDataService
      * @param array{old_id: int, new_id: int} $budget
      * @param bool $isTemplate
      * @param callable $callback
+     * @param array{old_id: int, new_id: int, vehicles: Collection} $user
      * @return void
      */
-    private function restoreExpense(array $models, string $table, array $budget, bool $isTemplate, callable $callback): void
+    private function restoreExpense(array $models, string $table, array $budget, bool $isTemplate, callable $callback, array $user = []): void
     {
         $singularName = Str::singular($table);
         $model = $models['template'];
@@ -218,7 +245,7 @@ class RestoreDataService
             ->table($tableName)
             ->where($columnName, $budget['old_id'])
             ->get()
-            ->each(function ($data) use ($budget, $model, $singularName, $columnName, $callback) {
+            ->each(function ($data) use ($budget, $model, $singularName, $columnName, $callback, $user) {
                 /** @var object{name: string, slug: string} $type */
                 $type = $this->db
                     ->table($singularName . '_types')
@@ -230,12 +257,15 @@ class RestoreDataService
                     ->orWhere('slug', $type->slug)
                     ->firstOrFail();
 
+                $options = $this->getUserVehicle($data, $user);
+
                 $model::create([
                     $columnName => $budget['new_id'],
                     'data' => $callback($data),
                     'expense_type_id' => $expenseType->id,
                     'created_at' => $data->created_at,
                     'updated_at' => $data->updated_at,
+                    ...$options,
                 ]);
             });
     }
@@ -279,16 +309,16 @@ class RestoreDataService
 
     /**
      * @param array{old_id: int, new_id: int} $user
-     * @return void
+     * @return Collection
      */
-    private function restoreUserVehicles(array $user): void
+    private function restoreUserVehicles(array $user): Collection
     {
-        $this->db
+        return $this->db
             ->table('user_vehicles')
             ->where('user_id', $user['old_id'])
             ->get()
-            ->each(function ($data) use ($user) {
-                UserVehicle::create([
+            ->map(function ($data) use ($user) {
+                $uv = UserVehicle::create([
                     'user_id' => $user['new_id'],
                     'data' => new UserVehicleDto(
                         color: $data['color'],
@@ -298,14 +328,32 @@ class RestoreDataService
                         license: $data['license'],
                     ),
                 ]);
+
+                return ['old_id' => $data->id, 'new_id' => $uv->id];
             });
     }
 
     /**
      * @param array{old_id: int, new_id: int} $budget
+     * @param array{old_id: int, new_id: int, vehicles: Collection} $user
      * @param bool $isTemplate
      * @return void
      */
-    private function restoreVehicles(array $budget, bool $isTemplate = false): void
-    {}
+    private function restoreVehicles(array $budget, array $user, bool $isTemplate = false): void
+    {
+        $models = ['template' => VehicleTemplate::class, 'budget' => Vehicle::class];
+        $table = 'vehicles';
+
+        $this->restoreExpense($models, $table, $budget, $isTemplate, function ($data) {
+            return new VehicleDto(
+                amount: $data['amount'],
+                balance: $data['balance'],
+                due_date: $data['due_date'],
+                mileage: $data['mileage'] ?? null,
+                confirmation: $data['confirmation'] ?? null,
+                notes: $data['notes'] ?? null,
+                paid_date: $data['paid_date'] ?? null,
+            );
+        }, $user);
+    }
 }
