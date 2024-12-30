@@ -3,16 +3,47 @@
 namespace App\Services;
 
 use App\Data\CreditCardDto;
+use App\Data\ExpenseSpendDto;
 use App\Data\IncomeDto;
 use App\Data\UserVehicleDto;
 use App\Data\VehicleDto;
+use App\Models\Childcare;
+use App\Models\ChildcareTemplate;
 use App\Models\CreditCard;
 use App\Models\CreditCardTemplate;
+use App\Models\Education;
+use App\Models\EducationTemplate;
+use App\Models\Entertainment;
+use App\Models\EntertainmentTemplate;
+use App\Models\Food;
+use App\Models\FoodTemplate;
+use App\Models\Gift;
+use App\Models\GiftTemplate;
+use App\Models\Housing;
+use App\Models\HousingTemplate;
 use App\Models\Income;
 use App\Models\IncomeTemplate;
 use App\Models\Investment;
 use App\Models\InvestmentTemplate;
+use App\Models\Loan;
+use App\Models\LoanTemplate;
+use App\Models\Medical;
+use App\Models\MedicalTemplate;
+use App\Models\Miscellaneous;
+use App\Models\MiscellaneousTemplate;
+use App\Models\Personal;
+use App\Models\PersonalTemplate;
+use App\Models\Shopping;
+use App\Models\ShoppingTemplate;
+use App\Models\Subscription;
+use App\Models\SubscriptionTemplate;
+use App\Models\Tax;
+use App\Models\TaxTemplate;
+use App\Models\Travel;
+use App\Models\TravelTemplate;
 use App\Models\UserVehicle;
+use App\Models\Utility;
+use App\Models\UtilityTemplate;
 use App\Models\Vehicle;
 use App\Models\VehicleTemplate;
 use Exception;
@@ -190,7 +221,101 @@ class RestoreDataService
      * @return void
      */
     private function restoreCommonExpenses(array $budget, bool $isTemplate = false): void
-    {}
+    {
+        $expenses = [
+            [
+                'budget' => Childcare::class,
+                'template' => ChildcareTemplate::class,
+                'table' => 'childcare',
+            ],
+            [
+                'budget' => Education::class,
+                'template' => EducationTemplate::class,
+                'table' => 'education',
+            ],
+            [
+                'budget' => Entertainment::class,
+                'template' => EntertainmentTemplate::class,
+                'table' => 'entertainment',
+            ],
+            [
+                'budget' => Food::class,
+                'template' => FoodTemplate::class,
+                'table' => 'food',
+            ],
+            [
+                'budget' => Gift::class,
+                'template' => GiftTemplate::class,
+                'table' => 'gift',
+            ],
+            [
+                'budget' => Housing::class,
+                'template' => HousingTemplate::class,
+                'table' => 'housing',
+            ],
+            [
+                'budget' => Loan::class,
+                'template' => LoanTemplate::class,
+                'table' => 'loans',
+            ],
+            [
+                'budget' => Medical::class,
+                'template' => MedicalTemplate::class,
+                'table' => 'medical',
+            ],
+            [
+                'budget' => Miscellaneous::class,
+                'template' => MiscellaneousTemplate::class,
+                'table' => 'miscellaneous',
+            ],
+            [
+                'budget' => Personal::class,
+                'template' => PersonalTemplate::class,
+                'table' => 'personal',
+            ],
+            [
+                'budget' => Shopping::class,
+                'template' => ShoppingTemplate::class,
+                'table' => 'shopping',
+            ],
+            [
+                'budget' => Subscription::class,
+                'template' => SubscriptionTemplate::class,
+                'table' => 'subscriptions',
+            ],
+            [
+                'budget' => Tax::class,
+                'template' => TaxTemplate::class,
+                'table' => 'tax',
+            ],
+            [
+                'budget' => Travel::class,
+                'template' => TravelTemplate::class,
+                'table' => 'travel',
+            ],
+            [
+                'budget' => Utility::class,
+                'template' => UtilityTemplate::class,
+                'table' => 'utilities',
+            ],
+        ];
+
+        foreach ($expenses as $expense) {
+            $models = ['template' => $expense['template'], 'budget' => $expense['budget']];
+            $table = $expense['table'];
+
+            $this->restoreExpense($models, $table, $budget, $isTemplate, function ($data) {
+                return new ExpenseSpendDto(
+                    name: $data['name'],
+                    amount: $data['amount'],
+                    due_date: $data['due_date'] ?? null,
+                    confirmation: $data['confirmation'] ?? null,
+                    paid_date: $data['paid_date'] ?? null,
+                    notes: $data['notes'] ?? null,
+                );
+            });
+        }
+    }
 
     /**
      * @return Collection<string, array<string, int>>
