@@ -46,6 +46,7 @@ use App\Models\Utility;
 use App\Models\UtilityTemplate;
 use App\Models\Vehicle;
 use App\Models\VehicleTemplate;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Str;
 use Throwable;
@@ -59,6 +60,7 @@ use App\Models\User;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use stdClass;
 
 class RestoreDataService
 {
@@ -69,7 +71,8 @@ class RestoreDataService
         $this->db = DB::build([
             'driver' => config('database.connections.mysql.driver'),
             'database' => config('database.connections.mysql.backup_database'),
-            'username' => config('database.connections.mysql.username'),
+            'host' => config('database.connections.mysql.host'),
+            'username' => config('database.connections.mysql.root_username'),
             'password' => config('database.connections.mysql.password'),
         ]);
     }
@@ -95,18 +98,19 @@ class RestoreDataService
     }
 
     /**
-     * @param Collection $data
+     * @param stdClass $data
      * @param array{new_id: string, old_id: string, vehicles: Collection} $user
      * @return array
      */
-    private function getUserVehicle(Collection $data, array $user): array
+    private function getUserVehicle(stdClass $data, array $user): array
     {
         if (empty($data->user_vehicle_id) || empty($user)) {
             return [];
         }
 
         $userVehicle = $user['vehicles']
-            ->filter(fn ($vehicle) => $data->user_vehicle_id === $vehicle['old_id']);
+            ->filter(fn ($vehicle) => $data->user_vehicle_id === $vehicle['old_id'])
+            ->first();
 
         if (empty($userVehicle)) {
             return [];
@@ -203,14 +207,14 @@ class RestoreDataService
                 amount: $data->amount,
                 due_date: $data->due_date,
                 apr: $data->apr,
-                balance: $data->balance,
-                exp_month: $data->exp_month,
-                exp_year: $data->exp_year,
-                last_4: $data->last_4,
-                limit: $data->limit,
-                paid_date: $data->paid_date,
-                confirmation: $data->confirmation,
-                notes: $data->notes,
+                balance: (float)$data->balance,
+                exp_month: (int)$data->exp_month,
+                exp_year: (int)$data->exp_year,
+                last_4: (int)$data->last_4,
+                limit: (float)$data->limit,
+                paid_date: ! empty($data->paid_date) ? Carbon::parse($data->paid_date) : null,
+                confirmation: $data->confirmation ?? null,
+                notes: $data->notes ?? null,
             );
         });
     }
@@ -306,12 +310,12 @@ class RestoreDataService
 
             $this->restoreExpense($models, $table, $budget, $isTemplate, function ($data) {
                 return new ExpenseSpendDto(
-                    name: $data['name'],
-                    amount: $data['amount'],
-                    due_date: $data['due_date'] ?? null,
-                    confirmation: $data['confirmation'] ?? null,
-                    paid_date: $data['paid_date'] ?? null,
-                    notes: $data['notes'] ?? null,
+                    name: $data->name,
+                    amount: $data->amount,
+                    due_date: $data->due_date ?? null,
+                    confirmation: $data->confirmation ?? null,
+                    paid_date: ! empty($data->paid_date) ? Carbon::parse($data->paid_date) : null,
+                    notes: $data->notes ?? null,
                 );
             });
         }
@@ -336,7 +340,7 @@ class RestoreDataService
                     'name' => $user->first_name . ' ' . $user->last_name,
                 ]);
 
-                $u = ['old_id' => $user->id, 'new_id' => $u->id];
+                $u = ['old_id' => $user->user_id, 'new_id' => $u->id];
 
                 $u['vehicles'] = $this->restoreUserVehicles($u);
 
@@ -355,10 +359,10 @@ class RestoreDataService
      */
     private function restoreExpense(array $models, string $table, array $budget, bool $isTemplate, callable $callback, array $user = []): void
     {
-        $singularName = Str::singular($table);
+        $singularName = ! in_array($table, ['miscellaneous']) ? Str::singular($table) : $table;
         $model = $models['template'];
         $columnName = 'budget_template_id';
-        $tableName = $singularName . '_template';
+        $tableName = $singularName . '_templates';
 
         if (! $isTemplate) {
             $model = $models['budget'];
@@ -371,23 +375,33 @@ class RestoreDataService
             ->where($columnName, $budget['old_id'])
             ->get()
             ->each(function ($data) use ($budget, $model, $singularName, $columnName, $callback, $user) {
-                /** @var object{name: string, slug: string} $type */
-                $type = $this->db
-                    ->table($singularName . '_types')
-                    ->where('id', $data->{$singularName . '_type_id'})
-                    ->firstOrFail();
+                $expenseType = null;
 
-                $expenseType = ExpenseType::query()
-                    ->where('name', $type->name)
-                    ->orWhere('slug', $type->slug)
-                    ->firstOrFail();
+                if (! empty($data->{$singularName . '_type_id'})) {
+                    /** @var object{name: string, slug: string} $type */
+                    $type = $this->db
+                        ->table($singularName . '_types')
+                        ->where('id', $data->{$singularName . '_type_id'})
+                        ->firstOrFail();
+
+                    $expenseType = ExpenseType::query()
+                        ->where('name', $type->name)
+                        ->orWhere('slug', $type->slug)
+                        ->first();
+                }
+
+                if (empty($expenseType)) {
+                    $expenseType = ExpenseType::query()
+                        ->where('slug', 'empty-type')
+                        ->firstOrFail();
+                }
 
                 $options = $this->getUserVehicle($data, $user);
 
                 $model::create([
                     $columnName => $budget['new_id'],
                     'data' => $callback($data),
-                    'expense_type_id' => $expenseType->id,
+                    'expense_type_id' => $expenseType->uuid,
                     'created_at' => $data->created_at,
                     'updated_at' => $data->updated_at,
                     ...$options,
@@ -409,7 +423,7 @@ class RestoreDataService
             return new IncomeDto(
                 name: $data->name,
                 amount: $data->amount,
-                pay_date: $data->initial_pay_date,
+                pay_date: Carbon::parse($data->initial_pay_date),
             );
         });
     }
@@ -446,15 +460,15 @@ class RestoreDataService
                 $uv = UserVehicle::create([
                     'user_id' => $user['new_id'],
                     'data' => new UserVehicleDto(
-                        color: $data['color'],
-                        make: $data['make'],
-                        model: $data['model'],
-                        year: $data['year'],
-                        license: $data['license'],
+                        color: $data->color,
+                        make: $data->make,
+                        model: $data->model,
+                        year: $data->year,
+                        license: $data->license,
                     ),
                 ]);
 
-                return ['old_id' => $data->id, 'new_id' => $uv->id];
+                return ['old_id' => $data->id, 'new_id' => $uv->uuid];
             });
     }
 
@@ -471,13 +485,13 @@ class RestoreDataService
 
         $this->restoreExpense($models, $table, $budget, $isTemplate, function ($data) {
             return new VehicleDto(
-                amount: $data['amount'],
-                balance: $data['balance'],
-                due_date: $data['due_date'],
-                mileage: $data['mileage'] ?? null,
-                confirmation: $data['confirmation'] ?? null,
-                notes: $data['notes'] ?? null,
-                paid_date: $data['paid_date'] ?? null,
+                amount: $data->amount,
+                balance: (float)$data->balance,
+                due_date: $data->due_date,
+                mileage: (int)$data->mileage ?? null,
+                confirmation: $data->confirmation ?? null,
+                notes: $data->notes ?? null,
+                paid_date: ! empty($data->paid_date) ? Carbon::parse($data->paid_date) : null,
             );
         }, $user);
     }
