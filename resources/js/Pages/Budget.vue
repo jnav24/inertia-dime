@@ -15,7 +15,7 @@ import TrendDown from '@/Components/Icons/outline/TrendDown.vue';
 import CreateBudgetModal from '@/Components/modals/CreateBudgetModal.vue';
 import ColumnActions from '@/Components/table/ColumnActions.vue';
 import AppLink from '@/Components/Elements/AppLink.vue';
-import { Budget, SortedAggregation, BudgetAggregationEnum } from '@/types/budget';
+import { Budget, SortedAggregation, BudgetAggregationEnum, SortedBudget } from '@/types/budget';
 import { PageProps } from '@/types/providers';
 import ColumnBasic from '@/Components/table/ColumnBasic.vue';
 import { formatTimeZone } from '@/utils/timestamp';
@@ -25,7 +25,7 @@ import { Column, ColumnComponent } from '@/types/table';
 
 type Props = PageProps & {
     aggregations: SortedAggregation;
-    budgets: { data: Budget[] };
+    budgets: SortedBudget;
 };
 
 const props = defineProps<Props>();
@@ -33,15 +33,39 @@ const props = defineProps<Props>();
 const showModal = ref(false);
 const selectedYear = ref(new Date().getFullYear().toString());
 
-const allYears = computed(() =>
-    Object.keys(props.aggregations).map((year) => ({ label: year, value: year })),
-);
+const allYears = computed(() => {
+    const years = Object.keys(props.aggregations);
+
+    if (
+        !props.aggregations[selectedYear.value] ||
+        !props.aggregations[new Date().getFullYear().toString()]
+    ) {
+        years.push(new Date().getFullYear().toString());
+    }
+
+    return years
+        .sort((a: string, b: string) => +b - +a)
+        .map((year) => ({ label: year, value: year }));
+});
 
 const highestSaved = computed(() => {
+    if (!props.aggregations[selectedYear.value]) {
+        return 0;
+    }
+
     const savedList = Object.values(props.aggregations[selectedYear.value]).map(
         (obj) => obj.data[BudgetAggregationEnum.SAVED],
     );
+
     return Math.max(...savedList);
+});
+
+const selectedBudgets = computed(() => {
+    if (!props.budgets[selectedYear.value]) {
+        return [];
+    }
+
+    return props.budgets[selectedYear.value].map((budget) => budget.data);
 });
 
 const handleColumnEvent = (e: { type: string; obj: any }) => {
@@ -117,8 +141,8 @@ const columns: Column<Budget>[] = [
         </template>
 
         <AuthenticatedContentLayout>
-            <template v-if="budgets.data.length">
-                <div class="grid grid-cols-3 gap-4">
+            <template v-if="selectedBudgets.length">
+                <div class="mb-8 grid grid-cols-3 gap-4">
                     <div
                         class="flex items-center justify-between rounded-lg border border-lm-stroke bg-lm-secondary px-4 py-8 dark:border-dm-stroke dark:bg-dm-secondary"
                     >
@@ -144,15 +168,11 @@ const columns: Column<Budget>[] = [
                         <Typography tag="p" variant="h1">$2,000</Typography>
                     </div>
                 </div>
-
-                <div class="my-8 w-36">
-                    <FormSelect
-                        label="Select Year"
-                        :items="allYears"
-                        v-model:value="selectedYear"
-                    />
-                </div>
             </template>
+
+            <div class="mb-8 w-36">
+                <FormSelect label="Select Year" :items="allYears" v-model:value="selectedYear" />
+            </div>
 
             <Table
                 :columns="columns"
@@ -160,7 +180,7 @@ const columns: Column<Budget>[] = [
                     title: 'No Budgets Found',
                     content: 'Click on the `New Budget` button, above, to add a budget.',
                 }"
-                :items="budgets.data"
+                :items="selectedBudgets"
                 :paginate="{ current: 1, options: [12], selected: 12 }"
                 @column-event="handleColumnEvent($event)"
             />

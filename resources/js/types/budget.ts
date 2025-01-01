@@ -20,6 +20,10 @@ export type Budget = {
     expenses: Expenses;
 };
 
+export type SortedBudget = {
+    [year: string]: { data: Budget }[];
+};
+
 export type SortedAggregation = {
     [year: string]: {
         [month: string]: Required<Aggregation>;
