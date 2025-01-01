@@ -62,19 +62,18 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use stdClass;
 
-class RestoreDataService
+readonly class RestoreDataService
 {
     private ConnectionInterface $db;
+    private CommonExpenseService $commonExpenseService;
 
-    public function __construct()
+    public function __construct(
+        ConnectionInterface $db,
+        CommonExpenseService $commonExpenseService,
+    )
     {
-        $this->db = DB::build([
-            'driver' => config('database.connections.mysql.driver'),
-            'database' => config('database.connections.mysql.backup_database'),
-            'host' => config('database.connections.mysql.host'),
-            'username' => config('database.connections.mysql.root_username'),
-            'password' => config('database.connections.mysql.password'),
-        ]);
+        $this->db = $db;
+        $this->commonExpenseService = $commonExpenseService;
     }
 
     /**
@@ -161,6 +160,7 @@ class RestoreDataService
                     $this->restoreIncomes($bud);
                     $this->restoreInvestments($bud);
                     $this->restoreVehicles($bud, $user);
+                    $this->saveAggregations($bud);
                 });
         });
     }
@@ -494,5 +494,19 @@ class RestoreDataService
                 paid_date: ! empty($data->paid_date) ? Carbon::parse($data->paid_date) : null,
             );
         }, $user);
+    }
+
+    /**
+     * @param array{old_id: int, new_id: int} $budgetArray
+     * @return void
+     */
+    private function saveAggregations(array $budgetArray): void
+    {
+        $budget = Budget::query()
+            ->withExpenses()
+            ->where('id', $budgetArray['new_id'])
+            ->firstOrFail();
+
+        $this->commonExpenseService->saveAggregations($budget);
     }
 }
