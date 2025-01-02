@@ -84,6 +84,9 @@ type CreditCardExpense = {
         exp_month: number;
         exp_year: number;
         due_date?: number;
+        confirmation?: string;
+        notes?: string;
+        paid_date?: string;
     };
     expense: ExpenseType;
 };
@@ -113,6 +116,9 @@ type CommonExpense = {
         name: string;
         amount: number;
         due_date?: number;
+        confirmation?: string;
+        notes?: string;
+        paid_date?: string;
     };
     expense: ExpenseType;
 };
@@ -124,6 +130,9 @@ export type VehicleExpense = {
         balance: number;
         due_date?: number;
         mileage: number;
+        confirmation?: string;
+        notes?: string;
+        paid_date?: string;
     };
     expense: ExpenseType;
     vehicle: UserVehicle;
