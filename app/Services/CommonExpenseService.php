@@ -253,7 +253,7 @@ class CommonExpenseService
         $count = count($list);
 
         if ($count === 3 || $count === 4) {
-            return Str::singular($list[2]);
+            return ! in_array($list[2], ['miscellaneous']) ? Str::singular($list[2]) : $list[2];
         }
 
         abort(Response::HTTP_BAD_REQUEST, 'Unable to get model');
