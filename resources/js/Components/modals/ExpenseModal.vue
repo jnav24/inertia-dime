@@ -13,8 +13,10 @@ import VehicleExpenseForm from '@/Components/Forms/VehicleExpenseForm.vue';
 import BudgetForm from '@/Components/Fields/BudgetForm.vue';
 import { NotificationContext, NotificationContextType } from '@/types/providers';
 import UserVehicleForm from '@/Components/Forms/UserVehicleForm.vue';
+import { ErrorBag, Errors } from '@inertiajs/inertia';
 
 type Props = {
+    errors: Errors & ErrorBag;
     expense: string;
     formData: any;
     notify?: string;
@@ -76,6 +78,19 @@ watch(
                         ?.pop()
                         ?.trim() ?? '',
                 type: 'success',
+            });
+        }
+    },
+);
+
+watch(
+    () => props.errors,
+    (v) => {
+        for (const error of Object.values(v)) {
+            notificationContext?.addNotification({
+                title: 'Error',
+                message: error,
+                type: 'error',
             });
         }
     },
