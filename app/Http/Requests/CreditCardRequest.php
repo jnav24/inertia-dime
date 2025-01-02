@@ -16,10 +16,12 @@ class CreditCardRequest extends FormRequest
             'account_type' => 'uuid',
             'apr' => 'nullable|numeric|decimal:2',
             'balance' => 'nullable|decimal:2',
-            'exp_month' => 'nullable|int|digits:2',
-            'exp_year' => 'nullable|int|digits:4',
-            'last_4' => 'nullable|int|digits:4',
+            'exp_month' => 'nullable|numeric|max:12',
+            'exp_year' => 'nullable|numeric|digits:4',
+            'last_4' => 'nullable|numeric|digits:4',
             'limit' => 'nullable|numeric|decimal:2',
+            'confirmation' => 'nullable|string|max:255',
+            'paid_date' => 'nullable|date',
         ];
     }
 
