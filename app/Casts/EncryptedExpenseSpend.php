@@ -3,6 +3,7 @@
 namespace App\Casts;
 
 use App\Data\ExpenseSpendDto;
+use Carbon\Carbon;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -25,7 +26,7 @@ class EncryptedExpenseSpend implements CastsAttributes
             amount: $item['amount'],
             due_date: $item['due_date'] ?? null,
             confirmation: $item['confirmation'] ?? null,
-            paid_date: $item['paid_date'] ?? null,
+            paid_date: ! empty($item['paid_date']) ? Carbon::parse($item['paid_date']) : null,
             notes: $item['notes'] ?? null,
         );
     }

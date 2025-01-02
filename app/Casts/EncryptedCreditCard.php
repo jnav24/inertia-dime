@@ -3,6 +3,7 @@
 namespace App\Casts;
 
 use App\Data\CreditCardDto;
+use Carbon\Carbon;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -30,6 +31,9 @@ class EncryptedCreditCard implements CastsAttributes
             exp_year: $item['exp_year'],
             last_4: $item['last_4'],
             limit: $item['limit'],
+            confirmation: $item['confirmation'],
+            notes: $item['notes'],
+            paid_date: Carbon::parse($item['paid_date']),
         );
     }
 

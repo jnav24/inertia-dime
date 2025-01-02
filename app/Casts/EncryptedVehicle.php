@@ -3,6 +3,7 @@
 namespace App\Casts;
 
 use App\Data\VehicleDto;
+use Carbon\Carbon;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -24,7 +25,10 @@ class EncryptedVehicle implements CastsAttributes
             amount: $item['amount'],
             balance: $item['balance'],
             due_date: $item['due_date'],
-            mileage: $item['mileage']
+            mileage: $item['mileage'],
+            confirmation: $item['confirmation'],
+            notes: $item['notes'],
+            paid_date: Carbon::parse($item['paid_date']),
         );
     }
 
