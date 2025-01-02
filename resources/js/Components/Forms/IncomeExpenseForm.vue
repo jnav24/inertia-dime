@@ -16,17 +16,17 @@ const amount = computed(() => convertToDollar(props.expense?.data.amount));
 <template>
     <div class="mb-6 grid grid-cols-2 gap-4">
         <FormInput label="Template" hidden :value="!!isTemplate" />
-        <FormInput label="Name" :rules="['required', 'min:3']" :value="expense?.data.name" />
+        <FormInput label="Name" :rules="['required', 'min:2']" :value="expense?.data.name" />
         <FormInput label="Amount" :rules="['required', 'float:2']" :value="amount" />
         <FormSelect
             :items="types"
             label="Account Type"
             item-label="name"
             item-value="id"
-            :value="expense?.expense.id"
+            :value="expense?.expense.id ?? ''"
             :rules="['required']"
         />
-        <FormDatePicker label="Pay Date" :value="getDefaultDate(expense?.data.pay_date)" />
+        <FormDatePicker label="Pay Date" :value="getDefaultDate(expense?.data.pay_date ?? '')" />
     </div>
 
     <ExpenseFormActions @close="$emit('close')" />

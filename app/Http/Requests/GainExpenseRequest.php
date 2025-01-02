@@ -9,7 +9,7 @@ class GainExpenseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|min:3',
+            'name' => 'required|min:2',
             'amount' => 'required|decimal:2',
             'pay_date' => 'date_format:Y-m-d',
             'template' => 'bool',
