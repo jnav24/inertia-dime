@@ -41,7 +41,9 @@ const verificationLinkSent = computed(() => props.status === 'verification-link-
 
         <div class="mt-6 text-center">
             <Typography variant="caption">
-                <AppLink :href="route('logout')" method="post" as="button">Log Out</AppLink>
+                <AppLink class="w-full" :href="route('logout')" method="post" as="button">
+                    Log Out
+                </AppLink>
             </Typography>
         </div>
     </GuestLayout>
