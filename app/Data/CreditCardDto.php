@@ -15,9 +15,9 @@ class CreditCardDto extends ExpenseSpendDto
         ?string $notes = null,
         public ?float $apr = null,
         public ?float $balance = null,
-        public ?int $exp_month = null,
-        public ?int $exp_year = null,
-        public ?int $last_4 = null,
+        public ?string $exp_month = null,
+        public ?string $exp_year = null,
+        public ?string $last_4 = null,
         public ?float $limit = null,
     )
     {
