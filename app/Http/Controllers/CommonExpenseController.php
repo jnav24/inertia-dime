@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Data\ExpenseSpendDto;
 use App\Http\Requests\CommonExpenseRequest;
-use App\Models\Budget;
 use App\Services\CommonExpenseService;
+use Carbon\Carbon;
 
 class CommonExpenseController extends Controller
 {
@@ -16,13 +16,13 @@ class CommonExpenseController extends Controller
     {
         $validated = $request->validated();
 
-        $this->commonExpenseService->getModel($request, $validated['template'])::create([
+        $this->commonExpenseService->getModelByRequest($request, $validated['template'])::create([
             'data' => new ExpenseSpendDto(
                 name: $validated['name'],
                 amount: $validated['amount'],
                 due_date: $validated['due_date'] ?? null,
                 confirmation: $validated['confirmation'] ?? null,
-                paid_date: $validated['paid_date'] ?? null,
+                paid_date: ! empty($validated['paid_date']) ? Carbon::parse($validated['paid_date']) : null,
                 notes: $validated['notes'] ?? null,
             ),
             'expense_type_id' => $validated['account_type'],
@@ -37,7 +37,7 @@ class CommonExpenseController extends Controller
     {
         $validated = $request->validated();
 
-        $template = $this->commonExpenseService->getModel($request, $validated['template'])::query()
+        $template = $this->commonExpenseService->getModelByRequest($request, $validated['template'])::query()
             ->withBudget()
             ->where('uuid', $uuid)
             ->firstOrFail();
@@ -48,7 +48,7 @@ class CommonExpenseController extends Controller
                 amount: $validated['amount'],
                 due_date: $validated['due_date'] ?? null,
                 confirmation: $validated['confirmation'] ?? null,
-                paid_date: $validated['paid_date'] ?? null,
+                paid_date: ! empty($validated['paid_date']) ? Carbon::parse($validated['paid_date']) : null,
                 notes: $validated['notes'] ?? null,
             ),
             'expense_type_id' => $validated['account_type'],
