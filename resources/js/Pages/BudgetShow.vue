@@ -9,13 +9,14 @@ import Plus from '@/Components/Icons/outline/Plus.vue';
 import { toTitleCase } from '@/utils/functions';
 import FormButton from '@/Components/Fields/FormButton.vue';
 import Table from '@/Components/table/Table.vue';
-import { columns } from '@/utils/helpers';
-import { formatDate } from '@/utils/timestamp';
+import { budgetColumns } from '@/utils/helpers';
+import { formatTimeZone } from '@/utils/timestamp';
 import ExpenseModal from '@/Components/modals/ExpenseModal.vue';
 
 type Props = PageProps & {
     budget: any;
     types: any;
+    vehicles: any;
 };
 
 const props = defineProps<Props>();
@@ -61,11 +62,14 @@ onMounted(() => {
             v-model:show="showModal"
             :expense="category"
             :form-data="formData"
+            :errors="errors"
             :notify="flash.message ?? ''"
             :types="types[selectedItem]?.data ?? []"
         />
 
-        <template #header>{{ formatDate('MMM yyyy', budget.data.budget_cycle) }}</template>
+        <template #header>
+            {{ formatTimeZone('MMM yyyy', 'UTC', budget.data.budget_cycle) }}
+        </template>
 
         <AuthenticatedContentLayout>
             <section class="grid grid-cols-4 gap-3">
@@ -83,7 +87,7 @@ onMounted(() => {
                     </div>
 
                     <Table
-                        :columns="[...(columns[selectedItem] ?? [])]"
+                        :columns="[...(budgetColumns[selectedItem] ?? [])]"
                         :empty="{
                             title: `No results found`,
                             content: 'Click the button above to add an expense.',

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\BudgetAggregationResource;
 use App\Http\Resources\BudgetResource;
 use App\Http\Resources\ExpenseTypeResource;
+use App\Http\Resources\UserVehicleResource;
 use App\Models\Budget;
 use App\Models\BudgetTemplate;
 use App\Models\ExpenseType;
@@ -41,7 +42,9 @@ class BudgetController extends Controller
 
         return Inertia::render('Budget', [
             'aggregations' => $aggregations,
-            'budgets' => BudgetResource::collection($budgets),
+            'budgets' => $budgets
+                ->map(fn (Budget $budget) => new BudgetResource($budget))
+                ->groupBy(fn ($budget) => Carbon::parse($budget["budget_cycle"])->format("Y")),
         ]);
     }
 
@@ -74,6 +77,9 @@ class BudgetController extends Controller
         return Inertia::render('BudgetShow', [
             'budget' => new BudgetResource($budget),
             'types' => ExpenseType::grouped()->map(fn ($object) => ExpenseTypeResource::collection($object)),
+            'vehicles' => UserVehicleResource::collection(
+                $user->userVehicles()->get(),
+            ),
         ]);
     }
 
