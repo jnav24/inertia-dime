@@ -2,6 +2,7 @@
 import Typography from '@/Components/Elements/Typography.vue';
 import CheckCircle from '@/Components/Icons/outline/CheckCircle.vue';
 import type { NotificationProps } from '@/types/providers';
+import CloseCircle from '@/Components/Icons/outline/CloseCircle.vue';
 
 defineProps<NotificationProps>();
 </script>
@@ -10,6 +11,7 @@ defineProps<NotificationProps>();
     <section class="flex w-96 items-start space-x-2 rounded-lg bg-dm-stroke px-2 py-5">
         <div>
             <CheckCircle v-if="type === 'success'" classes="size-6 text-primary" />
+            <CloseCircle v-if="type === 'error'" classes="size-6 text-danger" />
         </div>
         <div>
             <Typography variant="body1">
