@@ -25,7 +25,7 @@ const limit = computed(() => convertToDollar(props.expense?.data.limit));
             label="Account Type"
             item-label="name"
             item-value="id"
-            :value="expense?.expense.id"
+            :value="expense?.expense.id ?? ''"
             :rules="['required']"
         />
         <FormInput label="Balance" :rules="['required', 'float:2']" :value="balance" />

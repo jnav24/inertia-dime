@@ -6,6 +6,7 @@ use App\Data\VehicleDto;
 use App\Http\Requests\VehicleExpenseRequest;
 use App\Models\VehicleTemplate;
 use App\Services\CommonExpenseService;
+use Carbon\Carbon;
 
 class VehicleController extends Controller
 {
@@ -20,7 +21,7 @@ class VehicleController extends Controller
             'data' => new VehicleDto(
                 amount: $validated['amount'],
                 balance: $validated['balance'],
-                due_date: $validated['due_date'],
+                due_date: $validated['due_date'] ?? 1,
                 mileage: $validated['mileage'] ?? null,
                 confirmation: $validated['confirmation'] ?? null,
                 notes: $validated['notes'] ?? null,
@@ -48,18 +49,18 @@ class VehicleController extends Controller
             'data' => new VehicleDto(
                 amount: $validated['amount'],
                 balance: $validated['balance'],
-                due_date: $validated['due_date'],
-                mileage: $validated['mileage'],
+                due_date: $validated['due_date'] ?? 1,
+                mileage: $validated['mileage'] ?? null,
                 confirmation: $validated['confirmation'] ?? null,
                 notes: $validated['notes'] ?? null,
-                paid_date: $validated['paid_date'] ?? null,
+                paid_date: ! empty($validated['paid_date']) ? Carbon::parse($validated['paid_date']) : null,
             ),
             'expense_type_id' => $validated['account_type'],
             'user_vehicle_id' => $validated['vehicle'],
         ]);
 
         return redirect()->back()
-            ->with('message', $validated['name'] . ' was created successfully');
+            ->with('message', 'Vehicle was updated successfully');
     }
 
     public function destroy(string $uuid)
