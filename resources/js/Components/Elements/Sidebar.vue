@@ -9,6 +9,7 @@ type Emits = {
 
 type Props = {
     items: string[];
+    badges?: any;
     value?: string;
 };
 
@@ -42,7 +43,13 @@ const handleSelection = (v: string) => {
                 }"
                 @click="handleSelection(item)"
             >
-                {{ toTitleCase(item) }}
+                <span>{{ toTitleCase(item) }}</span>
+                <span
+                    class="flex h-6 min-w-6 items-center justify-center rounded-full bg-danger text-white"
+                    v-if="badges && badges[item]"
+                >
+                    {{ badges[item] < 100 ? badges[item] : 99 }}
+                </span>
             </li>
         </ul>
     </div>

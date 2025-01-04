@@ -16,6 +16,7 @@ import ExpenseModal from '@/Components/modals/ExpenseModal.vue';
 type Props = PageProps & {
     budget: any;
     types: any;
+    unpaid: any;
     vehicles: any;
 };
 
@@ -74,6 +75,7 @@ onMounted(() => {
         <AuthenticatedContentLayout>
             <section class="grid grid-cols-4 gap-3">
                 <Sidebar
+                    :badges="unpaid"
                     :value="defaultCategory"
                     :items="categories"
                     @on-selection="selectedItem = $event"
