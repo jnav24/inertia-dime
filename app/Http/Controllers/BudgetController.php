@@ -74,12 +74,14 @@ class BudgetController extends Controller
         $user = auth()->user();
 
         $budget = $user->budgets()->withExpenses()->where('uuid', $uuid)->firstOrFail();
+
         return Inertia::render('BudgetShow', [
             'budget' => new BudgetResource($budget),
             'types' => ExpenseType::grouped()->map(fn ($object) => ExpenseTypeResource::collection($object)),
             'vehicles' => UserVehicleResource::collection(
                 $user->userVehicles()->get(),
             ),
+            'unpaid' => $this->commonExpenseService->getUnPaid($budget),
         ]);
     }
 

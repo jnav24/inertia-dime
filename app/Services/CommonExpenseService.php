@@ -247,6 +247,20 @@ class CommonExpenseService
         );
     }
 
+    /**
+     * @param Budget $budget
+     * @return array<string, int>
+     */
+    public function getUnPaid(Budget $budget): array
+    {
+        return array_reduce(ExpenseTypeEnum::spend(), function ($result, $item) use ($budget) {
+            $result[$item] = $budget->{$item}->reduce(function ($res, $expense) {
+                return empty($expense->data->confirmation) ? $res + 1 : $res;
+            }, 0);
+            return $result;
+        }, []);
+    }
+
     private function getKey(Request $request): string
     {
         $list = explode('/', $request->path());
