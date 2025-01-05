@@ -6,12 +6,13 @@ import { PageProps } from '@/types/providers';
 import { computed, onMounted, ref } from 'vue';
 import Sidebar from '@/Components/Elements/Sidebar.vue';
 import Plus from '@/Components/Icons/outline/Plus.vue';
-import { toTitleCase } from '@/utils/functions';
+import { convertToCurrency, toTitleCase } from '@/utils/functions';
 import FormButton from '@/Components/Fields/FormButton.vue';
 import Table from '@/Components/table/Table.vue';
 import { budgetColumns } from '@/utils/helpers';
 import { formatTimeZone } from '@/utils/timestamp';
 import ExpenseModal from '@/Components/modals/ExpenseModal.vue';
+import Typography from '@/Components/Elements/Typography.vue';
 
 type Props = PageProps & {
     budget: any;
@@ -35,6 +36,16 @@ const category = computed(() => {
     };
 
     return categories[selectedItem.value] ?? selectedItem.value;
+});
+
+const expenseTotal = computed(() => {
+    return convertToCurrency(
+        props.budget.data.expenses[selectedItem.value]?.reduce(
+            (result: number, item: { data: { amount: number } }) =>
+                result + Number(item.data.amount ?? 0),
+            0,
+        ),
+    );
 });
 
 const handleColumnEvent = (e: { type: string; obj: any }) => {
@@ -82,7 +93,17 @@ onMounted(() => {
                 />
 
                 <div class="col-span-4 ml-3 mr-4 sm:mx-0 md:col-span-3">
-                    <div class="mb-4 text-right">
+                    <div class="mb-4 flex items-end justify-between">
+                        <div>
+                            <div class="flex items-center space-x-2">
+                                <Typography variant="body2">
+                                    <span class="">Total</span>
+                                </Typography>
+                                <Typography variant="body1">
+                                    <span class="font-bold">{{ expenseTotal }}</span>
+                                </Typography>
+                            </div>
+                        </div>
                         <FormButton color="primary" :icon="Plus" @click="showModal = true">
                             Add {{ toTitleCase(selectedItem) }}
                         </FormButton>
