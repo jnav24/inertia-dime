@@ -13,6 +13,8 @@ import { budgetColumns } from '@/utils/helpers';
 import { formatTimeZone } from '@/utils/timestamp';
 import ExpenseModal from '@/Components/modals/ExpenseModal.vue';
 import Typography from '@/Components/Elements/Typography.vue';
+import SavedWidget from '@/Components/SavedWidget.vue';
+import BudgetSummary from '@/Components/BudgetSummary.vue';
 
 type Props = PageProps & {
     budget: any;
@@ -84,7 +86,16 @@ onMounted(() => {
         </template>
 
         <AuthenticatedContentLayout>
-            <section class="grid grid-cols-4 gap-3">
+            <section class="grid grid-cols-5 items-center gap-8">
+                <div class="col-span-2">
+                    <SavedWidget />
+                </div>
+                <div class="col-span-3">
+                    <BudgetSummary :aggregation="budget.data.aggregation" />
+                </div>
+            </section>
+
+            <section class="mt-12 grid grid-cols-4 gap-3">
                 <Sidebar
                     :badges="unpaid"
                     :value="defaultCategory"
