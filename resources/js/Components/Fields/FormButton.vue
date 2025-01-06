@@ -17,10 +17,11 @@ const props = withDefaults(
         fab?: boolean;
         filled?: boolean;
         icon?: ConcreteComponent | string;
+        iconPosition?: 'left' | 'right';
         submit?: boolean;
         size?: 'xs' | 'sm' | 'md' | 'lg';
     }>(),
-    { color: 'default' },
+    { color: 'default', iconPosition: 'left' },
 );
 
 const isDisabled = computed(() => props.disabled || formContext?.isSubmitting?.value || false);
@@ -57,8 +58,9 @@ const setIcon = () => {
         :type="submit ? 'submit' : 'button'"
     >
         <span class="flex flex-row items-center justify-center space-x-2">
-            <component v-if="icon" :is="setIcon()" class="size-4" />
+            <component v-if="icon && iconPosition === 'left'" :is="setIcon()" class="size-4" />
             <span v-if="$slots.default"><slot /></span>
+            <component v-if="icon && iconPosition === 'right'" :is="setIcon()" class="size-4" />
         </span>
     </button>
 </template>
