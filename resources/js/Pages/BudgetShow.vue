@@ -88,7 +88,10 @@ onMounted(() => {
         <AuthenticatedContentLayout>
             <section class="grid grid-cols-5 items-center gap-8">
                 <div class="col-span-2">
-                    <SavedWidget />
+                    <SavedWidget
+                        :savings="budget.data.aggregation.data.saved"
+                        :total="budget.data.aggregation.data.earned"
+                    />
                 </div>
                 <div class="col-span-3">
                     <BudgetSummary :aggregation="budget.data.aggregation" />
