@@ -43,7 +43,7 @@ const setIcon = () => {
                 color === 'default' && !isDisabled,
             'active:bg-dark-primary bg-dm-primary text-white hover:bg-opacity-85':
                 color === 'primary' && !isDisabled,
-            'active:bg-dark-secondary bg-secondary text-gray-700 hover:bg-opacity-85':
+            'bg-dm-secondary text-white hover:bg-opacity-85 active:bg-secondary':
                 color === 'secondary' && !isDisabled,
             'bg-dm-danger text-white hover:bg-opacity-85 active:bg-danger':
                 color === 'danger' && !isDisabled,
