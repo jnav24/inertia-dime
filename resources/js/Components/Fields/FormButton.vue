@@ -45,7 +45,7 @@ const setIcon = () => {
                 color === 'primary' && !isDisabled,
             'active:bg-dark-secondary bg-secondary text-gray-700 hover:bg-opacity-85':
                 color === 'secondary' && !isDisabled,
-            'active:bg-dark-danger bg-danger hover:bg-opacity-85':
+            'bg-dm-danger text-white hover:bg-opacity-85 active:bg-danger':
                 color === 'danger' && !isDisabled,
             'rounded-full p-2': fab,
             'rounded-md p-1': checkbox,
