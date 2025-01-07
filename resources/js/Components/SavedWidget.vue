@@ -3,7 +3,8 @@ import ArrowTopRightSquare from '@/Components/Icons/outline/ArrowTopRightSquare.
 import FormButton from '@/Components/Fields/FormButton.vue';
 import Typography from '@/Components/Elements/Typography.vue';
 import Library from '@/Components/Icons/outline/Library.vue';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
+import SavingsModal from '@/Components/modals/SavingsModal.vue';
 
 type Props = {
     savings: number;
@@ -14,10 +15,14 @@ const props = defineProps<Props>();
 
 const MIN = 20;
 
+const showModal = ref(false);
+
 const percentage = computed(() => (props.savings / props.total) * 100);
 </script>
 
 <template>
+    <SavingsModal v-model:show="showModal" />
+
     <div
         class="relative overflow-hidden rounded-xl bg-gradient-to-r px-4 py-2"
         :class="{
@@ -45,6 +50,7 @@ const percentage = computed(() => (props.savings / props.total) * 100);
                 :color="percentage < MIN ? 'danger' : 'primary'"
                 :icon="ArrowTopRightSquare"
                 icon-position="right"
+                @onclick="showModal = true"
             >
                 More Info
             </FormButton>
