@@ -57,11 +57,11 @@ const startNumber = computed(() => 1 + selected.value * (page.value - 1));
                 <template v-if="pages < allowedLinks">
                     <FormButton
                         v-for="num in pages"
-                        :color="page === num + 1 ? 'default' : 'secondary'"
+                        :color="page === num ? 'default' : 'secondary'"
                         :key="num"
-                        @click="$emit('page-change', pages)"
+                        @click="$emit('page-change', num)"
                     >
-                        {{ num + 1 }}
+                        {{ num }}
                     </FormButton>
                 </template>
                 <FormButton fab :disabled="page === pages" @click="$emit('page-change', pages)">
