@@ -31,6 +31,7 @@ class BudgetController extends Controller
         $budgets = $user
             ->budgets()
             ->with('aggregation')
+            ->latest('budget_cycle')
             ->get();
 
         $aggregations = $budgets
