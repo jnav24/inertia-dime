@@ -110,7 +110,7 @@ const columns: Column<Report>[] = [
         content: {
             component: ColumnBasic as ColumnComponent<Report>,
             props: (obj: Report) => ({
-                value: formatDate('MMM yyyy', obj.budget_cycle),
+                value: formatDate('MMM dd yyyy', obj.budget_cycle),
             }),
         },
         colspan: 2,
