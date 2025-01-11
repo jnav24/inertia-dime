@@ -129,7 +129,7 @@ onMounted(() => {
                             title: `No results found`,
                             content: 'Click the button above to add an expense.',
                         }"
-                        :paginate="{ options: [15], selected: 15, current: 1 }"
+                        :paginate="{ options: [10], selected: 10, current: 1 }"
                         :items="budget.data.expenses[selectedItem]"
                         @column-event="handleColumnEvent($event)"
                     />
