@@ -5,6 +5,8 @@ import FormSelect from '@/Components/Fields/FormSelect.vue';
 import ChevronDoubleLeft from '@/Components/Icons/outline/ChevronDoubleLeft.vue';
 import ChevronDoubleRight from '@/Components/Icons/outline/ChevronDoubleRight.vue';
 import { computed, toRefs } from 'vue';
+import ChevronLeft from '@/Components/Icons/outline/ChevronLeft.vue';
+import ChevronRight from '@/Components/Icons/outline/ChevronRight.vue';
 
 type Emits = { (e: 'page-change', v: number): void; (e: 'selection', v: number): void };
 
@@ -13,10 +15,11 @@ type Props = {
     page: number;
     selected: number;
     total: number;
+    variant?: 'full' | 'short' | 'numeric';
 };
 
 defineEmits<Emits>();
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), { variant: 'short' });
 const { options, page, selected, total } = toRefs(props);
 
 const allowedLinks = 5;
@@ -51,10 +54,17 @@ const startNumber = computed(() => 1 + selected.value * (page.value - 1));
 
         <div class="flex flex-row items-center space-x-2">
             <template v-if="pages > 1">
-                <FormButton fab :disabled="page === 1" @click="$emit('page-change', 1)">
-                    <ChevronDoubleLeft classes="size-4" />
+                <template v-if="variant !== 'short'">
+                    <FormButton checkbox :disabled="page === 1" @click="$emit('page-change', 1)">
+                        <ChevronDoubleLeft
+                            :classes="`size-4 ${page === 1 ? 'text-gray-400' : ''}`"
+                        />
+                    </FormButton>
+                </template>
+                <FormButton checkbox :disabled="page === 1" @click="$emit('page-change', page - 1)">
+                    <ChevronLeft :classes="`size-4 ${page === 1 ? 'text-gray-400' : ''}`" />
                 </FormButton>
-                <template v-if="pages < allowedLinks">
+                <template v-if="variant !== 'short' && pages < allowedLinks">
                     <FormButton
                         v-for="num in pages"
                         :color="page === num ? 'default' : 'secondary'"
@@ -64,9 +74,24 @@ const startNumber = computed(() => 1 + selected.value * (page.value - 1));
                         {{ num }}
                     </FormButton>
                 </template>
-                <FormButton fab :disabled="page === pages" @click="$emit('page-change', pages)">
-                    <ChevronDoubleRight classes="size-4" />
+                <FormButton
+                    checkbox
+                    :disabled="page === pages"
+                    @click="$emit('page-change', page + 1)"
+                >
+                    <ChevronRight :classes="`size-4 ${page === pages ? 'text-gray-400' : ''}`" />
                 </FormButton>
+                <template v-if="variant !== 'short'">
+                    <FormButton
+                        checkbox
+                        :disabled="page === pages"
+                        @click="$emit('page-change', pages)"
+                    >
+                        <ChevronDoubleRight
+                            :classes="`size-4 ${page === pages ? 'text-gray-400' : ''}`"
+                        />
+                    </FormButton>
+                </template>
             </template>
         </div>
     </div>
