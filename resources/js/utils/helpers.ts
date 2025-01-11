@@ -49,9 +49,12 @@ const commonSpendColumn: Column<ValueOfExpense>[] = [
 const paidDateColumn: Column<ValueOfExpense> = {
     content: {
         component: ColumnBasic as ColumnComponent<ValueOfExpense>,
-        props: (obj) => ({
-            value: formatTimeZone('MMM d', 'UTC', parseNested(obj, 'data.paid_date')),
-        }),
+        props: (obj) => {
+            const paidDate = parseNested(obj, 'data.paid_date');
+            return {
+                value: paidDate ? formatTimeZone('MMM d', 'UTC', paidDate) : '',
+            };
+        },
     },
     label: 'Paid Date',
     colspan: 2,

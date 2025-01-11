@@ -23,10 +23,16 @@ const { error, labelId, getInputValue, updateInputValue } = useForm({
     rules: props.rules,
 });
 
-const container = ref(null);
+const container = ref<HTMLDivElement | null>(null);
 const selected = ref(false);
 
-const formatValue = computed(() => formatTimeZone('yyyy-MM-dd', 'UTC', getInputValue.value));
+const formatValue = computed(() => {
+    if (!getInputValue.value) {
+        return '';
+    }
+
+    return formatTimeZone('yyyy-MM-dd', 'UTC', getInputValue.value);
+});
 
 const offClickHandler = (e: Event) => {
     if (container.value && !container.value.contains(e.target as Node)) {
