@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, reactive, ref, watchEffect } from 'vue';
+import { computed, reactive, ref, watch, watchEffect } from 'vue';
 import TableEmpty, { Props as TableEmptyProps } from '@/Components/table/TableEmpty.vue';
 import FormCheckbox from '@/Components/Fields/FormCheckbox.vue';
 import TableRow from '@/Components/table/TableRow.vue';
@@ -71,6 +71,13 @@ const setAllChecked = (v: boolean) => (allChecked.value = v);
 const toggleCheckedItem = (v: number) => {
     // @todo
 };
+
+watch(
+    () => props.items,
+    () => {
+        paginateState.current = 1;
+    },
+);
 </script>
 
 <template>
