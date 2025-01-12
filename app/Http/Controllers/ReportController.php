@@ -38,13 +38,13 @@ class ReportController extends Controller
             $validated = $request->validate([
                 'expense' => ['required'],
                 'year' => ['required', 'digits:4'],
-                'type' => ['required', 'uuid'],
+                'type' => ['nullable', 'uuid'],
                 'keywords' => ['nullable', 'string'],
             ]);
 
             $results = Budget::query()
                 ->with([
-                    $validated['expense'] => fn ($q) => $q->where('expense_type_id', $validated['type']),
+                    $validated['expense'] => fn ($q) => ! empty($validated['types']) ? $q->where('expense_type_id', $validated['type']) : $q,
                 ])
                 ->where('user_id', $user->id)
                 ->where('budget_cycle', 'LIKE', $validated['year'] . '%')

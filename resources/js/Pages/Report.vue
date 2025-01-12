@@ -168,7 +168,6 @@ const columns: Column<Report>[] = [
                                 item-label="name"
                                 item-value="id"
                                 :value="form.type"
-                                :rules="['required']"
                                 @handle-selection="form.type = `${$event}`"
                             />
                             <FormInput label="Keywords" value="" />
