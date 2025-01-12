@@ -16,7 +16,7 @@ import Typography from '@/Components/Elements/Typography.vue';
 import ArrowUp from '@/Components/Icons/outline/ArrowUp.vue';
 import { ChartDatasetCustomTypesPerDataset } from 'chart.js/auto';
 import ArrowDown from '@/Components/Icons/outline/ArrowDown.vue';
-import { formatDate } from '@/utils/timestamp';
+import { formatTimeZone } from '@/utils/timestamp';
 import ColumnBasic from '@/Components/table/ColumnBasic.vue';
 import { Column, ColumnComponent } from '@/types/table';
 import { Expenses, ExpenseType } from '@/types/expenses';
@@ -110,7 +110,7 @@ const columns: Column<Report>[] = [
         content: {
             component: ColumnBasic as ColumnComponent<Report>,
             props: (obj: Report) => ({
-                value: formatDate('MMM dd yyyy', obj.budget_cycle),
+                value: formatTimeZone('MMM dd yyyy', 'UTC', obj.budget_cycle),
             }),
         },
         colspan: 2,
