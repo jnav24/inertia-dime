@@ -10,7 +10,7 @@ import FormButton from '@/Components/Fields/FormButton.vue';
 import LineChart from '@/Components/Charts/LineChart.vue';
 import Table from '@/Components/table/Table.vue';
 import { PageProps } from '@/types/providers';
-import { computed, reactive } from 'vue';
+import { computed, onUpdated, reactive, ref } from 'vue';
 import { convertToCurrency, toTitleCase, ucFirst } from '@/utils/functions';
 import Typography from '@/Components/Elements/Typography.vue';
 import ArrowUp from '@/Components/Icons/outline/ArrowUp.vue';
@@ -89,53 +89,114 @@ const form = reactive<ExpenseForm>({
     year: new Date().getFullYear().toString(),
 });
 
-const columns: Column<Report>[] = [
-    {
-        label: 'Name',
-        content: 'data.name',
-        colspan: 4,
-    },
-    {
-        label: 'Amount',
-        content: {
-            component: ColumnBasic as ColumnComponent<Report>,
-            props: (obj: Report) => ({
-                value: convertToCurrency(obj.data.amount),
-            }),
+const columns = ref<Column<Report>[]>([]);
+
+const setColumns = () => {
+    columns.value = [
+        {
+            label: 'Name',
+            content: 'data.name',
+            colspan: 4,
         },
-        colspan: 2,
-    },
-    {
-        label: 'Date',
-        content: {
-            component: ColumnBasic as ColumnComponent<Report>,
-            props: (obj: Report) => ({
-                value: formatTimeZone('MMM dd yyyy', 'UTC', obj.budget_cycle),
-            }),
+        {
+            label: 'Amount',
+            content: {
+                component: ColumnBasic as ColumnComponent<Report>,
+                props: (obj: Report) => ({
+                    value: convertToCurrency(obj.data.amount),
+                }),
+            },
+            colspan: 2,
         },
-        colspan: 2,
-    },
-    {
-        label: 'Expense',
-        content: {
-            component: ColumnBasic as ColumnComponent<Report>,
-            props: (_obj: Report) => ({
-                value: ucFirst(form.expense),
-            }),
-        },
-        colspan: 2,
-    },
-    {
-        label: 'Type',
-        content: {
-            component: ColumnBasic as ColumnComponent<Report>,
-            props: (_obj: Report) => ({
-                value: props.types[form.expense]?.data.find((t) => t.id === form.type)?.name ?? '',
-            }),
-        },
-        colspan: 2,
-    },
-];
+        ...(form.expense === 'incomes'
+            ? [
+                  {
+                      label: 'Pay Date',
+                      content: {
+                          component: ColumnBasic as ColumnComponent<Report>,
+                          props: (obj: Report) => ({
+                              value: formatTimeZone(
+                                  'MMM dd yyyy',
+                                  'UTC',
+                                  (obj.data as any).pay_date,
+                              ),
+                          }),
+                      },
+                      colspan: 2,
+                  },
+              ]
+            : []),
+        ...(!['banks', 'incomes', 'investments'].includes(form.expense)
+            ? [
+                  {
+                      label: 'Paid Date',
+                      content: {
+                          component: ColumnBasic as ColumnComponent<Report>,
+                          props: (obj: Report) => ({
+                              value: formatTimeZone(
+                                  'MMM dd yyyy',
+                                  'UTC',
+                                  (obj.data as any).paid_date,
+                              ),
+                          }),
+                      },
+                      colspan: 2,
+                  },
+                  {
+                      label: 'Confirmation',
+                      content: {
+                          component: ColumnBasic as ColumnComponent<Report>,
+                          props: (obj: Report) => ({
+                              value: (obj.data as any).confirmation,
+                          }),
+                      },
+                      colspan: 2,
+                  },
+              ]
+            : [
+                  {
+                      label: 'Budget',
+                      content: {
+                          component: ColumnBasic as ColumnComponent<Report>,
+                          props: (obj: Report) => ({
+                              value: formatTimeZone('MMM dd yyyy', 'UTC', obj.budget_cycle),
+                          }),
+                      },
+                      colspan: 2,
+                  },
+              ]),
+        // {
+        //     label: 'Expense',
+        //     content: {
+        //         component: ColumnBasic as ColumnComponent<Report>,
+        //         props: (_obj: Report) => ({
+        //             value: ucFirst(form.expense),
+        //         }),
+        //     },
+        //     colspan: 2,
+        // },
+        ...(form.type
+            ? [
+                  {
+                      label: 'Type',
+                      content: {
+                          component: ColumnBasic as ColumnComponent<Report>,
+                          props: (_obj: Report) => ({
+                              value:
+                                  props.types[form.expense]?.data.find((t) => t.id === form.type)
+                                      ?.name ?? '',
+                          }),
+                      },
+                      colspan: 2,
+                  },
+              ]
+            : []),
+    ];
+};
+
+onUpdated(() => {
+    setColumns();
+});
 </script>
 
 <template>
@@ -246,7 +307,7 @@ const columns: Column<Report>[] = [
                     </div>
                 </Card>
 
-                <Table :columns="columns" :items="reportData" />
+                <Table :columns="columns as Column<Report>[]" :items="reportData" />
             </section>
         </AuthenticatedContentLayout>
     </AuthenticatedLayout>
