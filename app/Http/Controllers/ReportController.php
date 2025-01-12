@@ -50,10 +50,15 @@ class ReportController extends Controller
                 ->where('budget_cycle', 'LIKE', $validated['year'] . '%')
                 ->get()
                 ->map(function (Budget $budget) use ($validated) {
-                    return $budget->{$validated['expense']}->map(function ($ex) use ($budget) {
-                        $ex->budget_cycle = $budget->budget_cycle;
-                        return new ReportResource($ex);
-                    });
+                    return $budget->{$validated['expense']}
+                        ->filter(function ($ex) use ($budget, $validated) {
+                            return empty($validated['keywords']) ||
+                                str_contains(strtolower($ex->data?->name), strtolower($validated['keywords']));
+                        })
+                        ->map(function ($ex) use ($budget) {
+                            $ex->budget_cycle = $budget->budget_cycle;
+                            return new ReportResource($ex);
+                        });
                 })
                 ->flatten()
                 ->groupBy(
