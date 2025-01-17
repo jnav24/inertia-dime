@@ -23,6 +23,6 @@ defineProps<Props>();
             <FormDatePicker label="Paid Date" :value="expense?.data.paid_date" />
         </div>
 
-        <FormTextarea label="Notes" />
+        <FormTextarea label="Notes" :value="expense?.data.notes" />
     </div>
 </template>
