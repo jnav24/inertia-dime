@@ -25,7 +25,7 @@ class VehicleController extends Controller
                 mileage: $validated['mileage'] ?? null,
                 confirmation: $validated['confirmation'] ?? null,
                 notes: $validated['notes'] ?? null,
-                paid_date: $validated['paid_date'] ?? null,
+                paid_date: ! empty($validated['paid_date']) ? Carbon::parse($validated['paid_date']) : null,
             ),
             'expense_type_id' => $validated['account_type'],
             'user_vehicle_id' => $validated['vehicle'],
@@ -33,7 +33,7 @@ class VehicleController extends Controller
         ]);
 
         return redirect()->back()
-            ->with('message', $validated['name'] . ' was created successfully');
+            ->with('message', 'Expense was created successfully');
     }
 
     public function update(VehicleExpenseRequest $request, string $uuid)
@@ -60,7 +60,7 @@ class VehicleController extends Controller
         ]);
 
         return redirect()->back()
-            ->with('message', 'Vehicle was updated successfully');
+            ->with('message', 'Expense was updated successfully');
     }
 
     public function destroy(string $uuid)
