@@ -15,6 +15,8 @@ import ExpenseModal from '@/Components/modals/ExpenseModal.vue';
 import Typography from '@/Components/Elements/Typography.vue';
 import SavedWidget from '@/Components/SavedWidget.vue';
 import BudgetSummary from '@/Components/BudgetSummary.vue';
+import ConfirmModal from '@/Components/modals/ConfirmModal.vue';
+import { ValueOfExpense } from '@/types/expenses';
 
 type Props = PageProps & {
     budget: any;
@@ -29,6 +31,7 @@ const categories = ref<string[]>([]);
 const formData = ref(undefined);
 const showModal = ref(false);
 const selectedItem = ref('');
+const toBeDeleted = ref<null | string>(null);
 
 const defaultCategory = computed(() => categories.value?.[0] ?? 'banks');
 
@@ -57,7 +60,7 @@ const handleColumnEvent = (e: { type: string; obj: any }) => {
             showModal.value = true;
             break;
         case 'delete':
-            console.log('open delete confirm');
+            toBeDeleted.value = (e.obj as ValueOfExpense).id;
             break;
     }
 };
@@ -80,6 +83,7 @@ onMounted(() => {
             :notify="flash.message ?? ''"
             :types="types[selectedItem]?.data ?? []"
         />
+        <ConfirmModal :id="toBeDeleted" :expense="category" @close-modal="toBeDeleted = null" />
 
         <template #header>
             {{ formatTimeZone('MMM yyyy', 'UTC', budget.data.budget_cycle) }}

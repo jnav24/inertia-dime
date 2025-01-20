@@ -12,6 +12,8 @@ import { columns } from '@/utils/helpers';
 import { toTitleCase } from '@/utils/functions';
 import { PageProps } from '@/types/providers';
 import { UserVehicle } from '@/types/expenses';
+import ConfirmModal from '@/Components/modals/ConfirmModal.vue';
+import { ValueOfExpense } from '@/types/expenses';
 
 type Props = PageProps & {
     budgetTemplate: any;
@@ -26,6 +28,7 @@ const categories = ref<string[]>([]);
 const formData = ref(undefined);
 const showModal = ref(false);
 const selectedItem = ref('');
+const toBeDeleted = ref<null | string>(null);
 
 const defaultCategory = computed(() => categories.value?.[0] ?? 'banks');
 
@@ -41,7 +44,7 @@ const handleColumnEvent = (e: { type: string; obj: any }) => {
             showModal.value = true;
             break;
         case 'delete':
-            console.log('open delete confirm');
+            toBeDeleted.value = (e.obj as ValueOfExpense).id;
             break;
     }
 };
@@ -69,9 +72,11 @@ watch(showModal, (v) => {
             v-model:show="showModal"
             :expense="category"
             :form-data="formData"
+            :errors="errors"
             :notify="flash.message ?? ''"
             :types="types[selectedItem]?.data ?? []"
         />
+        <ConfirmModal :id="toBeDeleted" :expense="category" @close-modal="toBeDeleted = null" />
 
         <template #header> Budget Template</template>
 
