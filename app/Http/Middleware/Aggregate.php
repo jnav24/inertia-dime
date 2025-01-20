@@ -25,7 +25,7 @@ class Aggregate
 
         $user = auth()->user();
 
-        if (is_string($uuid) && in_array($request->method(), ['POST', 'PATCH']) && ! empty($user)) {
+        if (is_string($uuid) && in_array($request->method(), ['POST', 'PATCH', 'DELETE']) && ! empty($user)) {
             AggregateJob::dispatch(uuid: $uuid, user: $user);
         }
 
