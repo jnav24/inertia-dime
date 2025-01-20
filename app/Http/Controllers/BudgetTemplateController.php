@@ -55,11 +55,4 @@ class BudgetTemplateController extends Controller
 
         return new BudgetTemplateResource($budgetTemplate);
     }
-
-    public function destroy(BudgetTemplate $budgetTemplate)
-    {
-        $budgetTemplate->delete();
-
-        return response()->json();
-    }
 }

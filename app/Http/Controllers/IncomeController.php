@@ -51,4 +51,7 @@ class IncomeController extends Controller
         return redirect()->back()
             ->with('message', $validated['name'] . ' was updated successfully');
     }
+
+    public function destroy()
+    {}
 }
