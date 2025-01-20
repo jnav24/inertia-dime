@@ -6,13 +6,15 @@ use App\Data\ExpenseSpendDto;
 use App\Http\Requests\CommonExpenseRequest;
 use App\Services\CommonExpenseService;
 use Carbon\Carbon;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 class CommonExpenseController extends Controller
 {
     public function __construct(protected CommonExpenseService $commonExpenseService)
     {}
 
-    public function store(CommonExpenseRequest $request)
+    public function store(CommonExpenseRequest $request): RedirectResponse
     {
         $validated = $request->validated();
 
@@ -33,7 +35,7 @@ class CommonExpenseController extends Controller
             ->with('message', $validated['name'] . ' was created successfully');
     }
 
-    public function update(CommonExpenseRequest $request, string $uuid)
+    public function update(CommonExpenseRequest $request, string $uuid): RedirectResponse
     {
         $validated = $request->validated();
 
@@ -56,5 +58,24 @@ class CommonExpenseController extends Controller
 
         return redirect()->back()
             ->with('message', $validated['name'] . ' was updated successfully');
+    }
+
+    public function destroy(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'id' => ['required', 'uuid'],
+            'template' => ['required', 'bool'],
+        ]);
+
+        $expense = $this->commonExpenseService->getModelByRequest($request, $validated['template'])::query()
+            ->where('uuid', $validated['id'])
+            ->first();
+
+        if (! empty($expense)) {
+            $expense->delete();
+        }
+
+        return redirect()->back()
+            ->with('message', $expense->data->name . ' was deleted successfully');
     }
 }
