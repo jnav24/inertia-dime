@@ -44,7 +44,7 @@ class ReportController extends Controller
 
             $results = Budget::query()
                 ->with([
-                    $validated['expense'] => fn ($q) => ! empty($validated['types']) ? $q->where('expense_type_id', $validated['type']) : $q,
+                    $validated['expense'] => fn ($q) => ! empty($validated['type']) ? $q->where('expense_type_id', $validated['type']) : $q,
                 ])
                 ->where('user_id', $user->id)
                 ->where('budget_cycle', 'LIKE', $validated['year'] . '%')
