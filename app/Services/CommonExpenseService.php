@@ -261,6 +261,24 @@ class CommonExpenseService
         }, []);
     }
 
+    public function deleteExpense(Request $request): string
+    {
+        $validated = $request->validate([
+            'id' => ['required', 'uuid'],
+            'template' => ['required', 'bool'],
+        ]);
+
+        $expense = $this->getModelByRequest($request, $validated['template'])::query()
+            ->where('uuid', $validated['id'])
+            ->first();
+
+        if (! empty($expense)) {
+            $expense->delete();
+        }
+
+        return $expense?->data?->name ?? 'Item';
+    }
+
     private function getKey(Request $request): string
     {
         $list = explode('/', $request->path());
