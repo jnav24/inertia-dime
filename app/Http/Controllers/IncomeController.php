@@ -6,14 +6,17 @@ use App\Data\IncomeDto;
 use App\Http\Requests\GainExpenseRequest;
 use App\Services\CommonExpenseService;
 use Carbon\Carbon;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 class IncomeController extends Controller
 {
     public function __construct(protected CommonExpenseService $commonExpenseService)
     {}
 
-    public function store(GainExpenseRequest $request)
+    public function store(GainExpenseRequest $request): RedirectResponse
     {
+        /** @var array{name: string, amount: float, pay_date: string, template: bool, account_type: string} $validated */
         $validated = $request->validated();
 
         $this->commonExpenseService->getModelByRequest($request, $validated['template'])::create([
@@ -30,7 +33,7 @@ class IncomeController extends Controller
             ->with('message', $validated['name'] . ' was created successfully');
     }
 
-    public function update(GainExpenseRequest $request, string $uuid)
+    public function update(GainExpenseRequest $request, string $uuid): RedirectResponse
     {
         $validated = $request->validated();
 
@@ -52,6 +55,11 @@ class IncomeController extends Controller
             ->with('message', $validated['name'] . ' was updated successfully');
     }
 
-    public function destroy()
-    {}
+    public function destroy(Request $request): RedirectResponse
+    {
+        $name = $this->commonExpenseService->deleteExpense($request);
+
+        return redirect()->back()
+            ->with('message', $name . ' was deleted successfully');
+    }
 }

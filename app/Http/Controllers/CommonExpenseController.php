@@ -62,20 +62,9 @@ class CommonExpenseController extends Controller
 
     public function destroy(Request $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'id' => ['required', 'uuid'],
-            'template' => ['required', 'bool'],
-        ]);
-
-        $expense = $this->commonExpenseService->getModelByRequest($request, $validated['template'])::query()
-            ->where('uuid', $validated['id'])
-            ->first();
-
-        if (! empty($expense)) {
-            $expense->delete();
-        }
+        $name = $this->commonExpenseService->deleteExpense($request);
 
         return redirect()->back()
-            ->with('message', $expense->data->name . ' was deleted successfully');
+            ->with('message', $name . ' was deleted successfully');
     }
 }
