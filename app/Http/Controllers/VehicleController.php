@@ -7,13 +7,15 @@ use App\Http\Requests\VehicleExpenseRequest;
 use App\Models\VehicleTemplate;
 use App\Services\CommonExpenseService;
 use Carbon\Carbon;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 class VehicleController extends Controller
 {
     public function __construct(protected CommonExpenseService $commonExpenseService)
     {}
 
-    public function store(VehicleExpenseRequest $request)
+    public function store(VehicleExpenseRequest $request): RedirectResponse
     {
         $validated = $request->validated();
 
@@ -36,7 +38,7 @@ class VehicleController extends Controller
             ->with('message', 'Expense was created successfully');
     }
 
-    public function update(VehicleExpenseRequest $request, string $uuid)
+    public function update(VehicleExpenseRequest $request, string $uuid): RedirectResponse
     {
         $validated = $request->validated();
 
@@ -63,7 +65,11 @@ class VehicleController extends Controller
             ->with('message', 'Expense was updated successfully');
     }
 
-    public function destroy(string $uuid)
+    public function destroy(Request $request): RedirectResponse
     {
+        $name = $this->commonExpenseService->deleteExpense($request);
+
+        return redirect()->back()
+            ->with('message', $name . ' was deleted successfully');
     }
 }
