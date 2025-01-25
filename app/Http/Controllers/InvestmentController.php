@@ -4,9 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Data\ExpenseGainDto;
 use App\Http\Requests\GainExpenseRequest;
-use App\Models\Banks;
-use App\Models\InvestmentTemplate;
 use App\Services\CommonExpenseService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class InvestmentController extends Controller
@@ -14,7 +13,7 @@ class InvestmentController extends Controller
     public function __construct(protected CommonExpenseService $commonExpenseService)
     {}
 
-    public function store(GainExpenseRequest $request)
+    public function store(GainExpenseRequest $request): RedirectResponse
     {
         $validated = $request->validated();
 
@@ -31,7 +30,7 @@ class InvestmentController extends Controller
             ->with('message', $validated['name'] . ' was created successfully');
     }
 
-    public function update(GainExpenseRequest $request, string $uuid)
+    public function update(GainExpenseRequest $request, string $uuid): RedirectResponse
     {
         $validated = $request->validated();
 
@@ -52,10 +51,11 @@ class InvestmentController extends Controller
             ->with('message', $validated['name'] . ' was updated successfully');
     }
 
-    public function destroy(string $uuid)
+    public function destroy(Request $request): RedirectResponse
     {
-//        $banks->delete();
-//
-//        return response()->json();
+        $name = $this->commonExpenseService->deleteExpense($request);
+
+        return redirect()->back()
+            ->with('message', $name . ' was deleted successfully');
     }
 }
