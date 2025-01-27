@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Data\UserVehicleDto;
 use App\Http\Requests\UserVehicleRequest;
 use App\Models\UserVehicle;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 class UserVehicleController extends Controller
 {
-    public function store(UserVehicleRequest $request)
+    public function store(UserVehicleRequest $request): RedirectResponse
     {
         $validated = $request->validated();
 
@@ -27,7 +29,7 @@ class UserVehicleController extends Controller
             ->with('message', 'Vehicle was created successfully');
     }
 
-    public function update(UserVehicleRequest $request, string $uuid)
+    public function update(UserVehicleRequest $request, string $uuid): RedirectResponse
     {
         $validated = $request->validated();
         $userVehicle = UserVehicle::query()
@@ -49,6 +51,22 @@ class UserVehicleController extends Controller
             ->with('message', 'Vehicle was updated successfully');
     }
 
-    public function destroy(string $uuid)
-    {}
+    public function destroy(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'id' => ['required', 'uuid'],
+        ]);
+
+        $userVehicle = UserVehicle::query()
+            ->where('uuid', $validated['id'])
+            ->where('user_id', auth()->user()->id)
+            ->first();
+
+        if (! empty($userVehicle)) {
+            $userVehicle->delete();
+        }
+
+        return redirect()->back()
+            ->with('message', 'Vehicle was deleted successfully');
+    }
 }
