@@ -8,6 +8,7 @@ use App\Models\CreditCardTemplate;
 use App\Services\CommonExpenseService;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 class CreditCardController extends Controller
 {
@@ -72,6 +73,11 @@ class CreditCardController extends Controller
             ->with('message', $validated['name'] . ' was updated successfully');
     }
 
-    public function destroy()
-    {}
+    public function destroy(Request $request): RedirectResponse
+    {
+        $name = $this->commonExpenseService->deleteExpense($request);
+
+        return redirect()->back()
+            ->with('message', $name . ' was deleted successfully');
+    }
 }
