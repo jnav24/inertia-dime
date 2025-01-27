@@ -7,8 +7,11 @@ import Plus from '@/Components/Icons/outline/Plus.vue';
 import ExpenseModal from '@/Components/modals/ExpenseModal.vue';
 import ColumnActions from '@/Components/table/ColumnActions.vue';
 import ColumnBadge from '@/Components/table/ColumnBadge.vue';
-import { ColumnBadgeProps } from '@/utils/helpers';
+import type { ColumnBadgeProps } from '@/types/table';
 import { NotificationContext, NotificationContextType } from '@/types/providers';
+import ConfirmModal from '@/Components/modals/ConfirmModal.vue';
+import { Column, ColumnComponent } from '@/types/table';
+import { UserVehicle } from '@/types/expenses';
 
 type Props = {
     notify?: string;
@@ -17,7 +20,7 @@ type Props = {
 
 const props = defineProps<Props>();
 
-const columns = [
+const columns: Column<UserVehicle>[] = [
     { content: 'year', label: 'Year', colspan: 1 },
     { content: 'color', label: 'Color' },
     { content: 'make', label: 'Make' },
@@ -25,7 +28,7 @@ const columns = [
     { content: 'license', label: 'License' },
     {
         content: {
-            component: ColumnBadge,
+            component: ColumnBadge as ColumnComponent<UserVehicle>,
             props: (obj) =>
                 ({
                     value: obj.is_active ? 'Active' : 'Inactive',
@@ -36,7 +39,7 @@ const columns = [
     },
     {
         content: {
-            component: ColumnActions,
+            component: ColumnActions as ColumnComponent<UserVehicle>,
             props: (obj) => ({ obj }),
         },
         label: '',
@@ -46,6 +49,7 @@ const columns = [
 
 const notificationContext = inject<NotificationContextType>(NotificationContext);
 
+const toBeDeleted = ref<null | string>(null);
 const showModal = ref(false);
 const formData = ref(undefined);
 
@@ -57,7 +61,7 @@ const handleColumnEvent = (e: { type: string; obj: any }) => {
             showModal.value = true;
             break;
         case 'delete':
-            console.log('open delete confirm');
+            toBeDeleted.value = e.obj.id;
             break;
     }
 };
@@ -83,6 +87,7 @@ watch(
         :form-data="formData"
         :types="[]"
     />
+    <ConfirmModal :id="toBeDeleted" expense="user vehicles" @close-modal="toBeDeleted = null" />
 
     <div class="mb-6 flex justify-between">
         <div>
