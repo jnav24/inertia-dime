@@ -2,14 +2,14 @@
 import FormButton from '@/Components/Fields/FormButton.vue';
 import Pencil from '@/Components/Icons/outline/Pencil.vue';
 import Trash from '@/Components/Icons/outline/Trash.vue';
-import { ValueOfExpense } from '@/types/expenses';
+import { UserVehicle, ValueOfExpense } from '@/types/expenses';
 
 defineEmits<{ (e: 'action-event', v: { type: string; obj: any }): void }>();
-defineProps<{ obj: ValueOfExpense }>();
+withDefaults(defineProps<{ hideActions?: boolean; obj: ValueOfExpense | UserVehicle }>(), { hideActions: false });
 </script>
 
 <template>
-    <div class="flex space-x-2">
+    <div class="flex space-x-2" v-if="!hideActions">
         <FormButton
             :icon="Pencil"
             fab

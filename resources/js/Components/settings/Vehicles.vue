@@ -40,7 +40,7 @@ const columns: Column<UserVehicle>[] = [
     {
         content: {
             component: ColumnActions as ColumnComponent<UserVehicle>,
-            props: (obj) => ({ obj }),
+            props: (obj) => ({ obj, hideActions: !obj.is_active }),
         },
         label: '',
         colspan: 1,
