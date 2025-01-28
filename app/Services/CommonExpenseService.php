@@ -269,6 +269,7 @@ class CommonExpenseService
         ]);
 
         $expense = $this->getModelByRequest($request, $validated['template'])::query()
+            ->withBudget()
             ->where('uuid', $validated['id'])
             ->first();
 
