@@ -2,6 +2,7 @@
 import type { RulesType } from '@/types/form';
 import useForm from '@/Composables/useForm';
 import FormLabel from '@/Components/Fields/FormLabel.vue';
+import { resolveComponent } from 'vue';
 
 const emit = defineEmits<{ (e: 'update:value', value: string): void }>();
 const props = withDefaults(
@@ -44,6 +45,14 @@ const updateOnBlur = (event: FocusEvent) => {
 
     return null;
 };
+
+const setIcon = () => {
+    if (typeof props.icon === 'string') {
+        return resolveComponent(props.icon);
+    }
+
+    return props.icon;
+};
 </script>
 
 <template>
@@ -52,10 +61,10 @@ const updateOnBlur = (event: FocusEvent) => {
 
         <div class="relative mb-2">
             <div
-                class="absolute left-0 top-0 flex h-full w-10 flex-row items-center justify-center"
+                class="absolute left-0 top-1 flex h-full w-10 flex-row items-center justify-center"
                 v-if="icon"
             >
-                {{ icon }}
+                <component :is="setIcon()" class="size-4 text-gray-600" />
             </div>
 
             <input
@@ -65,6 +74,7 @@ const updateOnBlur = (event: FocusEvent) => {
                     'border-gray-300 focus:border-primary': !error,
                     'border-red-600': error,
                     'bg-gray-200 text-gray-500 dark:bg-gray-700': readOnly,
+                    'pl-8': icon,
                 }"
                 :type="password ? 'password' : 'text'"
                 :value="getInputValue"
