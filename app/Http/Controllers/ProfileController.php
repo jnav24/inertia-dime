@@ -57,6 +57,7 @@ class ProfileController extends Controller
                 UserVehicle::query()
                     ->where('user_id', $user->id)
                     ->withTrashed()
+                    ->orderByRaw('deleted_at IS NOT NULL')
                     ->get()
             ),
             'hasMfa' => ! empty(auth()->user()->mfa_secret),
