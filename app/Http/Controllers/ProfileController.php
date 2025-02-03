@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\CacheEnum;
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Http\Resources\UserVehicleResource;
 use App\Models\User;
@@ -24,15 +25,12 @@ class ProfileController extends Controller
     {
         $mfa = null;
 
-        /** @var string $key */
-        $key = config('session.display_mfa');
+        $key = CacheEnum::DISPLAY_MFA->value;
 
         /** @var User $user */
         $user = auth()->user();
 
-        if (! empty(session()->has($key)) && ! empty($user->mfa_recovery_codes) && ! empty($user->mfa_secret)) {
-            session()->forget($key);
-
+        if (! empty(cache($key)) && ! empty($user->mfa_recovery_codes) && ! empty($user->mfa_secret)) {
             /** @var string $recovery */
             $recovery = decrypt($user->mfa_recovery_codes);
 
