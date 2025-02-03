@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\CacheEnum;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,7 +18,7 @@ class MfaVerification
     {
         $response = $next($request);
 
-        if (! empty(auth()->user()?->mfa_secret) && ! $this->isSessionValid()) {
+        if (! empty(auth()->user()?->mfa_secret) && ! $this->isSessionValid() && ! $this->isSettingUpMFA()) {
             /** @var string $key */
             $key = config('session.mfa');
 
@@ -50,5 +51,13 @@ class MfaVerification
         $sessionArray = decrypt($session);
 
         return auth()->user()?->id === $sessionArray['uid'] && $sessionArray['verified'];
+    }
+
+    private function isSettingUpMFA(): bool
+    {
+        /** @var bool $cache */
+        $cache = cache(CacheEnum::DISPLAY_MFA->value, false);
+
+        return $cache;
     }
 }
