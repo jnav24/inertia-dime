@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\CacheEnum;
 use App\Services\MfaService;
 use App\Services\RecoveryCodeService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use PragmaRX\Google2FA\Exceptions\IncompatibleWithGoogleAuthenticatorException;
 use PragmaRX\Google2FA\Exceptions\InvalidCharactersException;
 use PragmaRX\Google2FA\Exceptions\SecretKeyTooShortException;
@@ -30,10 +32,7 @@ class UserMfaController extends Controller
             ),
         ])?->save();
 
-        /** @var string $displayKey */
-        $displayKey = config('session.display_mfa');
-
-        session()->put($displayKey, true);
+        Cache::put(CacheEnum::DISPLAY_MFA->value, true);
 
         return redirect()->back();
     }
@@ -83,5 +82,11 @@ class UserMfaController extends Controller
             'mfa_secret' => null,
             'mfa_recovery_codes' => null,
         ])?->save();
+
+        /** @var string $key */
+        $key = config('session.mfa');
+
+        cache()->forget(CacheEnum::DISPLAY_MFA->value);
+        session()->forget($key);
     }
 }
