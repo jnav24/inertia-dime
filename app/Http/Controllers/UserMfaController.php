@@ -73,6 +73,12 @@ class UserMfaController extends Controller
             ], 422);
         }
 
+        cache()->forget(CacheEnum::DISPLAY_MFA->value);
+
+        /** @var string $key */
+        $key = config('session.mfa');
+        session()->put($key, encrypt(['verified' => true, 'uid' => auth()->user()?->id]));
+
         return response()->json(['success' => true]);
     }
 
