@@ -9,6 +9,7 @@
         "bacon/bacon-qr-code": "^3.0",
         "inertiajs/inertia-laravel": "^1.0",
         "laravel/framework": "11.31.0.0",
+        "laravel/pail": "^1.2",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
         "pragmarx/google2fa": "^8.0",
@@ -57,6 +58,10 @@
             "@php artisan key:generate --ansi",
             "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
             "@php artisan migrate --graceful --ansi"
+        ],
+        "dev": [
+            "Composer\\Config::disableProcessTimeout",
+            "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"sail up\" \"sleep 10 && sail artisan queue:work\" \"sleep 10 && sail artisan pail --timeout=0\" \"pnpm run dev\" --names=server,queue,logs,vite"
         ]
     },
     "extra": {
