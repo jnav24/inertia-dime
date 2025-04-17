@@ -46,6 +46,7 @@ class ProfileController extends Controller
                     $user->email,
                     $secret,
                 ),
+                'secret' => decrypt($user->mfa_secret),
                 'recovery_codes' => json_decode($recovery),
             ];
         }

@@ -98,6 +98,12 @@ watchEffect(() => {
 
                 <div class="flex justify-center py-6" v-html="mfa?.qr_code"></div>
 
+                <div class="py-6">
+                    Can't scan code? Copy this code
+                    <span class="font-bold">{{ mfa?.secret }}</span> and paste it in your
+                    authenticator
+                </div>
+
                 <BudgetForm>
                     <div class="mb-6 flex justify-center">
                         <div class="w-80">
