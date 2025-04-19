@@ -15,6 +15,9 @@ export default {
 
     theme: {
         extend: {
+            blur: {
+                xs: '2px',
+            },
             borderWidth: {
                 6: '6px',
             },

@@ -64,6 +64,16 @@ const copyRecoveryCodes = async () => {
     } catch (err) {}
 };
 
+const copySecret = async () => {
+    try {
+        await navigator.clipboard.writeText(props.mfa.secret);
+        isCopied.value = true;
+        setTimeout(() => {
+            isCopied.value = false;
+        }, 3000);
+    } catch (err) {}
+};
+
 const updateCode = (v: string) => (code.value = v);
 
 const cancelMFA = () => {
@@ -98,14 +108,21 @@ watchEffect(() => {
 
                 <div class="flex justify-center py-6" v-html="mfa?.qr_code"></div>
 
-                <div class="py-6">
-                    <Typography variant="caption">
-                        Can't scan code? Copy this code
-                        <span class="inline-block bg-gray-200 px-2 font-bold">{{
-                            mfa?.secret
-                        }}</span>
-                        and paste it in your authenticator
-                    </Typography>
+                <div class="space-y-2 pb-6 pt-2 text-center">
+                    <Typography variant="caption"> Enter code manually </Typography>
+                    <div class="align-center flex justify-center">
+                        <div class="bg-gray-200 px-4 py-2">
+                            <span class="blur-xs text-lg text-gray-600">
+                                {{ mfa?.secret }}
+                            </span>
+                        </div>
+                        <FormButton
+                            :color="isCopied ? 'secondary' : 'default'"
+                            :icon="DocumentDuplicate"
+                            @click="copySecret()"
+                            size="xs"
+                        ></FormButton>
+                    </div>
                 </div>
 
                 <BudgetForm>
