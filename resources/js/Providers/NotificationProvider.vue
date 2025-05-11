@@ -6,7 +6,7 @@ import { NotificationContext } from '@/types/providers';
 
 const DURATION = 5000;
 
-const interval = ref<null | ReturnType<typeof setInterval>>(null);
+const interval = ref<undefined | ReturnType<typeof setInterval>>(undefined);
 const notifications = ref<Array<NotificationProps & { timestamp: number }>>([]);
 
 const addNotification = (notify: NotificationProps) => {
@@ -28,7 +28,7 @@ watchEffect((onCleanup) => {
         });
     } else {
         clearInterval(interval.value);
-        interval.value = null;
+        interval.value = undefined;
     }
 });
 
@@ -38,7 +38,7 @@ provide<NotificationContextType>(NotificationContext, { addNotification });
 <template>
     <slot />
 
-    <div class="absolute bottom-0 right-0 p-4">
+    <div class="fixed bottom-0 right-0 space-y-2 p-4">
         <template v-for="(notification, idx) in notifications" :key="idx">
             <Notification v-bind="notification" />
         </template>
