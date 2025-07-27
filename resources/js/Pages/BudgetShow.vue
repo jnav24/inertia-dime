@@ -3,7 +3,7 @@ import { Head } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import AuthenticatedContentLayout from '@/Layouts/AuthenticatedContentLayout.vue';
 import { PageProps } from '@/types/providers';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import Sidebar from '@/Components/Elements/Sidebar.vue';
 import Plus from '@/Components/Icons/outline/Plus.vue';
 import { convertToCurrency, toTitleCase } from '@/utils/functions';
@@ -68,6 +68,12 @@ const handleColumnEvent = (e: { type: string; obj: any }) => {
 onMounted(() => {
     categories.value = Object.keys(props.types);
     selectedItem.value = categories.value?.[0] ?? 'banks';
+});
+
+watch(showModal, (val) => {
+    if (!val) {
+        formData.value = undefined;
+    }
 });
 </script>
 
