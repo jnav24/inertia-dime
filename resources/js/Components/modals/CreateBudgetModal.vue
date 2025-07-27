@@ -39,6 +39,7 @@ const setDefaultValues = () => {
 
             defaultMonth.value = month.toString().padStart(2, '0');
             defaultYear.value = year;
+            break;
         }
 
         if (
