@@ -17,6 +17,8 @@ import SavedWidget from '@/Components/SavedWidget.vue';
 import BudgetSummary from '@/Components/BudgetSummary.vue';
 import ConfirmModal from '@/Components/modals/ConfirmModal.vue';
 import { ValueOfExpense } from '@/types/expenses';
+import BreakdownModal from '@/Components/modals/BreakdownModal.vue';
+import Chart from '@/Components/Icons/solid/Chart.vue';
 
 type Props = PageProps & {
     budget: any;
@@ -29,6 +31,7 @@ const props = defineProps<Props>();
 
 const categories = ref<string[]>([]);
 const formData = ref(undefined);
+const showBreakdown = ref(false);
 const showModal = ref(false);
 const selectedItem = ref('');
 const toBeDeleted = ref<null | string>(null);
@@ -90,6 +93,10 @@ watch(showModal, (val) => {
             :types="types[selectedItem]?.data ?? []"
         />
         <ConfirmModal :id="toBeDeleted" :expense="category" @close-modal="toBeDeleted = null" />
+        <BreakdownModal
+            v-model:show="showBreakdown"
+            :expenses="budget.data.expenses[selectedItem]"
+        />
 
         <template #header>
             {{ formatTimeZone('MMM yyyy', 'UTC', budget.data.budget_cycle) }}
@@ -126,11 +133,16 @@ watch(showModal, (val) => {
                                 <Typography variant="body1">
                                     <span class="font-bold">{{ expenseTotal }}</span>
                                 </Typography>
+                                <FormButton @click="showBreakdown = true" fab>
+                                    <Chart classes="size-3" />
+                                </FormButton>
                             </div>
                         </div>
-                        <FormButton color="primary" :icon="Plus" @click="showModal = true">
-                            Add {{ toTitleCase(selectedItem) }}
-                        </FormButton>
+                        <div>
+                            <FormButton color="primary" :icon="Plus" @click="showModal = true">
+                                Add {{ toTitleCase(selectedItem) }}
+                            </FormButton>
+                        </div>
                     </div>
 
                     <Table
