@@ -187,6 +187,10 @@ class CommonExpenseService
                         continue;
                     }
 
+                    if ($expense === ExpenseTypeEnum::INCOME->value) {
+                        $data->data->pay_date->setMonth((int) $validated['month'])->setYear((int) $validated['year']);
+                    }
+
                     Log::info("Expense: {$expense}, Data: {$data}");
                     $budget->{$expense}()->create([
                         'data' => $data->data,
