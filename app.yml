@@ -1,0 +1,6 @@
+runtime: php83
+entrypoint: serve public/index.php
+
+handlers:
+  - url: /.*
+    script: auto

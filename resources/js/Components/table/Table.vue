@@ -7,6 +7,8 @@ import TablePagination from '@/Components/table/TablePagination.vue';
 import { parseNested } from '@/utils/functions';
 import ColumnBasic from '@/Components/table/ColumnBasic.vue';
 import { Column } from '@/types/table';
+import FormInput from '@/Components/Fields/FormInput.vue';
+import MagnifyingGlass from '@/Components/Icons/outline/MagnifyingGlass.vue';
 
 type Emits<T> = {
     (e: 'on-action', v: { type: 'delete'; ids: string[] }): void;
@@ -46,6 +48,9 @@ const paginateItems = computed(() =>
         paginateState.current * paginateState.selected,
     ),
 );
+const showTopSection = computed(() => {
+    return !!props.columns.filter((column) => column.searchable).length;
+});
 
 const getColSpan = (col?: number) => {
     const widthClasses = {
@@ -87,6 +92,12 @@ watch(
         class="rounded-xl border border-lm-stroke bg-lm-secondary dark:border-dm-stroke dark:bg-dm-secondary"
         v-else
     >
+        <div v-if="showTopSection" class="flex items-center justify-end px-2">
+            <div class="w-56">
+                <FormInput label="Search" :icon="MagnifyingGlass" placeholder />
+            </div>
+        </div>
+
         <div
             class="flex flex-row items-center justify-between space-x-4 border-b border-lm-stroke px-4 py-4 text-lm-text-hover dark:border-dm-stroke dark:text-dm-text-hover"
         >

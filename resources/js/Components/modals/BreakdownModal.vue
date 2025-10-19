@@ -81,7 +81,8 @@ const closeModal = () => emit('update:show', false);
 <template>
     <Modal :show="show" @close-modal="closeModal()" hide-close-button>
         <div class="w-200 space-y-4 p-4">
-            <div class="flex pt-8">
+            <Typography variant="h2">Breakdown by Type</Typography>
+            <div class="flex">
                 <div class="h-96 w-1/2">
                     <DoughnutChart
                         v-if="amounts.length && colors.length && labels.length"
