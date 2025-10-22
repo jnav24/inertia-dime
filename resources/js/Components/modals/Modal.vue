@@ -20,7 +20,7 @@ type Props = {
 const emit = defineEmits<Emits>();
 const props = defineProps<Props>();
 
-let timeoutId = undefined;
+let timeoutId: undefined | NodeJS.Timeout;
 const state = ref(false);
 
 const closeModal = () => {
