@@ -8,7 +8,7 @@ type Props = {
 
 const props = defineProps<Props>();
 
-const { activeTab, addTab } = inject<TabContextType>(TabContext, null);
+const { activeTab, addTab } = inject<TabContextType>(TabContext, {} as TabContextType);
 
 onMounted(() => {
     addTab(props.title);

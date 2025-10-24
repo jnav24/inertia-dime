@@ -4,6 +4,7 @@ import { usePage } from '@inertiajs/vue3';
 import { TabContext, TabContextType } from '@/types/tabs';
 import Typography from '@/Components/Elements/Typography.vue';
 import { toKebabCase, toTitleCase } from '@/utils/functions';
+import { PageProps } from '../../types/providers';
 
 const { props } = usePage();
 
@@ -17,7 +18,8 @@ const tabIndicatorStyles = computed(() => {
     let leftPosition = 0;
 
     if (tabKeys.value.length) {
-        leftPosition = rect?.left - tabs[tabKeys.value[0]]?.getBoundingClientRect()?.left;
+        leftPosition =
+            (rect?.left ?? 0) - (tabs[tabKeys.value[0]]?.getBoundingClientRect()?.left ?? 0);
     }
 
     return { left: `${leftPosition}px`, width: `${rect?.width ?? 0}px` };
@@ -42,7 +44,7 @@ const handleTabChange = (tab: string) => {
 };
 
 nextTick(() => {
-    const { tab } = props.ziggy.query;
+    const { tab } = (props as PageProps).ziggy.query;
 
     if (tab) {
         selectedTab.value = toTitleCase(tab);
@@ -63,7 +65,7 @@ provide<TabContextType>(TabContext, {
                     v-for="(tab, idx) in tabKeys"
                     :key="idx"
                     @click="handleTabChange(tab)"
-                    :ref="(el) => (tabs[tab] = el)"
+                    :ref="(el) => (tabs[tab] = el as HTMLButtonElement)"
                     type="button"
                 >
                     <Typography variant="body2">
