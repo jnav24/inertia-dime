@@ -13,7 +13,14 @@ export type NotificationProps = {
 };
 
 export type PageProps = {
-    auth: { id: number; name: string; email: string; email_verified_at: string };
+    auth: {
+        user?: {
+            id: number;
+            name: string;
+            email: string;
+            email_verified_at: string;
+        };
+    };
     errors: Errors & ErrorBag;
     flash: { message: string | null };
     ziggy: {
@@ -21,6 +28,7 @@ export type PageProps = {
         defaults: any[];
         location: string;
         port: number;
+        query: Record<string, string>;
         routes: Record<string, { methods: string[]; uri: string }>;
     };
 };
