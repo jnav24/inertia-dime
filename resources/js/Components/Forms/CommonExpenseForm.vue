@@ -15,8 +15,8 @@ const amount = computed(() => convertToDollar(props.expense?.data.amount));
 
 <template>
     <div class="mb-6 grid grid-cols-2 gap-4">
-        <FormInput label="Template" hidden :value="!!isTemplate" />
-        <FormInput label="Name" :rules="['required', 'min:3']" :value="expense?.data.name" />
+        <FormInput label="Template" hidden :value="String(!!isTemplate)" />
+        <FormInput label="Name" :rules="['required', 'min:3']" :value="expense?.data.name ?? ''" />
         <FormInput label="Amount" :rules="['required', 'float:2']" :value="amount" />
         <FormSelect
             :items="types"
@@ -24,13 +24,13 @@ const amount = computed(() => convertToDollar(props.expense?.data.amount));
             item-label="name"
             item-value="id"
             :rules="['required']"
-            :value="expense?.expense.id"
+            :value="expense?.expense?.id ?? ''"
         />
         <FormSelect
             v-if="isTemplate"
             :items="dueDates"
             label="Due Date"
-            :value="expense?.data.due_date ?? 1"
+            :value="String(expense?.data?.due_date ?? 1)"
         />
     </div>
 

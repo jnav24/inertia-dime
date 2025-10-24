@@ -22,12 +22,12 @@ defineProps<Props>();
         <FormInput label="Color" :value="data?.color" :rules="['required']" />
         <FormInput
             label="Year"
-            :value="data?.year?.toString()"
+            :value="(data?.year ?? new Date().getFullYear()).toString()"
             :rules="['required', 'numeric', 'eq:4']"
         />
-        <FormInput label="Make" :value="data?.make" :rules="['required']" />
-        <FormInput label="Model" :value="data?.model" :rules="['required']" />
-        <FormInput label="License" :value="data?.license" />
+        <FormInput label="Make" :value="data?.make ?? ''" :rules="['required']" />
+        <FormInput label="Model" :value="data?.model ?? ''" :rules="['required']" />
+        <FormInput label="License" :value="data?.license ?? ''" />
     </div>
 
     <ExpenseFormActions @close="$emit('close')" />

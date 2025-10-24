@@ -15,9 +15,9 @@ const amount = computed(() => convertToDollar(props.expense?.data.amount));
 
 <template>
     <div class="mb-6 grid grid-cols-2 gap-4">
-        <FormInput label="Template" hidden :value="!!isTemplate" />
+        <FormInput label="Template" hidden :value="String(!!isTemplate)" />
         <FormInput label="Account Type" hidden :value="types[0].id" />
-        <FormInput label="Name" :rules="['required', 'min:3']" :value="expense?.data.name" />
+        <FormInput label="Name" :rules="['required', 'min:3']" :value="expense?.data?.name ?? ''" />
         <FormInput label="Amount" :rules="['required', 'float:2']" :value="amount" />
         <FormSelect
             v-if="isTemplate"

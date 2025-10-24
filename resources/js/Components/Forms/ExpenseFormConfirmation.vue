@@ -6,7 +6,7 @@ import FormDatePicker from '@/Components/Fields/FormDatePicker.vue';
 import { ExpenseFormActionProps } from '@/types/expenses';
 
 type Props = {
-    expense: {
+    expense?: {
         data: ExpenseFormActionProps;
     };
 };
@@ -19,10 +19,10 @@ defineProps<Props>();
         <FormCheckbox label="Calculate this purchase in your totals?" />
 
         <div class="mt-4 grid grid-cols-2 gap-4">
-            <FormInput label="Confirmation" :value="expense?.data.confirmation" />
-            <FormDatePicker label="Paid Date" :value="expense?.data.paid_date" />
+            <FormInput label="Confirmation" :value="expense?.data?.confirmation ?? ''" />
+            <FormDatePicker label="Paid Date" :value="expense?.data?.paid_date ?? ''" />
         </div>
 
-        <FormTextarea label="Notes" :value="expense?.data.notes" />
+        <FormTextarea label="Notes" :value="expense?.data?.notes ?? ''" />
     </div>
 </template>

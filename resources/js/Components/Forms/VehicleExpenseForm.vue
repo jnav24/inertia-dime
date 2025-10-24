@@ -3,7 +3,7 @@ import FormInput from '@/Components/Fields/FormInput.vue';
 import ExpenseFormActions from '@/Components/Forms/ExpenseFormActions.vue';
 import FormSelect from '@/Components/Fields/FormSelect.vue';
 import ExpenseFormConfirmation from '@/Components/Forms/ExpenseFormConfirmation.vue';
-import { ExpenseFormEmits, UserVehicleExpenseFormProps } from '@/types/expenses';
+import { ExpenseFormEmits, UserVehicle, UserVehicleExpenseFormProps } from '@/types/expenses';
 import { computed, ref } from 'vue';
 import { convertToDollar } from '@/utils/functions';
 import { dueDates } from '@/utils/helpers';
@@ -21,7 +21,8 @@ const isMileage = computed(() => {
     return props.types.find((item) => item.id === typeSelected.value)?.slug === 'gas';
 });
 const userVehicles = computed(() => {
-    return (page.props?.vehicles?.data ?? []).map((vehicle) => ({
+    const vehiclesData = page.props.vehicles as { data: UserVehicle[] };
+    return vehiclesData.data.map((vehicle) => ({
         value: vehicle.id,
         label: `${vehicle.year} ${vehicle.make} ${vehicle.model}`,
     }));
@@ -30,11 +31,11 @@ const userVehicles = computed(() => {
 
 <template>
     <div class="mb-6 grid grid-cols-2 gap-4">
-        <FormInput label="Template" hidden :value="!!isTemplate" />
+        <FormInput label="Template" hidden :value="String(!!isTemplate)" />
         <FormSelect
             :items="userVehicles"
             label="Vehicle"
-            :value="expense?.vehicle.id"
+            :value="expense?.vehicle.id ?? ''"
             :rules="['required']"
         />
         <FormInput label="Amount" :rules="['required', 'float:2']" :value="amount" />
@@ -43,7 +44,7 @@ const userVehicles = computed(() => {
             label="Account Type"
             item-label="name"
             item-value="id"
-            :value="expense?.expense.id"
+            :value="expense?.expense.id ?? ''"
             :rules="['required']"
             @handle-selection="typeSelected = $event"
         />
@@ -52,13 +53,13 @@ const userVehicles = computed(() => {
             label="Mileage"
             v-if="isMileage"
             :rules="['required', 'min:3']"
-            :value="expense?.data.mileage"
+            :value="(expense?.data?.mileage ?? '').toString()"
         />
         <FormSelect
             v-if="isTemplate"
             :items="dueDates"
             label="Due Date"
-            :value="expense?.data.due_date ?? 1"
+            :value="(expense?.data?.due_date ?? 1).toString()"
         />
     </div>
 
