@@ -11,7 +11,7 @@ defineProps<{
     status?: String;
 }>();
 
-const user = (usePage().props as PageProps).auth.user;
+const user = (usePage().props as unknown as PageProps).auth.user;
 
 const form = useForm({
     name: user?.name ?? '',

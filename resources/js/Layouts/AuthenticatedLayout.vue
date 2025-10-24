@@ -70,7 +70,10 @@ const showingNavigationDropdown = ref(false);
                                                 type="button"
                                                 class="bg-dn-primary inline-flex items-center rounded-md border border-transparent px-3 py-2 text-sm font-medium leading-4 text-gray-200 transition duration-150 ease-in-out hover:text-gray-200 focus:outline-none dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300"
                                             >
-                                                {{ ($page.props as PageProps).auth?.user?.name }}
+                                                {{
+                                                    ($page.props as unknown as PageProps).auth?.user
+                                                        ?.name
+                                                }}
 
                                                 <svg
                                                     class="-me-0.5 ms-2 h-4 w-4"
@@ -163,10 +166,10 @@ const showingNavigationDropdown = ref(false);
                     <div class="border-t border-gray-200 pb-1 pt-4 dark:border-gray-600">
                         <div class="px-4">
                             <div class="text-base font-medium text-gray-800 dark:text-gray-200">
-                                {{ ($page.props as PageProps).auth?.user?.name }}
+                                {{ ($page.props as unknown as PageProps).auth?.user?.name }}
                             </div>
                             <div class="text-sm font-medium text-gray-500">
-                                {{ ($page.props as PageProps).auth?.user?.email }}
+                                {{ ($page.props as unknown as PageProps).auth?.user?.email }}
                             </div>
                         </div>
 

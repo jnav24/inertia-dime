@@ -50,7 +50,7 @@ export default function useHttp({
     headers = {},
     initialize = true,
 }: Props) {
-    const { ziggy } = usePage().props as PageProps;
+    const { ziggy } = usePage().props as unknown as PageProps;
 
     const state = reactive<FetchResponse>({
         data: {},

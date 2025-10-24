@@ -44,7 +44,7 @@ const handleTabChange = (tab: string) => {
 };
 
 nextTick(() => {
-    const { tab } = (props as PageProps).ziggy.query;
+    const { tab } = (props as unknown as PageProps).ziggy.query;
 
     if (tab) {
         selectedTab.value = toTitleCase(tab);
