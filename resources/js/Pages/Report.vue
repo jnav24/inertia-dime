@@ -70,7 +70,7 @@ const datasets = computed(() => {
     ] as ChartDatasetCustomTypesPerDataset[];
 });
 
-const averageBalance = computed(() => yearTotal.value / totals.value.length ?? 0.0);
+const averageBalance = computed(() => yearTotal.value / totals.value.length);
 const startingBalance = computed(() => totals.value?.[0] ?? 0.0);
 const endingBalance = computed(() => totals.value?.[totals.value.length - 1] ?? 0.0);
 const lowestBalance = computed(() => Math.min(...totals.value) ?? 0.0);
