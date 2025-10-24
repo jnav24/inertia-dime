@@ -9,7 +9,7 @@ import Tabs from '@/Components/tabs/Tabs.vue';
 import TabItem from '@/Components/tabs/TabItem.vue';
 import Card from '@/Components/Elements/Card.vue';
 import Mfa from '@/Components/settings/Mfa.vue';
-import Vehicles from '@/Components/settings/Vehicles.vue';
+import VehicleSetting from '@/Components/settings/VehicleSetting.vue';
 import { PageProps } from '@/types/providers';
 import { MFASetup } from '@/types/mfa';
 
@@ -61,7 +61,7 @@ defineProps<Props>();
                 </TabItem>
 
                 <TabItem title="Vehicles">
-                    <Vehicles :notify="flash.message ?? undefined" :vehicles="vehicles.data" />
+                    <VehicleSetting :data="vehicles.data" :notify="flash.message ?? undefined" />
                 </TabItem>
             </Tabs>
         </AuthenticatedContentLayout>

@@ -8,17 +8,18 @@ import ExpenseModal from '@/Components/modals/ExpenseModal.vue';
 import ColumnActions from '@/Components/table/ColumnActions.vue';
 import ColumnBadge from '@/Components/table/ColumnBadge.vue';
 import type { ColumnBadgeProps } from '@/types/table';
-import { NotificationContext, NotificationContextType } from '@/types/providers';
+import { NotificationContext, NotificationContextType, PageProps } from '@/types/providers';
 import ConfirmModal from '@/Components/modals/ConfirmModal.vue';
 import { Column, ColumnComponent } from '@/types/table';
 import { UserVehicle } from '@/types/expenses';
+import { ErrorBag, Errors } from '@inertiajs/inertia';
 
-type Props = {
+type Props = Partial<PageProps> & {
     notify?: string;
-    vehicles: any[];
+    data: any[];
 };
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), { notify: undefined });
 
 const columns: Column<UserVehicle>[] = [
     { content: 'year', label: 'Year', colspan: 1 },
@@ -84,6 +85,7 @@ watch(
     <ExpenseModal
         v-model:show="showModal"
         expense="user vehicles"
+        :errors="errors as Errors & ErrorBag"
         :form-data="formData"
         :types="[]"
     />
@@ -102,7 +104,7 @@ watch(
 
     <Table
         :columns="columns"
-        :items="vehicles"
+        :items="data"
         :empty="{ title: 'No Vehicles Found' }"
         @column-event="handleColumnEvent($event)"
     />
