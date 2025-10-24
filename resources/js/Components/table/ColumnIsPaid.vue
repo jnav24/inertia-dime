@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import CheckCircle from '@/Components/Icons/solid/CheckCircle.vue';
-import { ValueOfExpense } from '@/types/expenses';
 
-defineProps<{ obj: ValueOfExpense }>();
+defineProps<{ obj: { data: { confirmation?: string } } }>();
 </script>
 
 <template>

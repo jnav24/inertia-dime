@@ -6,7 +6,6 @@ import TableRow from '@/Components/table/TableRow.vue';
 import TablePagination from '@/Components/table/TablePagination.vue';
 import { parseNested } from '@/utils/functions';
 import ColumnBasic from '@/Components/table/ColumnBasic.vue';
-import { Column } from '@/types/table';
 import FormInput from '@/Components/Fields/FormInput.vue';
 import MagnifyingGlass from '@/Components/Icons/outline/MagnifyingGlass.vue';
 
@@ -15,9 +14,9 @@ type Emits<T> = {
     (e: 'column-event', v: { type: string; obj: T }): void;
 };
 
-type Props<T> = {
-    columns: Column<T>[];
-    items: T[];
+type Props = {
+    columns: any[];
+    items: any[];
     paginate?: { current: number; options: number[]; selected: number };
     selectable?: boolean;
     title?: string;
@@ -25,7 +24,7 @@ type Props<T> = {
 };
 
 defineEmits<Emits<any>>();
-const props = defineProps<Props<any>>();
+const props = defineProps<Props>();
 
 const allChecked = ref(false);
 const checkedItems = ref<string[]>([]);
