@@ -183,12 +183,12 @@ const validateSubmit = (e: Event) => {
                 props.method,
                 props.action,
                 {
-                    onBefore: (e) => emit('handleBefore', e),
-                    onCancel: (e) => emit('handleCancel', e),
+                    // onBefore: (e) => emit('handleBefore', e),
+                    // onCancel: (e) => emit('handleCancel', e),
                     onError: (e) => emit('handleError', e),
-                    onFinish: (e) => emit('handleFinish', e),
-                    onProgress: (e) => emit('handleProgress', e),
-                    onStart: (e) => emit('handleStart', e),
+                    // onFinish: (e) => emit('handleFinish', e),
+                    // onProgress: (e) => emit('handleProgress', e),
+                    // onStart: (e) => emit('handleStart', e),
                     onSuccess: (e) => emit('handleSuccess', e),
                 },
             );

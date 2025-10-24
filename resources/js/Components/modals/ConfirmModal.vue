@@ -74,7 +74,7 @@ const closeModal = () => emit('close-modal');
             <BudgetForm @after-submit="closeModal()" :action="routes[expense]" method="delete">
                 <div class="flex justify-end space-x-2">
                     <FormInput label="id" hidden :value="id ?? ''" />
-                    <FormInput label="template" hidden :value="isTemplate" />
+                    <FormInput label="template" hidden :value="String(isTemplate)" />
                     <FormButton @onclick="closeModal()">Cancel</FormButton>
                     <FormButton color="danger" submit>Confirm</FormButton>
                 </div>
