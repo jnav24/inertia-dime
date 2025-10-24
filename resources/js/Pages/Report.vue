@@ -309,15 +309,6 @@ onUpdated(() => {
                 </Card>
 
                 <Table :columns="columns as Column<Report>[]" :items="reportData" />
-
-                <Table :items="reportData">
-                    <TableBasicColumn label="Name" content="data.name" colspan="2" searchable />
-                    <TableBasicColumn label="Amount" colspan="2">
-                        <template v-slot="{ obj }">
-                            {{ convertToCurrency(obj.data.amount) }}
-                        </template>
-                    </TableBasicColumn>
-                </Table>
             </section>
         </AuthenticatedContentLayout>
     </AuthenticatedLayout>
