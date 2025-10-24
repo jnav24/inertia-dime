@@ -5,7 +5,7 @@ import type { ConcreteComponent } from 'vue';
 
 type ButtonColor = 'default' | 'primary' | 'secondary' | 'danger';
 
-const formContext = inject<FormContextType>(FormContext, null);
+const formContext = inject<FormContextType>(FormContext, {} as FormContextType);
 
 defineEmits<{ (e: 'onclick'): void }>();
 const props = withDefaults(

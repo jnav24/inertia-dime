@@ -4,7 +4,7 @@ import useForm from '@/Composables/useForm';
 import FormLabel from '@/Components/Fields/FormLabel.vue';
 import { resolveComponent } from 'vue';
 
-const emit = defineEmits<{ (e: 'update:value', value: string): void }>();
+const emit = defineEmits<{ (e: 'update:value', value: string | undefined): void }>();
 const props = withDefaults(
     defineProps<{
         hidden?: boolean;
@@ -17,7 +17,7 @@ const props = withDefaults(
         readOnly?: boolean;
         rules?: RulesType | Array<keyof RulesType>;
         validateOnInit?: boolean;
-        value?: string | boolean | number;
+        value: string | undefined;
     }>(),
     { onBlur: true, validateOnInit: false, value: undefined },
 );

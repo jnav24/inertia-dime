@@ -6,7 +6,7 @@ import { computed, ref, watchEffect } from 'vue';
 import useForm from '@/Composables/useForm';
 
 type Emits = {
-    (e: 'handle-selection', v: number): void;
+    (e: 'handle-selection', v: string): void;
     (e: 'update:value', v: string): void;
 };
 

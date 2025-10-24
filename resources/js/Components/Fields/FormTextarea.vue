@@ -10,6 +10,11 @@ type Props = {
     value?: string;
 };
 
+type Emits = {
+    (e: 'update:value', v: string): void;
+};
+
+const emits = defineEmits<Emits>();
 const props = defineProps<Props>();
 
 const { error, labelId, getInputValue, updateInputValue } = useForm({
@@ -24,7 +29,7 @@ const updateValue = (event: Event) => {
     updateInputValue(value);
 
     if (props.value) {
-        emit('update:value', value);
+        emits('update:value', value);
     }
 };
 </script>
