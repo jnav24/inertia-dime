@@ -321,8 +321,8 @@ export const budgetColumns: Record<string, Column<ValueOfExpense>[]> = {
 };
 
 export const dueDates = Array.from(Array(31).keys()).map((num: number) => ({
-    label: num + 1,
-    value: num + 1,
+    label: String(num + 1),
+    value: String(num + 1),
 }));
 
 export const getDefaultDate = (dateTime: string, budgetDateTime?: string) => {

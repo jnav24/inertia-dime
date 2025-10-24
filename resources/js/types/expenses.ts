@@ -126,6 +126,7 @@ type CommonExpense = {
 export type VehicleExpense = {
     id: string;
     data: ExpenseFormActionProps & {
+        id?: string;
         amount: number;
         balance: number;
         due_date?: number;
