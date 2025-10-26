@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\BooleanString;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CreditCardRequest extends FormRequest
@@ -12,7 +13,7 @@ class CreditCardRequest extends FormRequest
             'name' => 'required|min:3',
             'amount' => 'required|numeric|decimal:2',
             'due_date' => 'int|max:31',
-            'template' => 'bool',
+            'template' => new BooleanString(),
             'account_type' => 'uuid',
             'apr' => 'nullable|numeric|decimal:2',
             'balance' => 'nullable|decimal:2',

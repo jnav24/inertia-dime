@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\BooleanString;
 use Illuminate\Foundation\Http\FormRequest;
 
 class VehicleExpenseRequest extends FormRequest
@@ -19,7 +20,7 @@ class VehicleExpenseRequest extends FormRequest
             'balance' => 'nullable|decimal:2',
             'confirmation' => 'nullable|string|max:255',
             'due_date' => 'int|max:31',
-            'template' => 'bool',
+            'template' => new BooleanString(),
             'vehicle' => 'required|uuid',
             'paid_date' => 'nullable|date',
             'mileage' => 'nullable|string',

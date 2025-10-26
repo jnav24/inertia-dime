@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\BooleanString;
 use Illuminate\Foundation\Http\FormRequest;
 
 class GainExpenseRequest extends FormRequest
@@ -12,7 +13,7 @@ class GainExpenseRequest extends FormRequest
             'name' => 'required',
             'amount' => 'required|decimal:2',
             'pay_date' => 'date_format:Y-m-d',
-            'template' => 'bool',
+            'template' => new BooleanString(),
             'account_type' => 'uuid'
         ];
     }
