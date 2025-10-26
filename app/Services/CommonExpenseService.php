@@ -49,6 +49,7 @@ use App\Models\Utility;
 use App\Models\UtilityTemplate;
 use App\Models\Vehicle;
 use App\Models\VehicleTemplate;
+use App\Rules\BooleanString;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -146,15 +147,17 @@ class CommonExpenseService
         ],
     ];
 
-    public function getModelByRequest(Request $request, bool $template): string
+    public function getModelByRequest(Request $request, bool|string $template): string
     {
         $key = $this->getKey($request);
+        $template = $this->setTemplate($template);
         return $this->getModel($key, $template);
     }
 
     public function getModelByString(string $value, ?bool $template = false): string
     {
         $key = Str::singular($value);
+        $template = $this->setTemplate($template);
         return $this->getModel($key, $template ?? false);
     }
 
@@ -214,10 +217,12 @@ class CommonExpenseService
      * @param bool $template
      * @return array<string, int>
      */
-    public function getBudgetRelationship(Request $request, bool $template): array
+    public function getBudgetRelationship(Request $request, bool|string $template): array
     {
         /** @var string $referrer */
         $referrer = $request->header('referer');
+
+        $template = $this->setTemplate($template);
 
         if (! $template && $uuid = extractUuid($referrer)) {
             $budget = Budget::where('uuid', $uuid)->firstOrFail();
@@ -269,7 +274,7 @@ class CommonExpenseService
     {
         $validated = $request->validate([
             'id' => ['required', 'uuid'],
-            'template' => ['required', 'bool'],
+            'template' => ['required', new BooleanString()],
         ]);
 
         $expense = $this->getModelByRequest($request, $validated['template'])::query()
@@ -317,5 +322,14 @@ class CommonExpenseService
         }
 
         return $model;
+    }
+
+    private function setTemplate(bool|string $template): bool
+    {
+        if (is_string($template)) {
+            return $template === "true";
+        }
+
+        return $template;
     }
 }
