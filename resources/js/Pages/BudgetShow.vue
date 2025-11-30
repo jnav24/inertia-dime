@@ -8,8 +8,6 @@ import Sidebar from '@/Components/Elements/Sidebar.vue';
 import Plus from '@/Components/Icons/outline/Plus.vue';
 import { convertToCurrency, toTitleCase } from '@/utils/functions';
 import FormButton from '@/Components/Fields/FormButton.vue';
-import Table from '@/Components/table/Table.vue';
-import { budgetColumns } from '@/utils/helpers';
 import { formatTimeZone } from '@/utils/timestamp';
 import ExpenseModal from '@/Components/modals/ExpenseModal.vue';
 import Typography from '@/Components/Elements/Typography.vue';
@@ -19,6 +17,12 @@ import ConfirmModal from '@/Components/modals/ConfirmModal.vue';
 import { ValueOfExpense } from '@/types/expenses';
 import BreakdownModal from '@/Components/modals/BreakdownModal.vue';
 import Chart from '@/Components/Icons/solid/Chart.vue';
+import ColumnActions from '@/Components/table/ColumnActions.vue';
+import Table from '@/Components/table/Table.vue';
+import ColumnBasic from '@/Components/table/ColumnBasic.vue';
+import ColumnBadge from '@/Components/table/ColumnBadge.vue';
+import { ColumnBadgeColor } from '@/types/table';
+import CheckCircle from '@/Components/Icons/outline/CheckCircle.vue';
 
 type Props = PageProps & {
     budget: any;
@@ -54,6 +58,14 @@ const expenseTotal = computed(() => {
             0,
         ),
     );
+});
+
+const showBalanceColumns = computed(() => {
+    return ['credit cards', 'vehicles'].includes(category.value);
+});
+
+const showPaidColumns = computed(() => {
+    return !['banks', 'incomes', 'investments'].includes(category.value);
 });
 
 const handleColumnEvent = (e: { type: string; obj: any }) => {
@@ -146,15 +158,66 @@ watch(showModal, (val) => {
                     </div>
 
                     <Table
-                        :columns="[...(budgetColumns[selectedItem] ?? [])]"
-                        :empty="{
-                            title: `No results found`,
-                            content: 'Click the button above to add an expense.',
-                        }"
-                        :paginate="{ options: [10], selected: 10, current: 1 }"
-                        :items="budget.data.expenses[selectedItem]"
-                        @column-event="handleColumnEvent($event)"
-                    />
+                        :items="budget.data.expenses[selectedItem] ?? []"
+                        :paginatePerPage="[10]"
+                    >
+                        <ColumnBasic v-if="showPaidColumns" header="">
+                            <template v-slot:default="{ data }">
+                                <CheckCircle
+                                    v-if="data.data?.confirmation"
+                                    classes="size-8 text-primary"
+                                />
+                            </template>
+                        </ColumnBasic>
+                        <ColumnBasic
+                            v-if="category !== 'vehicles'"
+                            :colspan="3"
+                            header="Name"
+                            notation="data.name"
+                            searchable
+                        />
+                        <ColumnBasic v-if="category === 'vehicles'" :colspan="3" header="Vehicle">
+                            <template v-slot:default="{ data }">
+                                {{ data.vehicle.year }} {{ data.vehicle.make }}
+                                {{ data.vehicle.model }}
+                            </template>
+                        </ColumnBasic>
+                        <ColumnBasic :colspan="2" header="Amount">
+                            <template v-slot:default="{ data }">
+                                {{ convertToCurrency(Number(data.data.amount)) }}
+                            </template>
+                        </ColumnBasic>
+                        <ColumnBadge
+                            v-if="category !== 'miscellaneouses'"
+                            :color="ColumnBadgeColor.GRAY"
+                            :colspan="2"
+                            header="Type"
+                        >
+                            <template v-slot:default="{ data }">
+                                {{ data.expense.name }}
+                            </template>
+                        </ColumnBadge>
+                        <ColumnBasic v-if="showBalanceColumns" :colspan="2" header="Balance">
+                            <template v-slot:default="{ data }">
+                                {{ convertToCurrency(Number(data.data.balance)) }}
+                            </template>
+                        </ColumnBasic>
+                        <ColumnBasic v-if="showPaidColumns" :colspan="2" header="Paid Date">
+                            <template v-slot:default="{ data }">
+                                <span v-if="data.data.paid_date">
+                                    {{ formatTimeZone('MMM d', 'UTC', data.data.paid_date) }}
+                                </span>
+                            </template>
+                        </ColumnBasic>
+                        <ColumnBasic v-if="category === 'incomes'" :colspan="2" header="Pay Date">
+                            <template v-slot:default="{ data }">
+                                <span v-if="data.data.pay_date">
+                                    {{ formatTimeZone('MMM d', 'UTC', data.data.pay_date) }}
+                                </span>
+                            </template>
+                        </ColumnBasic>
+                        <ColumnActions @action-event="handleColumnEvent" header="" />
+                    </Table>
                 </div>
             </section>
         </AuthenticatedContentLayout>

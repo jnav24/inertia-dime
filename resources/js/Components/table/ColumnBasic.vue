@@ -1,10 +1,31 @@
 <script setup lang="ts">
+import { computed, inject, useSlots } from 'vue';
+import {
+    type ColumnProps,
+    TableContext,
+    type TableContextType,
+    TableRowContext,
+    type TableRowContextType,
+} from '@/types/table';
 import Typography from '@/Components/Elements/Typography.vue';
-import { ColumnBasicProps } from '@/types/table';
 
-defineProps<ColumnBasicProps>();
+const props = withDefaults(defineProps<ColumnProps>(), { colspan: 1 });
+
+const slots = useSlots();
+
+const tableContext = inject<TableContextType>(TableContext);
+const tableRowContext = inject<TableRowContextType>(TableRowContext);
+
+const columnValue = computed(() => tableRowContext?.getContent(props.header, props.notation));
+const columnGutter = computed(() => tableContext?.getGutter.value);
+const columnWidth = computed(() => tableContext?.getColSpan(props.colspan));
 </script>
 
 <template>
-    <Typography variant="body2">{{ value }}</Typography>
+    <div :class="[columnGutter, columnWidth]">
+        <Typography variant="body2">
+            <slot v-if="slots.default" :data="tableRowContext?.data ?? {}" />
+            <span v-else>{{ columnValue }}</span>
+        </Typography>
+    </div>
 </template>

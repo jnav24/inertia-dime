@@ -18,6 +18,7 @@ class ReportResource extends JsonResource
             'id' => $this->uuid,
             'data' => $this->data,
             'budget_cycle' => $this->budget_cycle,
+            'expense' => new ExpenseTypeResource($this->whenLoaded('expenseType')),
         ];
     }
 }

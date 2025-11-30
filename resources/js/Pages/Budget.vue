@@ -7,21 +7,20 @@ import AuthenticatedContentLayout from '@/Layouts/AuthenticatedContentLayout.vue
 import FormButton from '@/Components/Fields/FormButton.vue';
 import Plus from '@/Components/Icons/outline/Plus.vue';
 import PencilSquare from '@/Components/Icons/outline/PencilSquare.vue';
-import Table from '@/Components/table/Table.vue';
+import Fire from '@/Components/Icons/outline/Fire.vue';
 import FormSelect from '@/Components/Fields/FormSelect.vue';
 import Typography from '@/Components/Elements/Typography.vue';
 import TrendUp from '@/Components/Icons/outline/TrendUp.vue';
 import TrendDown from '@/Components/Icons/outline/TrendDown.vue';
 import CreateBudgetModal from '@/Components/modals/CreateBudgetModal.vue';
-import ColumnActions from '@/Components/table/ColumnActions.vue';
 import AppLink from '@/Components/Elements/AppLink.vue';
 import { Budget, SortedAggregation, BudgetAggregationEnum, SortedBudget } from '@/types/budget';
 import { PageProps } from '@/types/providers';
-import ColumnBasic from '@/Components/table/ColumnBasic.vue';
 import { formatTimeZone } from '@/utils/timestamp';
 import { convertToCurrency } from '@/utils/functions';
-import ColumnTrend from '@/Components/table/ColumnTrend.vue';
-import { Column, ColumnComponent } from '@/types/table';
+import Table from '@/Components/table/Table.vue';
+import ColumnActions from '@/Components/table/ColumnActions.vue';
+import ColumnBasic from '@/Components/table/ColumnBasic.vue';
 
 type Props = PageProps & {
     aggregations: SortedAggregation;
@@ -78,47 +77,6 @@ const handleColumnEvent = (e: { type: string; obj: any }) => {
             break;
     }
 };
-
-const columns: Column<Budget>[] = [
-    {
-        label: '',
-        content: {
-            component: ColumnTrend as ColumnComponent<Budget>,
-            props: (obj) => ({
-                aggregation: obj.aggregation,
-                highestSaved: highestSaved.value,
-            }),
-        },
-    },
-    {
-        content: {
-            component: ColumnBasic as ColumnComponent<Budget>,
-            props: (obj) => ({
-                value: formatTimeZone('MMMM', 'UTC', obj.budget_cycle),
-            }),
-        },
-        label: 'Name',
-        colspan: 3,
-    },
-    {
-        content: {
-            component: ColumnBasic as ColumnComponent<Budget>,
-            props: (obj) => ({
-                value: convertToCurrency(obj.aggregation.data[BudgetAggregationEnum.SAVED] ?? 0),
-            }),
-        },
-        label: 'Saved',
-        colspan: 3,
-    },
-    {
-        content: {
-            component: ColumnActions as ColumnComponent<Budget>,
-            props: (obj) => ({ obj }),
-        },
-        label: 'Actions',
-        colspan: 1,
-    },
-];
 </script>
 
 <template>
@@ -174,16 +132,41 @@ const columns: Column<Budget>[] = [
                 <FormSelect label="Select Year" :items="allYears" v-model:value="selectedYear" />
             </div>
 
-            <Table
-                :columns="columns"
-                :empty="{
-                    title: 'No Budgets Found',
-                    content: 'Click on the `New Budget` button, above, to add a budget.',
-                }"
-                :items="selectedBudgets"
-                :paginate="{ current: 1, options: [12], selected: 12 }"
-                @column-event="handleColumnEvent($event)"
-            />
+            <Table :items="selectedBudgets" :paginatePerPage="[12]">
+                <ColumnBasic header="">
+                    <template v-slot:default="{ data }">
+                        <div class="flex">
+                            <TrendDown
+                                v-if="data.aggregation.data[BudgetAggregationEnum.SAVED] < 0"
+                                classes="text-danger size-8"
+                            />
+                            <TrendUp v-else classes="text-success size-8" />
+                            <Fire
+                                v-if="
+                                    data.aggregation.data[BudgetAggregationEnum.SAVED] ===
+                                    highestSaved
+                                "
+                                classes="text-orange-500 size-8"
+                            />
+                        </div>
+                    </template>
+                </ColumnBasic>
+                <ColumnBasic :colspan="3" header="Name">
+                    <template v-slot:default="{ data }">
+                        {{ formatTimeZone('MMMM', 'UTC', data.budget_cycle) }}
+                    </template>
+                </ColumnBasic>
+                <ColumnBasic :colspan="3" header="Saved">
+                    <template v-slot:default="{ data }">
+                        {{
+                            convertToCurrency(
+                                data.aggregation.data[BudgetAggregationEnum.SAVED] ?? 0,
+                            )
+                        }}
+                    </template>
+                </ColumnBasic>
+                <ColumnActions @action-event="handleColumnEvent" header="Actions" />
+            </Table>
         </AuthenticatedContentLayout>
     </AuthenticatedLayout>
 </template>

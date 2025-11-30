@@ -9,11 +9,16 @@ import Sidebar from '@/Components/Elements/Sidebar.vue';
 import Table from '@/Components/table/Table.vue';
 import Plus from '@/Components/Icons/outline/Plus.vue';
 import { columns } from '@/utils/helpers';
-import { toTitleCase } from '@/utils/functions';
+import { convertToCurrency, toTitleCase } from '@/utils/functions';
 import { PageProps } from '@/types/providers';
 import { UserVehicle } from '@/types/expenses';
 import ConfirmModal from '@/Components/modals/ConfirmModal.vue';
 import { ValueOfExpense } from '@/types/expenses';
+import ColumnActions from '@/Components/table/ColumnActions.vue';
+import ColumnBasic from '@/Components/table/ColumnBasic.vue';
+import { ColumnBadgeColor } from '@/types/table';
+import ColumnBadge from '@/Components/table/ColumnBadge.vue';
+import { formatTimeZone } from '@/utils/timestamp';
 
 type Props = PageProps & {
     budgetTemplate: any;
@@ -57,6 +62,14 @@ const category = computed(() => {
     return categories[selectedItem.value] ?? selectedItem.value;
 });
 
+const showBalanceColumns = computed(() => {
+    return ['credit cards', 'vehicles'].includes(category.value);
+});
+
+const showPaidColumns = computed(() => {
+    return !['banks', 'incomes', 'investments'].includes(category.value);
+});
+
 watch(showModal, (v) => {
     if (!v) {
         formData.value = undefined;
@@ -93,16 +106,58 @@ watch(showModal, (v) => {
                             Add {{ toTitleCase(selectedItem) }}
                         </FormButton>
                     </div>
+
                     <Table
-                        :columns="[...(columns[selectedItem] ?? [])]"
-                        :empty="{
-                            title: `No results found`,
-                            content: 'Click the button above to add an expense.',
-                        }"
-                        :paginate="{ options: [10], selected: 10, current: 1 }"
-                        :items="budgetTemplate.data.expenses[selectedItem]"
-                        @column-event="handleColumnEvent($event)"
-                    />
+                        :items="budgetTemplate.data.expenses[selectedItem] ?? []"
+                        :paginatePerPage="[10]"
+                    >
+                        <ColumnBasic
+                            v-if="category !== 'vehicles'"
+                            :colspan="3"
+                            header="Name"
+                            notation="data.name"
+                            searchable
+                        />
+                        <ColumnBasic v-if="category === 'vehicles'" :colspan="3" header="Vehicle">
+                            <template v-slot:default="{ data }">
+                                {{ data.vehicle.year }} {{ data.vehicle.make }}
+                                {{ data.vehicle.model }}
+                            </template>
+                        </ColumnBasic>
+                        <ColumnBasic :colspan="2" header="Amount">
+                            <template v-slot:default="{ data }">
+                                {{ convertToCurrency(Number(data.data.amount)) }}
+                            </template>
+                        </ColumnBasic>
+                        <ColumnBadge
+                            v-if="category !== 'miscellaneouses'"
+                            :color="ColumnBadgeColor.GRAY"
+                            :colspan="2"
+                            header="Type"
+                        >
+                            <template v-slot:default="{ data }">
+                                {{ data.expense.name }}
+                            </template>
+                        </ColumnBadge>
+                        <ColumnBasic v-if="showBalanceColumns" :colspan="2" header="Balance">
+                            <template v-slot:default="{ data }">
+                                {{ convertToCurrency(Number(data.data.balance)) }}
+                            </template>
+                        </ColumnBasic>
+                        <ColumnBasic
+                            v-if="showPaidColumns"
+                            header="Due Date"
+                            notation="data.due_date"
+                        />
+                        <ColumnBasic v-if="category === 'incomes'" :colspan="2" header="Pay Date">
+                            <template v-slot:default="{ data }">
+                                <span v-if="data.data.pay_date">
+                                    {{ formatTimeZone('MMM d', 'UTC', data.data.pay_date) }}
+                                </span>
+                            </template>
+                        </ColumnBasic>
+                        <ColumnActions @action-event="handleColumnEvent" header="" />
+                    </Table>
                 </div>
             </section>
         </AuthenticatedContentLayout>

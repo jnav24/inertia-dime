@@ -1,18 +1,17 @@
 <script setup lang="ts">
 import { inject, ref, watch } from 'vue';
 import Typography from '@/Components/Elements/Typography.vue';
-import Table from '@/Components/table/Table.vue';
 import FormButton from '@/Components/Fields/FormButton.vue';
 import Plus from '@/Components/Icons/outline/Plus.vue';
 import ExpenseModal from '@/Components/modals/ExpenseModal.vue';
-import ColumnActions from '@/Components/table/ColumnActions.vue';
-import ColumnBadge from '@/Components/table/ColumnBadge.vue';
-import type { ColumnBadgeProps } from '@/types/table';
 import { NotificationContext, NotificationContextType, PageProps } from '@/types/providers';
 import ConfirmModal from '@/Components/modals/ConfirmModal.vue';
-import { Column, ColumnComponent } from '@/types/table';
-import { UserVehicle } from '@/types/expenses';
 import { ErrorBag, Errors } from '@inertiajs/inertia';
+import Table from '@/Components/table/Table.vue';
+import ColumnBasic from '@/Components/table/ColumnBasic.vue';
+import ColumnBadge from '@/Components/table/ColumnBadge.vue';
+import { ColumnBadgeColor } from '@/types/table';
+import ColumnActions from '@/Components/table/ColumnActions.vue';
 
 type Props = Partial<PageProps> & {
     notify?: string;
@@ -20,33 +19,6 @@ type Props = Partial<PageProps> & {
 };
 
 const props = withDefaults(defineProps<Props>(), { notify: undefined });
-
-const columns: Column<UserVehicle>[] = [
-    { content: 'year', label: 'Year', colspan: 1 },
-    { content: 'color', label: 'Color' },
-    { content: 'make', label: 'Make' },
-    { content: 'model', label: 'Model' },
-    { content: 'license', label: 'License' },
-    {
-        content: {
-            component: ColumnBadge as ColumnComponent<UserVehicle>,
-            props: (obj) =>
-                ({
-                    value: obj.is_active ? 'Active' : 'Inactive',
-                    color: obj.is_active ? 'success' : 'danger',
-                }) as ColumnBadgeProps,
-        },
-        label: 'Status',
-    },
-    {
-        content: {
-            component: ColumnActions as ColumnComponent<UserVehicle>,
-            props: (obj) => ({ obj, hideActions: !obj.is_active }),
-        },
-        label: '',
-        colspan: 1,
-    },
-];
 
 const notificationContext = inject<NotificationContextType>(NotificationContext);
 
@@ -57,7 +29,6 @@ const formData = ref(undefined);
 const handleColumnEvent = (e: { type: string; obj: any }) => {
     switch (e.type) {
         case 'edit':
-            console.log('e', e);
             formData.value = e.obj;
             showModal.value = true;
             break;
@@ -102,10 +73,20 @@ watch(
         </FormButton>
     </div>
 
-    <Table
-        :columns="columns"
-        :items="data"
-        :empty="{ title: 'No Vehicles Found' }"
-        @column-event="handleColumnEvent($event)"
-    />
+    <Table :items="data">
+        <ColumnBasic header="Year" />
+        <ColumnBasic header="Color" />
+        <ColumnBasic header="Make" searchable />
+        <ColumnBasic header="Model" searchable />
+        <ColumnBasic header="License" />
+        <ColumnBadge
+            :color="(d) => (d.is_active ? ColumnBadgeColor.SUCCESS : ColumnBadgeColor.DANGER)"
+            header="Status"
+        >
+            <template v-slot:default="{ data }">
+                {{ data.is_active ? 'Active' : 'Inactive' }}
+            </template>
+        </ColumnBadge>
+        <ColumnActions @action-event="handleColumnEvent" hide="is_active" header="" />
+    </Table>
 </template>
