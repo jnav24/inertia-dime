@@ -8,7 +8,6 @@ import AuthenticatedContentLayout from '@/Layouts/AuthenticatedContentLayout.vue
 import Sidebar from '@/Components/Elements/Sidebar.vue';
 import Table from '@/Components/table/Table.vue';
 import Plus from '@/Components/Icons/outline/Plus.vue';
-import { columns } from '@/utils/helpers';
 import { convertToCurrency, toTitleCase } from '@/utils/functions';
 import { PageProps } from '@/types/providers';
 import { UserVehicle } from '@/types/expenses';

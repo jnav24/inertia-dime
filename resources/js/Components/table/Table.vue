@@ -1,12 +1,12 @@
 <script setup lang="ts" generic="T extends Object">
 import { computed, type ConcreteComponent, provide, ref } from 'vue';
 import { type TableColumn, TableContext, type TableContextType } from '@/types/table';
-import TablePagination from '@/components/table/TablePagination.vue';
-import TableHeaders from '@/components/table/TableHeaders.vue';
-import TableBody from '@/components/table/TableBody.vue';
 import { Optional } from '@/types';
-import TableRow from '@/components/table/TableRow.vue';
-import TableOptions from '@/components/table/TableOptions.vue';
+import TablePagination from '@/Components/table/TablePagination.vue';
+import TableHeaders from '@/Components/table/TableHeaders.vue';
+import TableBody from '@/Components/table/TableBody.vue';
+import TableRow from '@/Components/table/TableRow.vue';
+import TableOptions from '@/Components/table/TableOptions.vue';
 import TableEmpty from '@/Components/table/TableEmpty.vue';
 
 interface EmptyTable {

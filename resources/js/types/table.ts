@@ -48,6 +48,6 @@ export interface TableContextType {
 
 export interface TableRowContextType {
     data: any;
-    getContent: (header: string, notation: string | undefined) => string;
+    getContent: (header: string, notation?: string | undefined) => string;
     parseValue: (value: string) => string;
 }
