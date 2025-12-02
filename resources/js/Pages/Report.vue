@@ -8,7 +8,6 @@ import FormInput from '@/Components/Fields/FormInput.vue';
 import FormSelect from '@/Components/Fields/FormSelect.vue';
 import FormButton from '@/Components/Fields/FormButton.vue';
 import LineChart from '@/Components/Charts/LineChart.vue';
-import Table from '@/Components/table/Table.vue';
 import { PageProps } from '@/types/providers';
 import { computed, onUpdated, reactive, ref } from 'vue';
 import { convertToCurrency, toTitleCase, ucFirst } from '@/utils/functions';
@@ -17,9 +16,11 @@ import ArrowUp from '@/Components/Icons/outline/ArrowUp.vue';
 import { ChartDatasetCustomTypesPerDataset } from 'chart.js/auto';
 import ArrowDown from '@/Components/Icons/outline/ArrowDown.vue';
 import { formatTimeZone } from '@/utils/timestamp';
-import ColumnBasic from '@/Components/table/ColumnBasic.vue';
-import { Column, ColumnComponent } from '@/types/table';
 import { Expenses, ExpenseType } from '@/types/expenses';
+import Table from '@/Components/table/Table.vue';
+import ColumnBasic from '@/Components/table/ColumnBasic.vue';
+import { ColumnBadgeColor } from '@/types/table';
+import ColumnBadge from '@/Components/table/ColumnBadge.vue';
 
 type ExpenseData = {
     amount: number;
@@ -89,115 +90,14 @@ const form = reactive<ExpenseForm>({
     year: new Date().getFullYear().toString(),
 });
 
-const columns = ref<Column<Report>[]>([]);
-
-const setColumns = () => {
-    columns.value = [
-        {
-            label: 'Name',
-            content: 'data.name',
-            colspan: 4,
-            searchable: true,
-        },
-        {
-            label: 'Amount',
-            content: {
-                component: ColumnBasic as ColumnComponent<Report>,
-                props: (obj: Report) => ({
-                    value: convertToCurrency(obj.data.amount),
-                }),
-            },
-            colspan: 2,
-        },
-        ...(form.expense === 'incomes'
-            ? [
-                  {
-                      label: 'Pay Date',
-                      content: {
-                          component: ColumnBasic as ColumnComponent<Report>,
-                          props: (obj: Report) => ({
-                              value: formatTimeZone(
-                                  'MMM dd yyyy',
-                                  'UTC',
-                                  (obj.data as any).pay_date,
-                              ),
-                          }),
-                      },
-                      colspan: 2,
-                  },
-              ]
-            : []),
-        ...(!['banks', 'incomes', 'investments'].includes(form.expense)
-            ? [
-                  {
-                      label: 'Paid Date',
-                      content: {
-                          component: ColumnBasic as ColumnComponent<Report>,
-                          props: (obj: Report) => ({
-                              value: formatTimeZone(
-                                  'MMM dd yyyy',
-                                  'UTC',
-                                  (obj.data as any).paid_date,
-                              ),
-                          }),
-                      },
-                      colspan: 2,
-                  },
-                  {
-                      label: 'Confirmation',
-                      content: {
-                          component: ColumnBasic as ColumnComponent<Report>,
-                          props: (obj: Report) => ({
-                              value: (obj.data as any).confirmation,
-                          }),
-                      },
-                      colspan: 2,
-                  },
-              ]
-            : [
-                  {
-                      label: 'Budget',
-                      content: {
-                          component: ColumnBasic as ColumnComponent<Report>,
-                          props: (obj: Report) => ({
-                              value: formatTimeZone('MMM dd yyyy', 'UTC', obj.budget_cycle),
-                          }),
-                      },
-                      colspan: 2,
-                  },
-              ]),
-        // {
-        //     label: 'Expense',
-        //     content: {
-        //         component: ColumnBasic as ColumnComponent<Report>,
-        //         props: (_obj: Report) => ({
-        //             value: ucFirst(form.expense),
-        //         }),
-        //     },
-        //     colspan: 2,
-        // },
-        ...(form.type
-            ? [
-                  {
-                      label: 'Type',
-                      content: {
-                          component: ColumnBasic as ColumnComponent<Report>,
-                          props: (_obj: Report) => ({
-                              value:
-                                  props.types[form.expense]?.data.find((t) => t.id === form.type)
-                                      ?.name ?? '',
-                          }),
-                      },
-                      colspan: 2,
-                  },
-              ]
-            : []),
-    ];
-};
-
-onUpdated(() => {
-    setColumns();
+const showPaidColumns = computed(() => {
+    return !['banks', 'incomes', 'investments'].includes(form.expense);
 });
+
+const updateExpense = (e: keyof Expenses) => {
+    form.expense = e;
+    form.type = '';
+};
 </script>
 
 <template>
@@ -216,7 +116,7 @@ onUpdated(() => {
                                 :items="expenseTypes"
                                 :value="form.expense"
                                 :rules="['required']"
-                                @handle-selection="form.expense = `${$event}` as keyof Expenses"
+                                @handle-selection="updateExpense(`${$event}` as keyof Expenses)"
                             />
                             <FormSelect
                                 label="Year"
@@ -308,7 +208,52 @@ onUpdated(() => {
                     </div>
                 </Card>
 
-                <Table :columns="columns as Column<Report>[]" :items="reportData" />
+                <Table
+                    :empty-state="{
+                        content: 'Try searching for something above.',
+                        title: 'No data available',
+                    }"
+                    :items="reportData"
+                >
+                    <ColumnBasic :colspan="4" header="Name" notation="data.name" searchable />
+                    <ColumnBasic :colspan="2" header="Amount">
+                        <template v-slot:default="{ data }">
+                            {{ convertToCurrency(data.data.amount) }}
+                        </template>
+                    </ColumnBasic>
+                    <ColumnBasic v-if="form.expense === 'incomes'" :colspan="2" header="Pay Date">
+                        <template v-slot:default="{ data }">
+                            <span v-if="data.data.pay_date">
+                                {{ formatTimeZone('MMM d', 'UTC', data.data.pay_date) }}
+                            </span>
+                        </template>
+                    </ColumnBasic>
+                    <ColumnBasic v-if="showPaidColumns" :colspan="2" header="Paid Date">
+                        <template v-slot:default="{ data }">
+                            <span v-if="data.data.paid_date">
+                                {{ formatTimeZone('MMM d', 'UTC', data.data.paid_date) }}
+                            </span>
+                        </template>
+                    </ColumnBasic>
+                    <ColumnBasic
+                        v-if="showPaidColumns"
+                        :colspan="2"
+                        header="Confirmation"
+                        notation="data.confirmation"
+                    />
+                    <ColumnBasic v-if="!showPaidColumns" :colspan="2" header="Budget">
+                        <template v-slot:default="{ data }">
+                            {{ formatTimeZone('MMM dd yyyy', 'UTC', data.budget_cycle) }}
+                        </template>
+                    </ColumnBasic>
+                    <ColumnBadge
+                        v-if="form.expense !== 'miscellaneouses'"
+                        :color="ColumnBadgeColor.GRAY"
+                        :colspan="2"
+                        header="Type"
+                        notation="expense.name"
+                    />
+                </Table>
             </section>
         </AuthenticatedContentLayout>
     </AuthenticatedLayout>

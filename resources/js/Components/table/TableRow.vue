@@ -1,12 +1,30 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { provide } from 'vue';
+import { TableRowContext, type TableRowContextType } from '@/types/table';
+
+interface Props {
+    data: { row: any };
+}
+
+const props = defineProps<Props>();
+
+const parseValue = (value: string) => {
+    return value.split('.').reduce((result, current) => {
+        return result[current] ?? '';
+    }, props.data?.row);
+};
+
+const getContent = (header: string, notation: string | undefined = undefined) => {
+    if (notation) {
+        return parseValue(notation);
+    }
+
+    return props.data?.row?.[header] ?? props.data?.row?.[header.toLowerCase()];
+};
+
+provide<TableRowContextType>(TableRowContext, { data: props.data?.row, getContent, parseValue });
+</script>
 
 <template>
-    <div
-        :class="[
-            'border-lm-stroke dark:border-dm-stroke flex flex-row items-center space-x-4 border-0 px-4 py-6 shadow-sm',
-            'bg-lm-secondary hover:bg-gray-100 dark:bg-dm-secondary dark:hover:bg-dm-primary/25',
-        ]"
-    >
-        <slot />
-    </div>
+    <slot></slot>
 </template>

@@ -32,10 +32,7 @@ const { error, labelId, getInputValue, updateInputValue } = useForm({
 const updateValue = (event: Event) => {
     const { value } = event.target as HTMLInputElement;
     updateInputValue(value);
-
-    if (props.value) {
-        emit('update:value', value);
-    }
+    emit('update:value', value);
 };
 
 const updateOnBlur = (event: FocusEvent) => {

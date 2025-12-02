@@ -1,12 +1,15 @@
 <script setup lang="ts">
+import { computed, inject, toRefs } from 'vue';
 import Typography from '@/Components/Elements/Typography.vue';
+import { TableContext, type TableContextType } from '@/types/table';
 import FormButton from '@/Components/Fields/FormButton.vue';
-import FormSelect from '@/Components/Fields/FormSelect.vue';
 import ChevronDoubleLeft from '@/Components/Icons/outline/ChevronDoubleLeft.vue';
 import ChevronDoubleRight from '@/Components/Icons/outline/ChevronDoubleRight.vue';
-import { computed, toRefs } from 'vue';
 import ChevronLeft from '@/Components/Icons/outline/ChevronLeft.vue';
 import ChevronRight from '@/Components/Icons/outline/ChevronRight.vue';
+import FormSelect from '@/Components/Fields/FormSelect.vue';
+
+const tableContext = inject<TableContextType>(TableContext);
 
 type Emits = { (e: 'page-change', v: number): void; (e: 'selection', v: number): void };
 
@@ -24,15 +27,18 @@ const { options, page, selected, total } = toRefs(props);
 
 const allowedLinks = 5;
 
-const items = computed<Record<string, string>[]>(() =>
-    options.value.map((op) => ({ label: op.toString(), value: op.toString() })),
-);
-const pages = computed(() => Math.ceil(total.value / selected.value));
 const endNumber = computed(() => {
     const value = selected.value * page.value;
     return total.value < value ? total.value : value;
 });
-const startNumber = computed(() => 1 + selected.value * (page.value - 1));
+const items = computed(() =>
+    options.value.map((op) => ({ label: op.toString(), value: op.toString() })),
+);
+const pages = computed(() => Math.ceil(total.value / selected.value));
+const startNumber = computed(() => {
+    if (total.value === 0) return 0;
+    return 1 + selected.value * (page.value - 1);
+});
 </script>
 
 <template>
@@ -45,9 +51,9 @@ const startNumber = computed(() => 1 + selected.value * (page.value - 1));
 
         <div class="flex flex-row items-center space-x-2">
             <FormSelect
-                @handle-selection="$emit('selection', +$event)"
+                @handle-selection="tableContext?.updateSelectedPaginatePerPage(Number($event))"
+                :items="items as any"
                 hide-label
-                :items="items"
                 label=""
                 :value="selected.toString()"
             />
@@ -57,13 +63,21 @@ const startNumber = computed(() => 1 + selected.value * (page.value - 1));
         <div class="flex flex-row items-center space-x-2">
             <template v-if="pages > 1">
                 <template v-if="variant !== 'short'">
-                    <FormButton checkbox :disabled="page === 1" @click="$emit('page-change', 1)">
+                    <FormButton
+                        checkbox
+                        :disabled="page === 1"
+                        @click="tableContext?.updatePage(1)"
+                    >
                         <ChevronDoubleLeft
                             :classes="`size-4 ${page === 1 ? 'text-gray-400' : ''}`"
                         />
                     </FormButton>
                 </template>
-                <FormButton checkbox :disabled="page === 1" @click="$emit('page-change', page - 1)">
+                <FormButton
+                    checkbox
+                    :disabled="page === 1"
+                    @click="tableContext?.updatePage(page - 1)"
+                >
                     <ChevronLeft :classes="`size-4 ${page === 1 ? 'text-gray-400' : ''}`" />
                 </FormButton>
                 <template v-if="variant !== 'short' && pages < allowedLinks">
@@ -79,7 +93,7 @@ const startNumber = computed(() => 1 + selected.value * (page.value - 1));
                 <FormButton
                     checkbox
                     :disabled="page === pages"
-                    @click="$emit('page-change', page + 1)"
+                    @click="tableContext?.updatePage(page + 1)"
                 >
                     <ChevronRight :classes="`size-4 ${page === pages ? 'text-gray-400' : ''}`" />
                 </FormButton>
@@ -87,7 +101,7 @@ const startNumber = computed(() => 1 + selected.value * (page.value - 1));
                     <FormButton
                         checkbox
                         :disabled="page === pages"
-                        @click="$emit('page-change', pages)"
+                        @click="tableContext?.updatePage(pages)"
                     >
                         <ChevronDoubleRight
                             :classes="`size-4 ${page === pages ? 'text-gray-400' : ''}`"

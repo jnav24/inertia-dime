@@ -1,55 +1,79 @@
-<script setup lang="ts">
-import { computed, reactive, ref, watch, watchEffect } from 'vue';
-import TableEmpty, { Props as TableEmptyProps } from '@/Components/table/TableEmpty.vue';
-import FormCheckbox from '@/Components/Fields/FormCheckbox.vue';
-import TableRow from '@/Components/table/TableRow.vue';
+<script setup lang="ts" generic="T extends Object">
+import { computed, type ConcreteComponent, provide, ref } from 'vue';
+import { type TableColumn, TableContext, type TableContextType } from '@/types/table';
+import { Optional } from '@/types';
 import TablePagination from '@/Components/table/TablePagination.vue';
-import { parseNested } from '@/utils/functions';
-import ColumnBasic from '@/Components/table/ColumnBasic.vue';
-import FormInput from '@/Components/Fields/FormInput.vue';
-import MagnifyingGlass from '@/Components/Icons/outline/MagnifyingGlass.vue';
+import TableHeaders from '@/Components/table/TableHeaders.vue';
+import TableBody from '@/Components/table/TableBody.vue';
+import TableRow from '@/Components/table/TableRow.vue';
+import TableOptions from '@/Components/table/TableOptions.vue';
+import TableEmpty from '@/Components/table/TableEmpty.vue';
 
-type Emits<T> = {
-    (e: 'on-action', v: { type: 'delete'; ids: string[] }): void;
-    (e: 'column-event', v: { type: string; obj: T }): void;
-};
-
-type Props = {
-    columns: any[];
-    items: any[];
-    paginate?: { current: number; options: number[]; selected: number };
-    selectable?: boolean;
+interface EmptyTable {
+    button?: {
+        label: string;
+        icon?: ConcreteComponent;
+    };
+    content?: string;
     title?: string;
-    empty?: TableEmptyProps;
-};
+}
 
-defineEmits<Emits<any>>();
-const props = defineProps<Props>();
+interface Props<T> {
+    emptyResults?: EmptyTable;
+    emptyState?: EmptyTable;
+    gutter?: number;
+    items: T[];
+    paginatePerPage?: number[];
+    perPage?: number;
+    selectable?: boolean;
+    variant?: 'full' | 'short' | 'numeric';
+}
+
+const props = withDefaults(defineProps<Props<T>>(), {
+    gutter: 3,
+    paginatePerPage: () => [10, 25, 50],
+    selectable: false,
+    variant: 'short',
+});
 
 const allChecked = ref(false);
-const checkedItems = ref<string[]>([]);
-const paginateState = reactive({
-    current: props.paginate?.current ?? 1,
-    options: props.paginate?.options ?? [10, 25, 50],
-    selected: props.paginate?.selected ?? 10,
-});
+const checkedItems = ref<(string | number)[]>([]);
+const currentPage = ref(1);
+const headers = ref<Record<string, TableColumn>>({});
+const searchable = ref({});
+const searchKey = ref('');
+const selectedPaginatePerPage = ref(props.perPage ?? props.paginatePerPage?.[0] ?? null);
 
-watchEffect(() => {
-    if (allChecked.value) {
-        checkedItems.value = [];
+const filteredItems = computed(() => {
+    const searchableKeys = Object.keys(searchable.value);
+
+    if (searchKey.value && searchableKeys.length) {
+        return props.items.filter((item) => {
+            return searchableKeys.some((key) => {
+                const value = parseObjectValue(key, item);
+                return (
+                    typeof value === 'string' &&
+                    (value as string).toLowerCase().includes(searchKey.value.toLowerCase())
+                );
+            });
+        });
     }
+
+    return props.items;
 });
 
-const hasData = computed(() => !!(props.columns?.length && props.items?.length));
+const getGutter = computed(() => `pr-${props.gutter}`);
+
 const paginateItems = computed(() =>
-    props.items.slice(
-        (paginateState.current - 1) * paginateState.selected,
-        paginateState.current * paginateState.selected,
+    filteredItems.value.slice(
+        (currentPage.value - 1) * selectedPaginatePerPage.value,
+        currentPage.value * selectedPaginatePerPage.value,
     ),
 );
-const showTopSection = computed(() => {
-    return !!props.columns.filter((column) => column.searchable).length;
-});
+
+const getHeaders = computed<TableColumn[]>(() => Object.values(headers.value));
+
+const hasSearchableItems = computed(() => Object.keys(searchable.value).length > 0);
 
 const getColSpan = (col?: number) => {
     const widthClasses = {
@@ -70,81 +94,100 @@ const getColSpan = (col?: number) => {
     return widthClasses[idx] || 'w-full';
 };
 
-const setAllChecked = (v: boolean) => (allChecked.value = v);
-
-const toggleCheckedItem = (v: number) => {
-    // @todo
+const parseObjectValue = (value: string, obj: Record<string, any>) => {
+    return value.split('.').reduce((result, current) => {
+        return result[current] ?? '';
+    }, obj);
 };
 
-watch(
-    () => props.items,
-    () => {
-        paginateState.current = 1;
-    },
-);
+const resetHeaders = () => (headers.value = {});
+
+const setAllChecked = (v: boolean) => (allChecked.value = v);
+
+const setHeaders = (header: Record<string, Optional<TableColumn, 'width'>>) => {
+    const [id, data] = Object.entries(header)[0];
+    headers.value = { ...headers.value, [id]: { ...data, width: getColSpan(data.colspan) } };
+};
+
+const setSearchable = (notation: string) => {
+    searchable.value = { ...searchable.value, [notation]: true };
+};
+
+const toggleCheckedItem = (checked: boolean, id: number | string) => {
+    checkedItems.value = checked
+        ? [...checkedItems.value, id]
+        : checkedItems.value.filter((i) => i !== id);
+};
+
+const updatePage = (page: number) => (currentPage.value = page);
+
+const updateSelectedPaginatePerPage = (selected: number) =>
+    (selectedPaginatePerPage.value = selected);
+
+provide<TableContextType>(TableContext, {
+    allChecked,
+    checkedItems,
+    data: paginateItems,
+    getColSpan,
+    getHeaders,
+    getGutter,
+    hasSearchableItems,
+    resetHeaders,
+    searchKey,
+    selectable: props.selectable,
+    setAllChecked,
+    setHeaders,
+    setSearchable,
+    toggleCheckedItem,
+    updatePage,
+    updateSelectedPaginatePerPage,
+});
 </script>
 
 <template>
-    <TableEmpty v-if="!hasData" v-bind="empty" />
+    <div v-if="!items.length">
+        <slot v-if="$slots['empty-state']" name="empty-state" />
+        <TableEmpty
+            v-else
+            :button="emptyState?.button"
+            :title="emptyState?.title"
+            :content="emptyState?.content"
+        />
+    </div>
 
     <div
-        class="rounded-xl border border-lm-stroke bg-lm-secondary dark:border-dm-stroke dark:bg-dm-secondary"
         v-else
+        class="rounded-xl border border-lm-stroke bg-lm-secondary dark:border-dm-stroke dark:bg-dm-secondary"
     >
-        <div v-if="showTopSection" class="flex items-center justify-end px-2">
-            <div class="w-56">
-                <FormInput label="Search" :icon="MagnifyingGlass" placeholder />
-            </div>
-        </div>
+        <TableOptions />
 
-        <div
-            class="flex flex-row items-center justify-between space-x-4 border-b border-lm-stroke px-4 py-4 text-lm-text-hover dark:border-dm-stroke dark:text-dm-text-hover"
-        >
-            <FormCheckbox
-                :defaultChecked="allChecked"
-                @handleUpdate="setAllChecked($event)"
-                label=""
-                v-if="selectable"
+        <template v-if="!filteredItems.length">
+            <slot v-if="$slots['empty-results']" name="empty-results" />
+            <TableEmpty
+                v-else
+                :button="emptyResults?.button"
+                :title="emptyResults?.title"
+                :content="emptyResults?.content"
             />
+        </template>
+        <template v-else>
+            <TableHeaders />
 
-            <template v-for="(column, index) in columns" :key="index">
-                {{ column.sortable }}
-                <div :class="getColSpan(column.colspan)">{{ column.label }}</div>
-            </template>
-        </div>
+            <TableBody>
+                <template v-slot="slots">
+                    <TableRow :data="slots">
+                        <slot />
+                    </TableRow>
+                </template>
+            </TableBody>
 
-        <TableRow
-            v-for="(item, index) in paginateItems"
-            :key="item?.id ?? index"
-            class="contact-row justify-between"
-        >
-            <FormCheckbox
-                v-if="selectable"
-                :defaultChecked="allChecked || checkedItems.includes(item?.id ?? index)"
-                @handleUpdate="toggleCheckedItem(item?.id ?? index)"
-                label=""
+            <TablePagination
+                :options="paginatePerPage"
+                :page="currentPage"
+                v-model:selected="selectedPaginatePerPage"
+                :total="filteredItems.length"
+                :variant="variant"
             />
-            <div :class="getColSpan(column.colspan)" v-for="(column, int) in columns" :key="int">
-                <template v-if="typeof column.content === 'string'">
-                    <ColumnBasic :value="parseNested(item, column.content)" />
-                </template>
-                <template v-else>
-                    <component
-                        :is="column.content.component"
-                        v-bind="column.content.props(item)"
-                        @action-event="$emit('column-event', $event)"
-                    />
-                </template>
-            </div>
-        </TableRow>
-
-        <TablePagination
-            :options="paginateState.options"
-            :page="paginateState.current"
-            :selected="paginateState.selected"
-            :total="items.length"
-            @pageChange="paginateState.current = $event"
-            @selection="paginateState.selected = $event"
-        />
+        </template>
     </div>
 </template>
