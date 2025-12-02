@@ -16,6 +16,7 @@ const showOptions = computed(() => {
 const updateSearch = (value: string | undefined) => {
     if (tableContext?.searchKey) {
         tableContext.searchKey.value = value ?? '';
+        tableContext.updatePage(1);
     }
 };
 </script>
