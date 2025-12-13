@@ -62,7 +62,17 @@ const filteredItems = computed(() => {
     return props.items;
 });
 
-const getGutter = computed(() => `pr-${props.gutter}`);
+const getGutter = computed(() => {
+    const gutters = {
+        '1': 'pr-1',
+        '2': 'pr-2',
+        '3': 'pr-3',
+        '4': 'pr-4',
+        '5': 'pr-5',
+    };
+    const idx = `${props.gutter || 3}` as keyof typeof gutters;
+    return gutters[idx] || 'pr-3';
+});
 
 const paginateItems = computed(() =>
     filteredItems.value.slice(
