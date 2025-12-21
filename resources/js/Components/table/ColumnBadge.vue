@@ -51,6 +51,8 @@ const slots = useSlots();
 const tableContext = inject<TableContextType>(TableContext);
 const tableRowContext = inject<TableRowContextType>(TableRowContext);
 
+const rowData = computed(() => tableRowContext?.data?.value.row ?? {});
+
 const badgeColor = computed(() => {
     switch (typeof props.color) {
         case 'string':
@@ -59,7 +61,7 @@ const badgeColor = computed(() => {
             const index = props.color[columnValue.value ?? ''] ?? ColumnBadgeColor.GRAY;
             return colors[index];
         case 'function':
-            return colors[props.color(tableRowContext?.data ?? {})];
+            return colors[props.color(rowData)];
     }
 
     return colors[ColumnBadgeColor.GRAY];
@@ -75,7 +77,7 @@ const columnWidth = computed(() => tableContext?.getColSpan(props.colspan));
         <div class="inline-block w-full rounded-lg border p-2" :class="badgeColor.outer">
             <Typography variant="caption">
                 <span class="block text-center" :class="badgeColor.inner">
-                    <slot v-if="slots.default" :data="tableRowContext?.data ?? {}" />
+                    <slot v-if="slots.default" :data="rowData" />
                     <span v-else>{{ columnValue }}</span>
                 </span>
             </Typography>

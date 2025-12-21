@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject, type Slots, useSlots, type VNode, watchEffect } from 'vue';
+import { computed, inject, type Slots, useSlots, type VNode, watchEffect } from 'vue';
 import { TableContext, type TableContextType } from '@/types/table';
 import FormCheckbox from '@/Components/Fields/FormCheckbox.vue';
 import { randomString } from '@/types/helpers';
@@ -39,14 +39,16 @@ watchEffect(() => {
         });
     }
 });
+
+const items = computed(() => tableContext?.data.value ?? []);
 </script>
 
 <template>
     <div
-        v-for="(row, idx) in tableContext?.data?.value ?? []"
+        v-for="(row, idx) in items"
         :key="row?.id ?? idx"
         :class="[
-            idx === (tableContext?.data?.value?.length ?? 0) - 1 ? 'border-0' : 'border-b',
+            idx === (items.length ?? 0) - 1 ? 'border-0' : 'border-b',
             `flex flex-row items-center space-x-4 border-lm-stroke px-4 py-6 shadow-sm dark:border-dm-stroke`,
             'bg-lm-secondary hover:bg-gray-100 dark:bg-dm-secondary dark:hover:bg-dm-primary/25',
         ]"

@@ -16,6 +16,7 @@ const slots = useSlots();
 const tableContext = inject<TableContextType>(TableContext);
 const tableRowContext = inject<TableRowContextType>(TableRowContext);
 
+const rowData = computed(() => tableRowContext?.data?.value.row ?? {});
 const columnValue = computed(() => tableRowContext?.getContent(props.header, props.notation));
 const columnGutter = computed(() => tableContext?.getGutter.value);
 const columnWidth = computed(() => tableContext?.getColSpan(props.colspan));
@@ -24,7 +25,7 @@ const columnWidth = computed(() => tableContext?.getColSpan(props.colspan));
 <template>
     <div :class="[columnGutter, columnWidth]">
         <Typography variant="body2">
-            <slot v-if="slots.default" :data="tableRowContext?.data ?? {}" />
+            <slot v-if="slots.default" :data="rowData" />
             <span v-else>{{ columnValue }}</span>
         </Typography>
     </div>

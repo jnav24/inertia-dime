@@ -21,12 +21,14 @@ const props = withDefaults(defineProps<Props>(), { colspan: 1 });
 const tableContext = inject<TableContextType>(TableContext);
 const tableRowContext = inject<TableRowContextType>(TableRowContext);
 
+const rowData = computed(() => tableRowContext?.data?.value.row ?? {});
+
 const columnWidth = computed(() => tableContext?.getColSpan(props.colspan));
 
 const showActions = computed(() => {
     switch (typeof props.hide) {
         case 'function':
-            return props.hide(tableRowContext?.data ?? {});
+            return props.hide(rowData);
         case 'string':
             return Boolean(tableRowContext?.getContent(props.hide));
     }
@@ -41,12 +43,12 @@ const showActions = computed(() => {
             <FormButton
                 :icon="Pencil"
                 fab
-                @click="$emit('action-event', { type: 'edit', obj: tableRowContext?.data ?? {} })"
+                @click="$emit('action-event', { type: 'edit', obj: rowData })"
             ></FormButton>
             <FormButton
                 :icon="Trash"
                 fab
-                @click="$emit('action-event', { type: 'delete', obj: tableRowContext?.data ?? {} })"
+                @click="$emit('action-event', { type: 'delete', obj: rowData })"
             ></FormButton>
         </template>
     </div>
