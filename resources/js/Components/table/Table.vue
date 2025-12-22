@@ -40,11 +40,13 @@ const allChecked = ref(false);
 const checkedItems = ref<(string | number)[]>([]);
 const currentPage = ref(1);
 const headers = ref<Record<string, TableColumn>>({});
+const itemsCache = ref('');
 const searchable = ref({});
 const searchKey = ref('');
 const selectedPaginatePerPage = ref(props.perPage ?? props.paginatePerPage?.[0] ?? null);
 
 const filteredItems = computed(() => {
+    resetPagination();
     const searchableKeys = Object.keys(searchable.value);
 
     if (searchKey.value && searchableKeys.length) {
@@ -111,6 +113,23 @@ const parseObjectValue = (value: string, obj: Record<string, any>) => {
 };
 
 const resetHeaders = () => (headers.value = {});
+
+const resetPagination = () => {
+    const cache = (props.items as unknown as Array<{ id: string }>)
+        .map((item) => item.id)
+        .join(', ');
+
+    if (!itemsCache.value) {
+        itemsCache.value = cache;
+        return;
+    }
+
+    if (!itemsCache.value.includes(cache)) {
+        itemsCache.value = cache;
+        currentPage.value = 1;
+        return;
+    }
+};
 
 const setAllChecked = (v: boolean) => (allChecked.value = v);
 
