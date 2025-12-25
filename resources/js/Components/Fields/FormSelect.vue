@@ -2,7 +2,7 @@
 import FormLabel from '@/Components/Fields/FormLabel.vue';
 import type { RulesType } from '@/types/form';
 import ChevronDown from '@/Components/Icons/outline/ChevronDown.vue';
-import { computed, ref, watchEffect } from 'vue';
+import { computed, ref, watch, watchEffect } from 'vue';
 import useForm from '@/Composables/useForm';
 
 type Emits = {
@@ -70,6 +70,11 @@ watchEffect(() => {
         dropDownItems.value?.classList.remove('h-0', 'py-0');
     }
 });
+
+watch(
+    () => props.items,
+    () => updateInputValue(''),
+);
 
 const handleBlur = () => {
     if (!disableField.value) {
