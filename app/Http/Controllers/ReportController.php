@@ -30,14 +30,15 @@ class ReportController extends Controller
             ->where("user_id", $user->id)
             ->get()
             ->map(function (Budget $item) {
-                return ["label" => $item->year, "value" => $item->year];
+                return ["label" => $item->year, "value" => (string)$item->year];
             });
         $results = [];
 
         if ($request->isMethod('post')) {
             $validated = $request->validate([
                 'expense' => ['required'],
-                'year' => ['required', 'digits:4'],
+                'end_year' => ['required', 'digits:4'],
+                'start_year' => ['required', 'digits:4'],
                 'type' => ['nullable', 'uuid'],
                 'keywords' => ['nullable', 'string'],
             ]);
@@ -49,7 +50,10 @@ class ReportController extends Controller
                         ->when(! empty($validated['type']), fn ($query) => $query->where('expense_type_id', $validated['type'])),
                 ])
                 ->where('user_id', $user->id)
-                ->where('budget_cycle', 'LIKE', $validated['year'] . '%')
+                ->whereBetween('budget_cycle', [
+                    Carbon::create($validated['start_year'])->startOfYear(),
+                    Carbon::create($validated['end_year'])->endOfYear(),
+                ])
                 ->get()
                 ->map(function (Budget $budget) use ($validated) {
                     return $budget->{$validated['expense']}
@@ -64,7 +68,7 @@ class ReportController extends Controller
                 })
                 ->flatten()
                 ->groupBy(
-                    fn($report) => Carbon::parse($report["budget_cycle"])->format("M")
+                    fn($report) => Carbon::parse($report["budget_cycle"])->format("M Y")
                 );
         }
 

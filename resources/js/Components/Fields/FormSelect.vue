@@ -54,7 +54,7 @@ const getPlaceholder = computed(() => {
     const obj: SelectItems =
         (props.items ?? []).find((obj: SelectItems) => v === obj[props.itemValue]) ?? {};
 
-    if (isValueSelected && obj && obj[props.itemLabel]) {
+    if (isValueSelected.value && obj && obj[props.itemLabel]) {
         return obj[props.itemLabel];
     }
 
@@ -73,7 +73,10 @@ watchEffect(() => {
 
 watch(
     () => props.items,
-    () => updateInputValue(''),
+    (newItems) => {
+        const result = newItems.find((item) => item[props.itemValue] === props.value);
+        updateInputValue(result?.[props.itemValue] ?? '');
+    },
 );
 
 const handleBlur = () => {

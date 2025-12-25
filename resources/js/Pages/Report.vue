@@ -83,11 +83,16 @@ const yearTotalPercentage = computed(() => {
     );
     return isNaN(percentage) ? 0 : percentage;
 });
+const endYearList = computed(() => {
+    return props.aggregations.filter((item) => item.value >= form.start_year);
+});
 
-const form = reactive<ExpenseForm>({
+const form = reactive<ExpenseForm & { start_year: string; end_year: string }>({
     expense: 'banks',
     type: '',
     year: new Date().getFullYear().toString(),
+    start_year: new Date().getFullYear().toString(),
+    end_year: new Date().getFullYear().toString(),
 });
 
 const showPaidColumns = computed(() => {
@@ -119,9 +124,17 @@ const updateExpense = (e: keyof Expenses) => {
                                 @handle-selection="updateExpense(`${$event}` as keyof Expenses)"
                             />
                             <FormSelect
-                                label="Year"
+                                label="Start Year"
                                 :items="aggregations"
-                                :value="form.year"
+                                :value="form.start_year"
+                                :rules="['required']"
+                                @handle-selection="form.start_year = `${$event}`"
+                            />
+                            <FormSelect
+                                label="End Year"
+                                :is-disabled="form.year === ''"
+                                :items="endYearList"
+                                :value="form.end_year"
                                 :rules="['required']"
                             />
                             <FormSelect
