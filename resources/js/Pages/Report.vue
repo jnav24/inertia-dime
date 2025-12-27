@@ -146,7 +146,9 @@ const updateExpense = (e: keyof Expenses) => {
                                 @handle-selection="form.type = `${$event}`"
                             />
                             <FormInput label="Keywords" value="" />
-                            <div class="pt-8">
+                        </div>
+                        <div class="flex justify-center pt-4">
+                            <div class="w-1/4">
                                 <FormButton block color="primary" submit>Search</FormButton>
                             </div>
                         </div>
