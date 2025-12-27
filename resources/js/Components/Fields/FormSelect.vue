@@ -45,16 +45,12 @@ const { error, labelId, getInputValue, updateInputValue } = useForm({
 const dropDownItems = ref<HTMLDivElement | null>(null);
 const selected = ref(false);
 
-const isValueSelected = computed(
-    () => props.value && (Number(props.value) > 0 || props.value.length),
-);
-
 const getPlaceholder = computed(() => {
     const v = !labelId ? props.value : getInputValue.value;
     const obj: SelectItems =
         (props.items ?? []).find((obj: SelectItems) => v === obj[props.itemValue]) ?? {};
 
-    if (isValueSelected.value && obj && obj[props.itemLabel]) {
+    if (obj?.[props.itemLabel]) {
         return obj[props.itemLabel];
     }
 
