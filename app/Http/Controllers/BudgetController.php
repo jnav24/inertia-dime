@@ -35,17 +35,15 @@ class BudgetController extends Controller
             ->get();
 
         $aggregations = $budgets
-            ->map(fn (Budget $budget) => new BudgetAggregationResource($budget))
-            ->groupBy(fn ($aggregation) => Carbon::parse($aggregation["budget_cycle"])->format("Y"))
-            ->map(function ($group) {
-                return $group->keyBy(fn ($agg) => Carbon::parse($agg["budget_cycle"])->format("n"));
-            });
+            ->mapInto(BudgetAggregationResource::class)
+            ->groupBy(fn ($aggregation) => (string) Carbon::parse($aggregation["budget_cycle"])->year)
+            ->map(fn ($group) => $group->keyBy(fn ($agg) => (string) Carbon::parse($agg['budget_cycle'])->month));
 
         return Inertia::render('Budget', [
             'aggregations' => $aggregations,
             'budgets' => $budgets
-                ->map(fn (Budget $budget) => new BudgetResource($budget))
-                ->groupBy(fn ($budget) => Carbon::parse($budget["budget_cycle"])->format("Y")),
+                ->mapInto(BudgetResource::class)
+                ->groupBy(fn ($budget) => (string) Carbon::parse($budget["budget_cycle"])->year),
         ]);
     }
 
