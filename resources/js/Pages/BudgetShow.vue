@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
+import { Head, router } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import AuthenticatedContentLayout from '@/Layouts/AuthenticatedContentLayout.vue';
 import { PageProps } from '@/types/providers';
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import Sidebar from '@/Components/Elements/Sidebar.vue';
 import Plus from '@/Components/Icons/outline/Plus.vue';
 import { convertToCurrency, toTitleCase } from '@/utils/functions';
@@ -80,6 +80,18 @@ const handleColumnEvent = (e: { type: string; obj: any }) => {
     }
 };
 
+const handleExpenseSelection = (expense: string) => {
+    router.get(
+        route('budget.show', { uuid: props.budget.data.id }),
+        { expense },
+        {
+            preserveState: true,
+            preserveScroll: true,
+            replace: true,
+        },
+    );
+};
+
 onMounted(() => {
     categories.value = Object.keys(props.types);
     selectedItem.value = categories.value?.[0] ?? 'banks';
@@ -90,6 +102,16 @@ watch(showModal, (val) => {
         formData.value = undefined;
     }
 });
+
+watch(
+    () => props.ziggy?.query?.expense,
+    async (expense) => {
+        // sets the table data
+        await nextTick();
+        selectedItem.value = expense || defaultCategory.value;
+    },
+    { immediate: true },
+);
 </script>
 
 <template>
@@ -130,9 +152,9 @@ watch(showModal, (val) => {
             <section class="mt-12 grid grid-cols-4 gap-3">
                 <Sidebar
                     :badges="unpaid"
-                    :value="defaultCategory"
+                    :value="selectedItem"
                     :items="categories"
-                    @on-selection="selectedItem = $event"
+                    @on-selection="handleExpenseSelection($event)"
                 />
 
                 <div class="col-span-4 ml-3 mr-4 sm:mx-0 md:col-span-3">

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Typography from '@/Components/Elements/Typography.vue';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { toTitleCase } from '@/utils/functions';
 
 type Emits = {
@@ -21,6 +21,14 @@ const selected = ref('');
 onMounted(() => {
     selected.value = props.value ?? props.items?.[0] ?? '';
 });
+
+watch(
+    () => [props.value, props.items] as const,
+    ([value, items]) => {
+        selected.value = value ?? items?.[0] ?? '';
+    },
+    { immediate: true },
+);
 
 const handleSelection = (v: string) => {
     selected.value = v;
