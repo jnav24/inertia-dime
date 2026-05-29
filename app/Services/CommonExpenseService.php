@@ -191,7 +191,7 @@ class CommonExpenseService
                     }
 
                     if ($expense === ExpenseTypeEnum::INCOME->value) {
-                        $data->data->pay_date->setMonth((int) $validated['month'])->setYear((int) $validated['year']);
+                        $data->data->pay_date = $data->data->pay_date->setMonth((int) $validated['month'])->setYear((int) $validated['year']);
                     }
 
                     Log::info("Expense: {$expense}, Data: {$data}");
