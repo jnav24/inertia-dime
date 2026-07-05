@@ -7,6 +7,7 @@ use App\Http\Controllers\CommonExpenseController;
 use App\Http\Controllers\CreditCardController;
 use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\InvestmentController;
+use App\Http\Controllers\LoanController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UserMfaController;
@@ -93,9 +94,9 @@ Route::middleware(['auth', 'mfa', 'verified'])->group(function () {
             Route::patch('/expense/housing/{uuid}', [CommonExpenseController::class, 'update'])->name('expense.housing.update');
             Route::delete('/expense/housing', [CommonExpenseController::class, 'destroy'])->name('expense.housing.destroy');
 
-            Route::post('/expense/loan', [CommonExpenseController::class, 'store'])->name('expense.loan.store');
-            Route::patch('/expense/loan/{uuid}', [CommonExpenseController::class, 'update'])->name('expense.loan.update');
-            Route::delete('/expense/loan', [CommonExpenseController::class, 'destroy'])->name('expense.loan.destroy');
+            Route::post('/expense/loan', [LoanController::class, 'store'])->name('expense.loan.store');
+            Route::patch('/expense/loan/{uuid}', [LoanController::class, 'update'])->name('expense.loan.update');
+            Route::delete('/expense/loan', [LoanController::class, 'destroy'])->name('expense.loan.destroy');
 
             Route::post('/expense/medical', [CommonExpenseController::class, 'store'])->name('expense.medical.store');
             Route::patch('/expense/medical/{uuid}', [CommonExpenseController::class, 'update'])->name('expense.medical.update');

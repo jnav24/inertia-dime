@@ -52,6 +52,10 @@ export type IncomeExpenseFormProps = ExpenseFormProps & {
     expense?: IncomeExpense;
 };
 
+export type LoanExpenseFormProps = ExpenseFormProps & {
+    expense?: LoanExpense;
+};
+
 export type UserVehicleExpenseFormProps = ExpenseFormProps & {
     expense?: VehicleExpense;
 };
@@ -84,9 +88,6 @@ type CreditCardExpense = {
         exp_month: number;
         exp_year: number;
         due_date?: number;
-        confirmation?: string;
-        notes?: string;
-        paid_date?: string;
     };
     expense: ExpenseType;
 };
@@ -106,6 +107,19 @@ export type IncomeExpense = {
         name: string;
         amount: number;
         pay_date: string;
+    };
+    expense: ExpenseType;
+};
+
+type LoanExpense = {
+    id: string;
+    data: ExpenseFormActionProps & {
+        name: string;
+        amount: number;
+        balance: number;
+        limit: number;
+        apr: number;
+        due_date?: number;
     };
     expense: ExpenseType;
 };
@@ -144,4 +158,5 @@ export type ValueOfExpense =
     | CommonExpense
     | CreditCardExpense
     | IncomeExpense
+    | LoanExpense
     | VehicleExpense;

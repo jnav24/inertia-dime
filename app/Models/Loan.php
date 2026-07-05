@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Casts\EncryptedExpenseSpend;
+use App\Casts\EncryptedLoan;
 use App\Traits\HasUuids;
 use App\Traits\WithBudget;
 use Illuminate\Database\Eloquent\Model;
@@ -23,7 +23,7 @@ class Loan extends Model
     protected function casts(): array
     {
         return [
-            'data' => EncryptedExpenseSpend::class,
+            'data' => EncryptedLoan::class,
             'uuid' => 'string',
         ];
     }

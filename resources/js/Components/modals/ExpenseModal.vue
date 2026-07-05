@@ -14,6 +14,7 @@ import BudgetForm from '@/Components/Fields/BudgetForm.vue';
 import { NotificationContext, NotificationContextType } from '@/types/providers';
 import UserVehicleForm from '@/Components/Forms/UserVehicleForm.vue';
 import { ErrorBag, Errors } from '@inertiajs/inertia';
+import LoanExpenseForm from '@/Components/Forms/LoanExpenseForm.vue';
 
 type Props = {
     errors: Errors & ErrorBag;
@@ -126,6 +127,13 @@ watch(
                 />
                 <IncomeExpenseForm
                     v-else-if="'incomes' === expense"
+                    :expense="formData"
+                    :is-template="isTemplate"
+                    @close="closeModal()"
+                    :types="types"
+                />
+                <LoanExpenseForm
+                    v-else-if="'loans' === expense"
                     :expense="formData"
                     :is-template="isTemplate"
                     @close="closeModal()"
