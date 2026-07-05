@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Data\LoanDto;
-use App\Http\Requests\CreditCardRequest;
+use App\Http\Requests\LoanRequest;
 use App\Services\CommonExpenseService;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
@@ -14,7 +14,7 @@ class LoanController extends Controller
     public function __construct(protected CommonExpenseService $commonExpenseService)
     {}
 
-    public function store(CreditCardRequest $request): RedirectResponse
+    public function store(LoanRequest $request): RedirectResponse
     {
         $validated = $request->validated();
 
@@ -28,7 +28,7 @@ class LoanController extends Controller
             ->with('message', $validated['name'] . ' was created successfully');
     }
 
-    public function update(CreditCardRequest $request, string $uuid): RedirectResponse
+    public function update(LoanRequest $request, string $uuid): RedirectResponse
     {
         $validated = $request->validated();
 
