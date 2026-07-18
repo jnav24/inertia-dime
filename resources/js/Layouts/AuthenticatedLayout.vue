@@ -7,6 +7,7 @@ import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link } from '@inertiajs/vue3';
 import Typography from '@/Components/Elements/Typography.vue';
 import Chart from '@/Components/Icons/solid/Chart.vue';
+import ChartPie from '@/Components/Icons/solid/ChartPie.vue';
 import Home from '@/Components/Icons/solid/Home.vue';
 import Reports from '@/Components/Icons/solid/Reports.vue';
 import NotificationProvider from '@/Providers/NotificationProvider.vue';
@@ -56,6 +57,14 @@ const showingNavigationDropdown = ref(false);
                                 >
                                     <Reports classes="mr-2 size-4" />
                                     <span>Reports</span>
+                                </NavLink>
+
+                                <NavLink
+                                    :href="route('dividends.index')"
+                                    :active="route().current('dividends.index')"
+                                >
+                                    <ChartPie classes="mr-2 size-4" />
+                                    <span>Dividends</span>
                                 </NavLink>
                             </div>
                         </div>

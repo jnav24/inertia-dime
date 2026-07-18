@@ -114,7 +114,7 @@ const updateExpense = (e: keyof Expenses) => {
         <AuthenticatedContentLayout>
             <section class="space-y-6">
                 <Card>
-                    <BudgetForm>
+                    <BudgetForm :action="route('report.search')">
                         <div class="grid grid-cols-5 gap-4">
                             <FormSelect
                                 label="Expense"

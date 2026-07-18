@@ -5,6 +5,7 @@ use App\Http\Controllers\BudgetController;
 use App\Http\Controllers\BudgetTemplateController;
 use App\Http\Controllers\CommonExpenseController;
 use App\Http\Controllers\CreditCardController;
+use App\Http\Controllers\DividendController;
 use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\InvestmentController;
 use App\Http\Controllers\LoanController;
@@ -136,7 +137,9 @@ Route::middleware(['auth', 'mfa', 'verified'])->group(function () {
         });
 
         Route::get('/reports', [ReportController::class, 'index'])->name('report.index');
-        Route::post('/reports', [ReportController::class, 'index'])->name('report.index');
+        Route::post('/reports', [ReportController::class, 'index'])->name('report.search');
+
+        Route::get('/dividends', [DividendController::class, 'index'])->name('dividends.index');
     });
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

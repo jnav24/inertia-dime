@@ -40,7 +40,8 @@ const addTab = (tab: string) => {
 const handleTabChange = (tab: string) => {
     selectedTab.value = tab;
     const params = { tab: toKebabCase(tab) };
-    window.history.pushState(params, '', route('profile.edit', params));
+    const currentRoute = route().current();
+    window.history.pushState(params, '', route(currentRoute as string, params));
 };
 
 nextTick(() => {
