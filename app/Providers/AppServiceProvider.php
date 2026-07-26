@@ -2,21 +2,26 @@
 
 namespace App\Providers;
 
+use App\Services\BrokerageService;
 use App\Services\CommonExpenseService;
+use App\Services\FmpService;
+use App\Services\MassiveService;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Contracts\Foundation\Application;
 
 class AppServiceProvider extends ServiceProvider
 {
+    public $singletons = [
+        BrokerageService::class => BrokerageService::class,
+        CommonExpenseService::class => CommonExpenseService::class,
+        FmpService::class => FmpService::class,
+        MassiveService::class => MassiveService::class,
+    ];
+
     /**
      * Register any application services.
      */
     public function register(): void
-    {
-        $this->app->singleton(CommonExpenseService::class, function (Application $app) {
-            return new CommonExpenseService();
-        });
-    }
+    {}
 
     /**
      * Bootstrap any application services.

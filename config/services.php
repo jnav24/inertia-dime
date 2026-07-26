@@ -35,4 +35,22 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Brokerage Services
+    |--------------------------------------------------------------------------
+    |
+    | This section is for storing the credentials for brokerage services.
+    |
+    */
+
+    'fmp' => [
+        'api_key' => env('FMP_API_KEY'),
+        'api_url' => env('FMP_API_URL', 'https://financialmodelingprep.com'),
+    ],
+    'massive' => [
+        'api_key' => env('MASSIVE_API_KEY'),
+        'api_url' => env('MASSIVE_API_URL', 'https://api.massive.com'),
+    ],
+
 ];
