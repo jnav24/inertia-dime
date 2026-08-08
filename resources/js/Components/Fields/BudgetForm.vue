@@ -210,6 +210,7 @@ provide<FormContextType>(FormContext, {
     setupForm,
     validateField,
     validateAllFields,
+    validateSubmit,
     resetFields,
 });
 </script>

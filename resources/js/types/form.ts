@@ -63,5 +63,6 @@ export type FormContextType = {
     setupForm: (label: string, rules: any) => string;
     validateField: (labelId: string, value: string, initialize?: boolean) => string | null;
     validateAllFields: () => void;
+    validateSubmit: (e: Event) => void;
     resetFields: () => void;
 };

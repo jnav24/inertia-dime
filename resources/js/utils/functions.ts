@@ -33,3 +33,11 @@ export const convertToCurrency = (val: number, currency = 'USD') => {
 };
 
 export const toKebabCase = (value: string) => value.toLowerCase().replace(/\s+/g, '-');
+
+export const debounce = (fn: Function, delay = 300) => {
+    let timeout: NodeJS.Timeout | undefined = undefined;
+    return (...args: any[]) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => fn(...args), delay);
+    };
+};
