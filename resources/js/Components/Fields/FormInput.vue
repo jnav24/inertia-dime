@@ -3,10 +3,12 @@ import type { RulesType } from '@/types/form';
 import useForm from '@/Composables/useForm';
 import FormLabel from '@/Components/Fields/FormLabel.vue';
 import { resolveComponent } from 'vue';
+import CloseCircle from '@/Components/Icons/solid/CloseCircle.vue';
 
 const emit = defineEmits<{ (e: 'update:value', value: string | undefined): void }>();
 const props = withDefaults(
     defineProps<{
+        clearable?: boolean;
         hidden?: boolean;
         icon?: any;
         label: string;
@@ -62,6 +64,15 @@ const setIcon = () => {
                 v-if="icon"
             >
                 <component :is="setIcon()" class="size-4 text-gray-600" />
+            </div>
+
+            <div
+                v-if="clearable && getInputValue"
+                @click="updateValue({ target: { value: '' } } as unknown as Event)"
+                class="absolute right-0 top-1 flex h-full w-10 cursor-pointer flex-row items-center justify-center"
+                role="button"
+            >
+                <CloseCircle classes="size-4 text-gray-600" />
             </div>
 
             <input
