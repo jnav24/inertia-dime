@@ -140,6 +140,7 @@ Route::middleware(['auth', 'mfa', 'verified'])->group(function () {
         Route::post('/reports', [ReportController::class, 'index'])->name('report.search');
 
         Route::get('/dividends', [DividendController::class, 'index'])->name('dividends.index');
+        Route::post('/dividends', [DividendController::class, 'searchStocks'])->name('dividends.search');
     });
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
