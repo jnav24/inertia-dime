@@ -69,10 +69,10 @@ const setIcon = () => {
             <div
                 v-if="clearable && getInputValue"
                 @click="updateValue({ target: { value: '' } } as unknown as Event)"
-                class="absolute right-0 top-1 flex h-full w-10 cursor-pointer flex-row items-center justify-center"
+                class="absolute -top-2 right-0 flex h-full w-10 cursor-pointer flex-row items-center justify-center"
                 role="button"
             >
-                <CloseCircle classes="size-4 text-gray-600" />
+                <CloseCircle classes="size-6 text-gray-600" />
             </div>
 
             <input
