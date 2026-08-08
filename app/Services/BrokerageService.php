@@ -8,13 +8,18 @@ use Illuminate\Support\Arr;
 
 class BrokerageService
 {
-    public function getDividendOrCreate(FmpService $fmpService, MassiveService $massiveService, string $ticker): ?Dividend
+    public function __construct(
+        private readonly FmpService $fmpService,
+        private readonly MassiveService $massiveService,
+    ) {}
+
+    public function getDividendOrCreate(string $ticker): ?Dividend
     {
         $dividend = Dividend::query()->where('symbol', $ticker)->first();
 
         if (empty($dividend)) {
-            $dividendResponse = Arr::first($massiveService->getDividend($ticker));
-            $stockResponse = Arr::first($fmpService->getStock($ticker));
+            $dividendResponse = Arr::first($this->massiveService->getDividend($ticker));
+            $stockResponse = Arr::first($this->fmpService->getStock($ticker));
 
             if (empty($dividendResponse) && empty($stockResponse)) {
                 return null;
@@ -26,12 +31,12 @@ class BrokerageService
         return $dividend;
     }
 
-    public function updateDividend(FmpService $fmpService, MassiveService $massiveService, string $ticker)
+    public function updateDividend(string $ticker)
     {
         $dividend = Dividend::query()->where('symbol', $ticker)->firstOrFail();
 
-        $dividendResponse = Arr::first($massiveService->getDividend($ticker));
-        $stockResponse = Arr::first($fmpService->getStock($ticker));
+        $dividendResponse = Arr::first($this->massiveService->getDividend($ticker));
+        $stockResponse = Arr::first($this->fmpService->getStock($ticker));
 
         if (empty($dividendResponse) && empty($stockResponse)) {
             return null;
