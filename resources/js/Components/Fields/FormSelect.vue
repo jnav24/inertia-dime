@@ -2,8 +2,9 @@
 import FormLabel from '@/Components/Fields/FormLabel.vue';
 import type { RulesType } from '@/types/form';
 import ChevronDown from '@/Components/Icons/outline/ChevronDown.vue';
-import { computed, ref, watch, watchEffect } from 'vue';
+import { computed, ref, watch } from 'vue';
 import useForm from '@/Composables/useForm';
+import FormSelectOptions from '@/Components/Fields/FormSelectOptions.vue';
 
 type Emits = {
     (e: 'handle-selection', v: string): void;
@@ -42,7 +43,6 @@ const { error, labelId, getInputValue, updateInputValue } = useForm({
     rules: props.rules,
 });
 
-const dropDownItems = ref<HTMLDivElement | null>(null);
 const selected = ref(false);
 
 const getPlaceholder = computed(() => {
@@ -58,14 +58,6 @@ const getPlaceholder = computed(() => {
 });
 
 const disableField = computed(() => props.isDisabled || !props.items?.length);
-
-watchEffect(() => {
-    if (!selected.value) {
-        setTimeout(() => dropDownItems.value?.classList.add('h-0', 'py-0'), 300);
-    } else {
-        dropDownItems.value?.classList.remove('h-0', 'py-0');
-    }
-});
 
 watch(
     () => props.items,
@@ -122,23 +114,18 @@ const handleSelection = (value: string) => {
                 :class="{ 'rotate-180': selected, 'rotate-0': !selected }"
             />
 
-            <div
-                class="dark:bg-dark-main absolute left-0 top-0 max-h-48 w-full transform overflow-y-auto rounded border border-gray-300 bg-white shadow-sm transition duration-300 ease-out"
-                :class="{
-                    'translate-y-12 opacity-100': selected,
-                    'translate-y-0 opacity-0': !selected,
-                }"
-                ref="dropDownItems"
+            <FormSelectOptions
+                @handle-selection="handleSelection"
+                :items="items"
+                :itemLabel="itemLabel"
+                :itemValue="itemValue"
+                :show="selected"
             >
-                <div
-                    class="p-2 text-sm hover:bg-gray-200"
-                    v-for="(item, index) in items"
-                    :key="index"
-                    @click="handleSelection(item[itemValue])"
-                >
-                    {{ item[itemLabel] }}
-                </div>
-            </div>
+                <template #default="{ item }">
+                    <slot v-if="$slots.default" :item="item" />
+                    <span v-else>{{ item[itemLabel] }}</span>
+                </template>
+            </FormSelectOptions>
         </div>
 
         <span v-if="error" class="text-sm text-red-600">{{ error }}</span>
