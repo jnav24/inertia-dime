@@ -23,9 +23,7 @@ class FmpService implements BrokerageInterface
             return [];
         }
 
-        dd($response->json());
-
-        return [];
+        return $response->json();
     }
 
     public function getDividend(string $ticker): array

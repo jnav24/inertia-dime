@@ -25,8 +25,6 @@ class MassiveService implements BrokerageInterface
             return [];
         }
 
-        dd($response->json());
-
         return $response->json()['results'];
     }
 
