@@ -5,7 +5,13 @@ import FormLabel from '@/Components/Fields/FormLabel.vue';
 import { resolveComponent } from 'vue';
 import CloseCircle from '@/Components/Icons/solid/CloseCircle.vue';
 
-const emit = defineEmits<{ (e: 'update:value', value: string | undefined): void }>();
+type Emits = {
+    (e: 'handle-focus'): void;
+    (e: 'handle-blur'): void;
+    (e: 'update:value', value: string | undefined): void;
+};
+
+const emit = defineEmits<Emits>();
 const props = withDefaults(
     defineProps<{
         clearable?: boolean;
@@ -38,10 +44,17 @@ const updateValue = (event: Event) => {
 };
 
 const updateOnBlur = (event: FocusEvent) => {
+    emit('handle-blur');
+
     if (props.onBlur) {
         return updateValue(event);
     }
 
+    return null;
+};
+
+const updateOnFocus = (event: FocusEvent) => {
+    emit('handle-focus');
     return null;
 };
 
@@ -69,7 +82,7 @@ const setIcon = () => {
             <div
                 v-if="clearable && getInputValue"
                 @click="updateValue({ target: { value: '' } } as unknown as Event)"
-                class="absolute -top-2 right-0 flex h-full w-10 cursor-pointer flex-row items-center justify-center"
+                class="absolute right-0 top-1 flex h-full w-10 cursor-pointer flex-row items-center justify-center"
                 role="button"
             >
                 <CloseCircle classes="size-6 text-gray-600" />
@@ -88,6 +101,7 @@ const setIcon = () => {
                 :value="getInputValue"
                 :autocomplete="noAutocomplete || password ? 'on' : 'off'"
                 @blur="updateOnBlur($event)"
+                @focus="updateOnFocus($event)"
                 @input="updateValue($event)"
                 :aria-labelledby="labelId"
                 :readonly="readOnly || hidden"

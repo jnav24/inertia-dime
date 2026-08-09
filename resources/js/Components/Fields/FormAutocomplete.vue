@@ -2,7 +2,7 @@
 import FormInput from '@/Components/Fields/FormInput.vue';
 import FormSelectOptions from '@/Components/Fields/FormSelectOptions.vue';
 import { FormContext, FormContextType, RulesType } from '@/types/form';
-import { inject } from 'vue';
+import { computed, ref, inject } from 'vue';
 import { debounce } from '@/utils/functions';
 
 const formContext = inject<FormContextType>(FormContext, {} as FormContextType);
@@ -39,26 +39,60 @@ const props = withDefaults(defineProps<Props>(), {
     itemValue: 'value',
 });
 
+const isFocused = ref(false);
+const search = ref('');
+
+const filteredItems = computed(() =>
+    props.items.filter((item) => {
+        const label = item[props.itemLabel];
+        const value = item[props.itemValue];
+        return (
+            label.toLowerCase().includes(search.value.toLowerCase()) ||
+            value.toLowerCase().includes(search.value.toLowerCase())
+        );
+    }),
+);
+const showSelections = computed(
+    () => isFocused.value && search.value.length > 0 && props.items.length > 0,
+);
+
+const debouncedSubmit = debounce(() => {
+    if (search.value.length) {
+        formContext.validateSubmit(new Event('submit'));
+    }
+}, 750);
+
 const handleInputUpdate = (value: string | undefined) => {
-    if (formContext) {
-        debounce(() => formContext.validateSubmit(new Event('submit')));
+    search.value = value || '';
+
+    if (formContext && value?.length) {
+        debouncedSubmit();
         return;
     }
 
     emit('search-value', value || '');
 };
+
+const handleSelection = (value: string) => {
+    emit('handle-selection', value);
+};
 </script>
 
 <template>
-    <div class="relative">
-        <FormInput @update:value="handleInputUpdate" v-bind="props" />
+    <div class="relative z-50">
+        <FormInput
+            @handle-blur="isFocused = false"
+            @handle-focus="isFocused = true"
+            @update:value="handleInputUpdate"
+            v-bind="props"
+        />
 
         <FormSelectOptions
-            @handle-selection="emit('handle-selection', $event)"
-            :items="items"
+            @handle-selection="handleSelection"
+            :items="filteredItems"
             :itemLabel="itemLabel"
             :itemValue="itemValue"
-            :show="!!items.length"
+            :show="showSelections"
         >
             <template #default="{ item }">
                 <slot v-if="$slots.default" :item="item" />

@@ -31,9 +31,8 @@ watchEffect(() => {
 });
 
 const handleSelection = (value: string) => {
-    if (props.show) {
-        emit('handle-selection', value);
-    }
+    emit('handle-selection', value);
+    // if (props.show) {}
 };
 </script>
 
