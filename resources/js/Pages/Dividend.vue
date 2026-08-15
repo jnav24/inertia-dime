@@ -18,10 +18,12 @@ type Props = PageProps & {
 
 const props = defineProps<Props>();
 
+const dividend = ref({});
 const showModal = ref(false);
 
 const handleSelection = (event: any) => {
-    console.log('Dividend.handleSelection', event);
+    dividend.value = props.items.find((item) => item.symbol === event);
+    showModal.value = true;
 };
 </script>
 
@@ -32,7 +34,11 @@ const handleSelection = (event: any) => {
         <template #header> Dividends </template>
 
         <AuthenticatedContentLayout>
-            <DividendSearchModal :show="showModal" @update:show="showModal = $event" />
+            <DividendSearchModal
+                @update:show="showModal = $event"
+                :dividend="dividend"
+                :show="showModal"
+            />
 
             <div class="flex justify-end">
                 <div class="w-1/3">
