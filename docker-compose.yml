@@ -75,6 +75,20 @@ services:
                 - '-p${DB_PASSWORD}'
             retries: 3
             timeout: 5s
+    scheduler:
+      image: sail-8.3/app
+      command: php artisan schedule:work
+      restart: always
+      volumes:
+        - '.:/var/www/html'
+      environment:
+        WWWUSER: '${WWWUSER}'
+        LARAVEL_SAIL: 1
+      networks:
+        - sail
+      depends_on:
+        - laravel.test
+        - mysql
 networks:
     sail:
         driver: bridge
