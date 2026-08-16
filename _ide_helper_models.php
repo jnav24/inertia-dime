@@ -394,6 +394,121 @@ namespace App\Models{
  *
  * @property int $id
  * @property string $uuid
+ * @property string $symbol
+ * @property string $company_name
+ * @property string|null $image
+ * @property float $price
+ * @property float $last_dividend
+ * @property float $yield
+ * @property string|null $sector
+ * @property string|null $industry
+ * @property int|null $market_cap
+ * @property float $beta
+ * @property string|null $range
+ * @property float $change
+ * @property float $change_percentage
+ * @property int|null $volume
+ * @property int|null $average_volume
+ * @property string|null $currency
+ * @property string|null $cik
+ * @property string|null $isin
+ * @property string|null $cusip
+ * @property string|null $exchange
+ * @property string|null $exchange_full_name
+ * @property string|null $website
+ * @property string|null $description
+ * @property string|null $ceo
+ * @property string|null $country
+ * @property string|null $full_time_employees
+ * @property string|null $phone
+ * @property string|null $address
+ * @property string|null $city
+ * @property string|null $state
+ * @property string|null $zip
+ * @property string|null $ipo_date
+ * @property int $default_image
+ * @property int $is_etf
+ * @property int $is_actively_trading
+ * @property int $is_adr
+ * @property int $is_fund
+ * @property \Illuminate\Support\Carbon|null $declaration_date
+ * @property \Illuminate\Support\Carbon|null $ex_date
+ * @property \Illuminate\Support\Carbon|null $record_date
+ * @property \Illuminate\Support\Carbon|null $payout_date
+ * @property \App\Enums\FrequencyEnum $frequency
+ * @property float $payout_amount
+ * @property string $source
+ * @property string|null $distribution_type
+ * @property float $historical_adjustment_factor
+ * @property float $split_adjusted_cash_amount
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\UserDividend> $userDividends
+ * @property-read int|null $user_dividends_count
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend whereAddress($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend whereAverageVolume($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend whereBeta($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend whereCeo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend whereChange($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend whereChangePercentage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend whereCik($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend whereCity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend whereCompanyName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend whereCountry($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend whereCurrency($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend whereCusip($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend whereDeclarationDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend whereDefaultImage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend whereDistributionType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend whereExDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend whereExchange($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend whereExchangeFullName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend whereFrequency($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend whereFullTimeEmployees($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend whereHistoricalAdjustmentFactor($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend whereImage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend whereIndustry($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend whereIpoDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend whereIsActivelyTrading($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend whereIsAdr($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend whereIsEtf($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend whereIsFund($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend whereIsin($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend whereLastDividend($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend whereMarketCap($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend wherePayoutAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend wherePayoutDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend wherePhone($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend wherePrice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend whereRange($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend whereRecordDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend whereSector($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend whereSource($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend whereSplitAdjustedCashAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend whereState($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend whereSymbol($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend whereUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend whereVolume($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend whereWebsite($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend whereYield($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dividend whereZip($value)
+ */
+	class Dividend extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * 
+ *
+ * @property int $id
+ * @property string $uuid
  * @property \App\Data\ExpenseSpendDto $data
  * @property int $budget_id
  * @property string $expense_type_id
@@ -889,7 +1004,7 @@ namespace App\Models{
  *
  * @property int $id
  * @property string $uuid
- * @property \App\Data\ExpenseSpendDto $data
+ * @property \App\Data\LoanDto $data
  * @property int $budget_id
  * @property string $expense_type_id
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -922,7 +1037,7 @@ namespace App\Models{
  *
  * @property int $id
  * @property string $uuid
- * @property \App\Data\ExpenseSpendDto $data
+ * @property \App\Data\LoanDto $data
  * @property int $budget_template_id
  * @property string $expense_type_id
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -1421,14 +1536,8 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * Class User
  * 
- * Represents a user in the application.
- * This class extends the base Authenticatable class and implements the MustVerifyEmail interface.
  *
- * @package App\Models
- * @mixin \Illuminate\Database\Eloquent\Builder
- * @uses HasFactory<UserFactory>
  * @property int $id
  * @property string $name
  * @property string $email
@@ -1446,6 +1555,8 @@ namespace App\Models{
  * @property-read int|null $budgets_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\UserDividend> $userDividends
+ * @property-read int|null $user_dividends_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\UserVehicle> $userVehicles
  * @property-read int|null $user_vehicles_count
  * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
@@ -1464,6 +1575,33 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedAt($value)
  */
 	class User extends \Eloquent implements \Illuminate\Contracts\Auth\MustVerifyEmail {}
+}
+
+namespace App\Models{
+/**
+ * 
+ *
+ * @property int $id
+ * @property string $uuid
+ * @property int $user_id
+ * @property int $dividend_id
+ * @property float $quantity
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Dividend $dividend
+ * @property-read \App\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UserDividend newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UserDividend newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UserDividend query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UserDividend whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UserDividend whereDividendId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UserDividend whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UserDividend whereQuantity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UserDividend whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UserDividend whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UserDividend whereUuid($value)
+ */
+	class UserDividend extends \Eloquent {}
 }
 
 namespace App\Models{
