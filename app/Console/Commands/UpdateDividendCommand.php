@@ -6,7 +6,7 @@ use App\Models\Dividend;
 use App\Services\BrokerageService;
 use Illuminate\Console\Command;
 
-class UpdateDividends extends Command
+class UpdateDividendCommand extends Command
 {
     /**
      * The name and signature of the console command.
