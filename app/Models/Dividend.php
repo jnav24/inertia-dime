@@ -24,6 +24,11 @@ class Dividend extends Model
         ];
     }
 
+    public function getRouteKeyName(): string
+    {
+        return 'uuid';
+    }
+
     public function userDividends(): HasMany
     {
         return $this->hasMany(UserDividend::class);
