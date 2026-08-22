@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Validation\Rule;
 
 class DividendController extends Controller
 {
@@ -47,7 +48,7 @@ class DividendController extends Controller
         $validated = $request->validate([
             'quantity' => 'required|decimal:0,8|min:0.01',
             'price' => 'required|decimal:2,8|min:0.01',
-            'transaction_type' => 'required|enum:' . TransactionEnum::class,
+            'transaction_type' => ['required', Rule::in(array_column(TransactionEnum::cases(), 'value')) ]
         ]);
 
         $userDividend = auth()->user()
@@ -90,7 +91,7 @@ class DividendController extends Controller
     {
         return [
             'items' => UserDividendResource::collection(
-                auth()->user()->userDividends()->get(),
+                auth()->user()->userDividends()->with('dividend')->get(),
             ),
             'results' => [ 'data' => [] ],
         ];

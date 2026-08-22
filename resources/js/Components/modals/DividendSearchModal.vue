@@ -27,8 +27,8 @@ const frequency = {
 const maxLength = 350;
 const tz = 'UTC';
 const transactionTypes = [
-    { label: 'Buy', value: 'buy' },
-    { label: 'Sell', value: 'sell' },
+    { label: 'Buy', value: 'bought' },
+    { label: 'Sell', value: 'sold' },
 ];
 
 const showFullDescription = ref(false);
@@ -180,7 +180,7 @@ const truncateDescription = computed(() => props.dividend.description.length > m
 
             <div class="w-1/3 border-l pl-4">
                 <Typography variant="h4">Add Transaction</Typography>
-                <BudgetForm>
+                <BudgetForm :action="route('dividends.update', dividend.uuid)" method="patch">
                     <div class="mt-6 flex-col space-y-4">
                         <FormInput label="Quantity" :rules="['required', 'float:2']" value="0" />
                         <FormInput
@@ -194,7 +194,7 @@ const truncateDescription = computed(() => props.dividend.description.length > m
                             :rules="['required']"
                             item-label="label"
                             item-value="value"
-                            value="buy"
+                            value="bought"
                         />
                         <FormButton block color="primary" submit>Submit</FormButton>
                         <FormButton @click="$emit('update:show', false)" block>Cancel</FormButton>
