@@ -118,7 +118,12 @@ class DividendController extends Controller
     {
         return [
             'items' => UserDividendResource::collection(
-                auth()->user()->userDividends()->with('dividend')->get(),
+                auth()->user()
+                    ->userDividends()
+                    ->with('dividend')
+                    ->get()
+                    ->sortBy('dividend.company_name')
+                    ->values(),
             ),
             'results' => [ 'data' => [] ],
         ];
