@@ -31,9 +31,28 @@ class DividendController extends Controller
 
         $dividend = $brokerageService->getDividendOrCreate($validated['search']);
 
+        $userDividends = auth()->user()
+            ->userDividends()
+            ->with('dividend')
+            ->where('dividend_id', $dividend->id)
+            ->first();
+
+        if ($userDividends) {
+            $results = UserDividendResource::collection(collect([$userDividends]));
+        } else {
+            $tempUserDividend = new \App\Models\UserDividend([
+                'uuid' => null,
+                'quantity' => null,
+                'dividend_id' => $dividend->id,
+            ]);
+            $tempUserDividend->setRelation('dividend', $dividend);
+
+            $results = UserDividendResource::collection(collect([$tempUserDividend]));
+        }
+
         return Inertia::render('Dividend', [
             ...$this->getResponse(),
-            'results' => DividendResource::collection(collect([$dividend])->flatten()->filter()->values()),
+            'results' => $results,
         ]);
     }
 

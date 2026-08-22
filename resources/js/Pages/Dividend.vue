@@ -27,6 +27,8 @@ const props = defineProps<Props>();
 const dividend = ref({});
 const showModal = ref(false);
 
+const autocompleteOptions = computed(() => props.results.data.map((item) => item.dividend));
+
 const totalMarketValue = computed(() => {
     return props.items.data.reduce((acc, item) => acc + item.dividend.price * item.quantity, 0);
 });
@@ -41,9 +43,25 @@ const frequency = (value: string) => {
     return options[value] ?? 1;
 };
 
-const handleSelection = (event: any) => {
-    dividend.value = props.results.data.find((item) => item.symbol === event);
+const handleDividendSelection = (selected: any) => {
+    dividend.value = {
+        ...selected,
+        income: convertToCurrency(
+            selected.dividend.payout_amount *
+                frequency(selected.dividend.frequency) *
+                selected.quantity,
+        ),
+        percentage: convertToPercentage(
+            (selected.dividend.price * selected.quantity) / totalMarketValue.value,
+            true,
+        ),
+    };
     showModal.value = true;
+};
+
+const handleSearchSelection = (event: any) => {
+    const selected = props.results.data.find((item) => item.dividend.symbol === event);
+    handleDividendSelection(selected);
 };
 </script>
 
@@ -64,9 +82,9 @@ const handleSelection = (event: any) => {
                 <div class="w-1/3">
                     <BudgetForm :action="route('dividends.search')">
                         <FormAutocomplete
-                            @handle-selection="handleSelection"
+                            @handle-selection="handleSearchSelection"
                             :icon="MagnifyingGlass"
-                            :items="results.data"
+                            :items="autocompleteOptions"
                             item-label="name"
                             item-value="symbol"
                             label="Search"
@@ -153,7 +171,11 @@ const handleSelection = (event: any) => {
                         <ColumnBasic :colspan="1" header="">
                             <template v-slot:default="{ data }">
                                 <div class="flex justify-end">
-                                    <FormButton :icon="Settings" fab @click=""></FormButton>
+                                    <FormButton
+                                        @click="handleDividendSelection(data)"
+                                        :icon="Settings"
+                                        fab
+                                    ></FormButton>
                                 </div>
                             </template>
                         </ColumnBasic>

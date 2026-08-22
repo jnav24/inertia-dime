@@ -33,68 +33,75 @@ const transactionTypes = [
 
 const showFullDescription = ref(false);
 
+const hasHoldings = computed(() => {
+    return props.dividend.quantity && props.dividend.uuid;
+});
+
 const isGain = computed(() => {
-    return props.dividend.change_percentage > 0;
+    return props.dividend.dividend.change_percentage > 0;
 });
 
 const change = computed(() => {
     const symbol = isGain.value ? '+' : '';
-    return symbol + props.dividend.change;
+    return symbol + props.dividend.dividend.change;
 });
 
 const changePercentage = computed(() => {
     const symbol = isGain.value ? '+' : '';
-    return symbol + props.dividend.change_percentage.toFixed(2) + '%';
+    return symbol + props.dividend.dividend.change_percentage.toFixed(2) + '%';
 });
 
 const dividendPayout = computed(() => {
-    const total = `(${convertToCurrency(props.dividend.payout_amount * (frequency[props.dividend.frequency as keyof typeof frequency] ?? 1))} annually)`;
-    return `${convertToCurrency(props.dividend.payout_amount)} ${total}`;
+    const total = `(${convertToCurrency(props.dividend.dividend.payout_amount * (frequency[props.dividend.dividend.frequency as keyof typeof frequency] ?? 1))} annually)`;
+    return `${convertToCurrency(props.dividend.dividend.payout_amount)} ${total}`;
 });
 
 const stats = computed(() => {
     return [
-        { label: 'Sector', value: props.dividend.sector },
-        { label: 'Frequency', value: toTitleCase(props.dividend.frequency) },
-        { label: 'Yield', value: props.dividend.yield.toFixed(2) + '%' },
+        { label: 'Sector', value: props.dividend.dividend.sector },
+        { label: 'Frequency', value: toTitleCase(props.dividend.dividend.frequency) },
+        { label: 'Yield', value: props.dividend.dividend.yield.toFixed(2) + '%' },
         { label: 'Payout Amount', value: dividendPayout.value },
         {
             label: 'Declaration Date',
-            value: formatTimeZone(format, tz, props.dividend.declaration_date),
+            value: formatTimeZone(format, tz, props.dividend.dividend.declaration_date),
             tooltip:
                 'The date the company’s board officially announces the dividend (and usually sets the dividend amount and the other key dates like ex-dividend and payment).',
         },
         {
             label: 'Ex Date',
-            value: formatTimeZone(format, tz, props.dividend.ex_date),
+            value: formatTimeZone(format, tz, props.dividend.dividend.ex_date),
             tooltip:
                 'The cutoff for eligibility based on share ownership. On/after this date, a new buyer does not get the upcoming dividend; only shareholders who owned the shares before the ex-date are entitled.',
         },
         {
             label: 'Record Date',
-            value: formatTimeZone(format, tz, props.dividend.record_date),
+            value: formatTimeZone(format, tz, props.dividend.dividend.record_date),
             tooltip:
                 'The date the company checks its official shareholder records to determine who is eligible. In practice, it’s usually set so that investors who were still holders on the ex-date will be the ones recorded.',
         },
-        { label: 'Payout Date', value: formatTimeZone(format, tz, props.dividend.payout_date) },
+        {
+            label: 'Payout Date',
+            value: formatTimeZone(format, tz, props.dividend.dividend.payout_date),
+        },
     ];
 });
-
-// the total $ amount holding value; $20,030
-// number of holdings
-// percentage of portfolio
-// projected annual dividend income for specific holding
 
 const holdings = computed(() => {
+    if (!hasHoldings.value) return [];
+
     return [
-        { label: 'Shares', value: '3,584.75' },
-        { label: 'Market Value', value: convertToCurrency(165382.49) },
-        { label: '% of Portfolio', value: '4.17%' },
-        { label: 'Annual Income', value: convertToCurrency(7827.59) },
+        { label: 'Shares', value: props.dividend.quantity },
+        {
+            label: 'Market Value',
+            value: convertToCurrency(props.dividend.dividend.price * props.dividend.quantity),
+        },
+        { label: '% of Portfolio', value: props.dividend.percentage },
+        { label: 'Annual Income', value: props.dividend.income },
     ];
 });
 
-const truncateDescription = computed(() => props.dividend.description.length > maxLength);
+const truncateDescription = computed(() => props.dividend.dividend.description.length > maxLength);
 </script>
 
 <template>
@@ -104,18 +111,20 @@ const truncateDescription = computed(() => props.dividend.description.length > m
                 <div class="mb-4 flex items-center justify-between">
                     <div class="flex items-center space-x-2">
                         <div class="bg-gray-200">
-                            <img :src="dividend.image" alt="" class="h-16 w-16" />
+                            <img :src="dividend.dividend.image" alt="" class="h-16 w-16" />
                         </div>
 
                         <div>
-                            <Typography variant="h2">{{ dividend.company_name }}</Typography>
-                            <Typography variant="caption">{{ dividend.symbol }}</Typography>
+                            <Typography variant="h2">{{ dividend.dividend.name }}</Typography>
+                            <Typography variant="caption">{{
+                                dividend.dividend.symbol
+                            }}</Typography>
                         </div>
                     </div>
 
                     <div class="text-right">
                         <Typography variant="h3">
-                            {{ convertToCurrency(dividend.price) }}
+                            {{ convertToCurrency(dividend.dividend.price) }}
                         </Typography>
                         <Typography variant="caption">
                             <span
@@ -129,7 +138,7 @@ const truncateDescription = computed(() => props.dividend.description.length > m
                     </div>
                 </div>
 
-                <div class="mb-6 flex-col space-y-2">
+                <div v-if="hasHoldings" class="mb-6 flex-col space-y-2">
                     <Typography variant="h5">
                         <span class="font-bold">Holdings</span>
                     </Typography>
@@ -162,10 +171,10 @@ const truncateDescription = computed(() => props.dividend.description.length > m
                 <div class="mt-4">
                     <Typography variant="body1">
                         <span v-if="!showFullDescription">
-                            {{ dividend.description.slice(0, maxLength) }}
+                            {{ dividend.dividend.description.slice(0, maxLength) }}
                             <span v-if="truncateDescription">...</span>
                         </span>
-                        <span v-else>{{ dividend.description }}</span>
+                        <span v-else>{{ dividend.dividend.description }}</span>
                     </Typography>
                     <button
                         v-if="truncateDescription"
@@ -182,7 +191,7 @@ const truncateDescription = computed(() => props.dividend.description.length > m
                 <Typography variant="h4">Add Transaction</Typography>
                 <BudgetForm
                     @after-submit="$emit('update:show', false)"
-                    :action="route('dividends.update', dividend.uuid)"
+                    :action="route('dividends.update', dividend.dividend.uuid)"
                     method="patch"
                 >
                     <div class="mt-6 flex-col space-y-4">
@@ -190,7 +199,7 @@ const truncateDescription = computed(() => props.dividend.description.length > m
                         <FormInput
                             label="Price"
                             :rules="['required', 'float:2']"
-                            :value="dividend.price"
+                            :value="dividend.dividend.price"
                         />
                         <FormSelect
                             label="Transaction Type"
