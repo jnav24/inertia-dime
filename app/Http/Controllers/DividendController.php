@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\DividendResource;
 use App\Http\Resources\UserDividendResource;
 use Exception;
 use Throwable;
@@ -29,10 +30,10 @@ class DividendController extends Controller
 
         $dividend = $brokerageService->getDividendOrCreate($validated['search']);
 
-        return redirect()
-            ->route('dividends.index')
-            ->with('results', collect([$dividend])->flatten()->filter()->values())
-            ->with('preserveScroll', true);
+        return Inertia::render('Dividend', [
+            ...$this->getResponse(),
+            'results' => DividendResource::collection(collect([$dividend])->flatten()->filter()->values()),
+        ]);
     }
 
     /**
@@ -89,8 +90,9 @@ class DividendController extends Controller
     {
         return [
             'items' => UserDividendResource::collection(
-                auth()->user()->userDividends->with('dividend')->get(),
+                auth()->user()->userDividends()->get(),
             ),
+            'results' => [ 'data' => [] ],
         ];
     }
 }

@@ -13,7 +13,8 @@ import { PageProps } from '@/types/providers';
 import Typography from '@/Components/Elements/Typography.vue';
 
 type Props = PageProps & {
-    items: any[];
+    items: { data: any[] };
+    results: { data: any[] };
 };
 
 const props = defineProps<Props>();
@@ -22,7 +23,7 @@ const dividend = ref({});
 const showModal = ref(false);
 
 const handleSelection = (event: any) => {
-    dividend.value = props.items.find((item) => item.symbol === event);
+    dividend.value = props.results.data.find((item) => item.symbol === event);
     showModal.value = true;
 };
 </script>
@@ -46,8 +47,8 @@ const handleSelection = (event: any) => {
                         <FormAutocomplete
                             @handle-selection="handleSelection"
                             :icon="MagnifyingGlass"
-                            :items="items"
-                            item-label="company_name"
+                            :items="results.data"
+                            item-label="name"
                             item-value="symbol"
                             label="Search"
                             clearable
@@ -62,9 +63,7 @@ const handleSelection = (event: any) => {
                                     </div>
                                     <div>
                                         <Typography variant="body1">{{ item.symbol }}</Typography>
-                                        <Typography variant="caption">{{
-                                            item.company_name
-                                        }}</Typography>
+                                        <Typography variant="caption">{{ item.name }}</Typography>
                                     </div>
                                 </div>
                             </template>

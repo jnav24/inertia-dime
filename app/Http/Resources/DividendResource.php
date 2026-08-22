@@ -17,11 +17,13 @@ class DividendResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'change' => $this->change,
+            'change_percentage' => $this->change_percentage,
             'declaration_date' => $this->declaration_date,
             'description' => $this->description,
             'ex_date' => $this->ex_date,
             'frequency' => $this->frequency,
-            'image' => $this->default_image,
+            'image' => $this->image,
             'name' => $this->company_name,
             'payout_amount' => $this->payout_amount,
             'payout_date' => $this->payout_date,
