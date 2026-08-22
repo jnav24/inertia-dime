@@ -3,19 +3,25 @@ import Modal from '@/Components/modals/Modal.vue';
 import Typography from '@/Components/Elements/Typography.vue';
 import { convertToCurrency, toTitleCase } from '@/utils/functions';
 import { formatTimeZone } from '@/utils/timestamp';
-import { computed, ref } from 'vue';
+import { computed, inject, ref, watch } from 'vue';
 import BudgetForm from '@/Components/Fields/BudgetForm.vue';
 import FormInput from '@/Components/Fields/FormInput.vue';
 import FormSelect from '@/Components/Fields/FormSelect.vue';
 import FormButton from '@/Components/Fields/FormButton.vue';
 import ChevronRight from '@/Components/Icons/outline/ChevronRight.vue';
+import { NotificationContext, NotificationContextType } from '@/types/providers';
+import { ErrorBag, Errors } from '@inertiajs/inertia';
 
 interface Props {
     dividend: any;
+    errors: Errors & ErrorBag;
+    notify?: string;
     show: boolean;
 }
 
 const props = defineProps<Props>();
+
+const notificationContext = inject<NotificationContextType>(NotificationContext);
 
 const format = 'yyyy-MM-dd';
 const frequency = {
@@ -102,6 +108,36 @@ const holdings = computed(() => {
 });
 
 const truncateDescription = computed(() => props.dividend.dividend.description.length > maxLength);
+
+watch(
+    () => props.notify,
+    (v) => {
+        if (v) {
+            notificationContext?.addNotification({
+                title: 'Success',
+                message:
+                    v
+                        .match(/[^0-9]+/g)
+                        ?.pop()
+                        ?.trim() ?? '',
+                type: 'success',
+            });
+        }
+    },
+);
+
+watch(
+    () => props.errors,
+    (v) => {
+        for (const error of Object.values(v)) {
+            notificationContext?.addNotification({
+                title: 'Error',
+                message: error,
+                type: 'error',
+            });
+        }
+    },
+);
 </script>
 
 <template>

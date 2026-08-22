@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\DividendResource;
 use App\Http\Resources\UserDividendResource;
 use Exception;
+use Illuminate\Http\RedirectResponse;
 use Throwable;
 use App\Enums\TransactionEnum;
 use App\Models\Dividend;
@@ -59,7 +60,7 @@ class DividendController extends Controller
     /**
      * @param Request $request
      * @param Dividend $dividend
-     * @return Response
+     * @return RedirectResponse
      * @throws Throwable
      */
     public function update(Request $request, Dividend $dividend)
@@ -99,7 +100,8 @@ class DividendController extends Controller
 
             DB::commit();
 
-            return Inertia::render('Dividend', $this->getResponse());
+            return redirect()->back()
+                ->with('message', $dividend->symbol . ' was saved successfully');
         } catch(Throwable $e) {
             DB::rollBack();
             throw new Exception($e->getMessage());

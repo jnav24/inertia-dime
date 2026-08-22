@@ -75,6 +75,8 @@ const handleSearchSelection = (event: any) => {
             <DividendSearchModal
                 @update:show="showModal = $event"
                 :dividend="dividend"
+                :errors="errors"
+                :notify="flash.message ?? ''"
                 :show="showModal"
             />
 
