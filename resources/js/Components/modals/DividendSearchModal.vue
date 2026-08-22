@@ -180,7 +180,11 @@ const truncateDescription = computed(() => props.dividend.description.length > m
 
             <div class="w-1/3 border-l pl-4">
                 <Typography variant="h4">Add Transaction</Typography>
-                <BudgetForm :action="route('dividends.update', dividend.uuid)" method="patch">
+                <BudgetForm
+                    @after-submit="$emit('update:show', false)"
+                    :action="route('dividends.update', dividend.uuid)"
+                    method="patch"
+                >
                     <div class="mt-6 flex-col space-y-4">
                         <FormInput label="Quantity" :rules="['required', 'float:2']" value="0" />
                         <FormInput

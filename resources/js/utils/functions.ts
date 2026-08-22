@@ -32,6 +32,10 @@ export const convertToCurrency = (val: number, currency = 'USD') => {
     return formatter.format(Number(convertToDollar(val)));
 };
 
+export const convertToPercentage = (val: number, convert: boolean = false) => {
+    return `${(val * (convert ? 100 : 1)).toFixed(2)}%`;
+};
+
 export const toKebabCase = (value: string) => value.toLowerCase().replace(/\s+/g, '-');
 
 export const debounce = (fn: Function, delay = 300) => {
