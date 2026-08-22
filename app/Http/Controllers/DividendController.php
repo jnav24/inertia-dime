@@ -80,8 +80,14 @@ class DividendController extends Controller
             DB::beginTransaction();
 
             if ($userDividend) {
+                $quantity = $userDividend->quantity + $validated['quantity'];
+
+                if ($validated['transaction_type'] === TransactionEnum::SELL->value) {
+                    $quantity = max(0, $userDividend->quantity - $validated['quantity']);
+                }
+
                 $userDividend->update([
-                    'quantity' => $userDividend->quantity + $validated['quantity'],
+                    'quantity' => $quantity,
                 ]);
             } else {
                 $userDividend = auth()->user()->userDividends()->create([
@@ -94,7 +100,7 @@ class DividendController extends Controller
                 'quantity' => $validated['quantity'],
                 'price' => $validated['price'],
                 'transaction_date' => now(),
-                'transaction_type' => TransactionEnum::BUY->value,
+                'transaction_type' => $validated['transaction_type'],
                 'user_dividend_id' => $userDividend->id,
             ]);
 
