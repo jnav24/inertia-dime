@@ -92,7 +92,7 @@ class MassiveService implements BrokerageInterface
 
     public function getAndMapDividend(string $symbol): array
     {
-        $dividend = Arr::first($this->getDividend($symbol));
+        $dividend = Arr::first($this->getDividend($symbol)) ?? [];
         return $this->mapDividend($dividend);
     }
 
@@ -104,9 +104,13 @@ class MassiveService implements BrokerageInterface
 
     private function mapDividend(array $stock)
     {
+        if (empty($stock)) {
+            return [];
+        }
+
         return [
             'declaration_date' => $stock['declaration_date'] ?? null,
-            'distribution_type' => $stock['distribution_type'],
+            'distribution_type' => $stock['distribution_type'] ?? 'recurring',
             'ex_date' => $stock['ex_dividend_date'] ?? null,
             'frequency' => FrequencyEnum::fromApiValue($stock['frequency'] ?? 4),
             'payout_amount' => $stock['cash_amount'] ?? 0.00,

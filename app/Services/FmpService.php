@@ -77,18 +77,22 @@ class FmpService implements BrokerageInterface
 
     public function getAndMapDividend(string $symbol): array
     {
-        $dividend = Arr::first($this->getDividend($symbol));
+        $dividend = Arr::first($this->getDividend($symbol)) ?? [];
         return $this->mapDividend($dividend);
     }
 
     public function getAndMapStock(string $symbol): array
     {
-        $stock = Arr::first($this->getStock($symbol));
+        $stock = Arr::first($this->getStock($symbol)) ?? [];
         return $this->mapStock($stock);
     }
 
     private function mapDividend(array $stock)
     {
+        if (empty($stock)) {
+            return [];
+        }
+
         return [
             'declaration_date' => $stock['declarationDate'] ?? null,
             'distribution_type' => $stock['distributionType'] ?? 'recurring',
