@@ -29,8 +29,8 @@ class BrokerageService
 
         if (empty($dividend)) {
             foreach ($this->stocks as $key => $class) {
-                $dividendResponse = app($this->dividends[$key])->getDividend($ticker);
-                $stockResponse = app($class)->getStock($ticker);
+                $dividendResponse = app($this->dividends[$key])->getAndMapDividend($ticker);
+                $stockResponse = app($class)->getAndMapStock($ticker);
 
                 if (!empty($stockResponse) && !empty($dividendResponse)) {
                     $data = $this->calculateYield([ ...$stockResponse, ...$dividendResponse ]);
@@ -48,8 +48,8 @@ class BrokerageService
         $dividend = Dividend::query()->where('symbol', $ticker)->firstOrFail();
 
         foreach ($this->stocks as $key => $class) {
-            $dividendResponse = app($this->dividends[$key])->getDividend($ticker);
-            $stockResponse = app($class)->getStock($ticker);
+            $dividendResponse = app($this->dividends[$key])->getAndMapDividend($ticker);
+            $stockResponse = app($class)->getAndMapStock($ticker);
 
             if (!empty($stockResponse) && !empty($dividendResponse)) {
                 $data = $this->calculateYield([ ...$stockResponse, ...$dividendResponse ]);

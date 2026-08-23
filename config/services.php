@@ -54,7 +54,7 @@ return [
     ],
     'seeking_alpha' => [
         'api_url' => env('SEEKING_ALPHA_API_URL', 'https://finance-api.seekingalpha.com'),
-        'web_url' => env('SEEKING_ALPHA_API_URL', 'https://seekingalpha.com'),
+        'web_url' => env('SEEKING_ALPHA_WEB_URL', 'https://seekingalpha.com'),
     ],
 
 ];

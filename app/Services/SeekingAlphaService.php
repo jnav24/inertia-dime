@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Contracts\BrokerageInterface;
 use App\Enums\FrequencyEnum;
 use App\Models\Dividend;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -35,7 +36,7 @@ class SeekingAlphaService implements BrokerageInterface
 
         $response = Http::withHeaders([
             'Content-Type' => 'application/json'
-        ])->get(config('services.seeking_alpha.web_url') . "api/v3/symbol_data?{$query}");
+        ])->get(config('services.seeking_alpha.web_url') . "/api/v3/symbol_data?{$query}");
         $data = $response->json()['data'] ?? null;
 
         if (empty($data)) {
@@ -63,9 +64,10 @@ class SeekingAlphaService implements BrokerageInterface
 
         $response = Http::withHeaders([
             'Content-Type' => 'application/json'
-        ])->get(config('services.seeking_alpha.web_url') . "api/v3/symbols/{$symbol}");
+        ])->get(config('services.seeking_alpha.web_url') . "/api/v3/symbols/{$symbol}");
 
         $data = $response->json()['data'] ?? null;
+        $included = $response->json()['included'] ?? null;
 
         if (empty($data)) {
             Log::error($response->json()['Error Message'] ?? $response->body());
@@ -79,7 +81,7 @@ class SeekingAlphaService implements BrokerageInterface
         return [
             ...$data['attributes'],
             ...$data['meta'],
-            ...$response['included'].map(fn ($item) => $item['type'] === 'companyInfo')['attributes'],
+            ...Arr::first(array_filter($included, fn ($item) => $item['type'] === 'companyInfo'))['attributes'],
             ...$this->getPriceInfo($data['id']),
         ];
     }
@@ -99,7 +101,7 @@ class SeekingAlphaService implements BrokerageInterface
     public function getAndMapDividend(string $symbol): array
     {
         $dividend = $this->getDividend($symbol);
-        return $this->mapDividend($dividend);
+        return $this->mapDividend($dividend['attributes']);
     }
 
     public function getAndMapStock(string $symbol): array
@@ -162,21 +164,21 @@ class SeekingAlphaService implements BrokerageInterface
 
         $response = Http::withHeaders([
             'Content-Type' => 'application/json'
-        ])->get(config('services.seeking_alpha.api_url') . "real_time_quotes?sa_ids={$id}");
+        ])->get(config('services.seeking_alpha.api_url') . "/real_time_quotes?sa_ids={$id}");
 
-        $data = $response->json()['real_time_quotes'] ?? null;
+        $data = Arr::first($response->json()['real_time_quotes'] ?? []);
 
         if (empty($data)) {
             Log::error($response->json()['Error Message'] ?? $response->body());
             return [];
         }
 
-        $change = $data[0]['close'] - $data[0]['prev_close'];
+        $change = ($data['close'] ?? $data['last']) - $data['prev_close'];
 
         return [
-            ...$data[0],
+            ...$data,
             'change' => $change,
-            'change_percentage' => ($change / $data[0]['prev_close']) * 100
+            'change_percentage' => ($change / $data['prev_close']) * 100
         ];
     }
 
@@ -187,9 +189,10 @@ class SeekingAlphaService implements BrokerageInterface
         }
 
         return [
-            'declaration_date' => $dividend['dividends'][0]['declareDate'] ?? null,
+            'declaration_date' => $dividend['dividends'][0]['date'] ?? null,
             'ex_date' => $dividend['dividends'][0]['exDate'] ?? null,
             'frequency' => FrequencyEnum::fromApiValue($dividend['divDistribution'] ?? 4),
+            'last_dividend' => $dividend['dividends'][1]['amount'] ?? 0.00,
             'market_cap' => $dividend['marketCap'] ?? null,
             'payout_amount' => $dividend['dividends'][0]['amount'] ?? 0.00,
             'payout_date' => $dividend['dividends'][0]['payDate'] ?? null,
@@ -206,14 +209,18 @@ class SeekingAlphaService implements BrokerageInterface
 
         return [
             'address' => $stock['streetaddress'],
+            'change' => $stock['change'],
+            'change_percentage' => $stock['change_percentage'],
             'city' => $stock['city'],
             'company_name' => $stock['companyName'],
             'country' => $stock['country'],
             'currency' => $stock['currency'],
+            'default_image' => 0,
             'description' => $stock['businessDescription'],
             'exchange' => $stock['exchange'] ?? null,
             'exchange_full_name' => $stock['exchangeTitle'] ?? null,
             'full_time_employees' => $stock['numberOfEmployees'],
+            'historical_adjustment_factor' => 0,
             'image' => $stock['companyLogoUrlLight'],
             'industry' => $stock['industryDisplay'],
             'is_actively_trading' => $stock['isActivelyTrading'] ?? true,
@@ -224,9 +231,10 @@ class SeekingAlphaService implements BrokerageInterface
             'price' => $stock['last'],
             'sector' => $stock['sectorDisplay'],
             'source' => 'seeking_alpha',
+            'split_adjusted_cash_amount' => 0,
             'state' => $stock['state'],
             'symbol' => $stock['name'],
-            'volume' => $stock['volume'],
+            'volume' => $stock['volume'] ?? null,
             'website' => $stock['webpage'],
             'zip' => $stock['zipcode'],
         ];
