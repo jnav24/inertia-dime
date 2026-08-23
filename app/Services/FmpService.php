@@ -39,9 +39,7 @@ class FmpService implements BrokerageInterface
             return [];
         }
 
-        dd($response->json());
-
-        return [];
+        return $response->json();
     }
 
     public function getDividendOrCreate(string $ticker): ?Dividend
@@ -75,5 +73,76 @@ class FmpService implements BrokerageInterface
         }
 
         return $dividend;
+    }
+
+    public function getAndMapDividend(string $symbol): array
+    {
+        $dividend = Arr::first($this->getDividend($symbol));
+        return $this->mapDividend($dividend);
+    }
+
+    public function getAndMapStock(string $symbol): array
+    {
+        $stock = Arr::first($this->getStock($symbol));
+        return $this->mapStock($stock);
+    }
+
+    private function mapDividend(array $stock)
+    {
+        return [
+            'declaration_date' => $stock['declarationDate'] ?? null,
+            'distribution_type' => $stock['distributionType'] ?? 'recurring',
+            'ex_date' => $stock['date'] ?? null,
+            'frequency' => FrequencyEnum::fromApiValue($stock['frequency'] ?? 4),
+            'payout_amount' => $stock['dividend'] ?? 0.00,
+            'payout_date' => $stock['payDate'] ?? null,
+            'record_date' => $stock['recordDate'] ?? null,
+            'yield' => $stock['yield'] ?? 0.00,
+        ];
+    }
+
+    private function mapStock(array $stock): array
+    {
+        if (empty($stock)) {
+            return [];
+        }
+
+        return [
+            'address' => $stock['address'],
+            'average_volume' => $stock['averageVolume'],
+            'beta' => $stock['beta'] ?? 1,
+            'ceo' => $stock['ceo'],
+            'change' => $stock['change'],
+            'change_percentage' => $stock['changePercentage'],
+            'cik' => $stock['cik'],
+            'city' => $stock['city'],
+            'company_name' => $stock['companyName'],
+            'country' => $stock['country'],
+            'currency' => $stock['currency'],
+            'cusip' => $stock['cusip'],
+            'description' => $stock['description'],
+            'exchange' => $stock['exchange'] ?? null,
+            'exchange_full_name' => $stock['exchangeFullName'] ?? null,
+            'full_time_employees' => $stock['fullTimeEmployees'],
+            'image' => $stock['image'],
+            'industry' => $stock['industry'],
+            'ipo_date' => $stock['ipoDate'] ?? null,
+            'is_actively_trading' => $stock['isActivelyTrading'],
+            'is_adr' => $stock['isAdr'],
+            'is_etf' => $stock['isEtf'],
+            'is_fund' => $stock['isFund'],
+            'isin' => $stock['isin'],
+            'market_cap' => $stock['marketCap'] ?? null,
+            'phone' => $stock['phone'],
+            'price' => $stock['price'],
+            'range' => $stock['range'],
+            'sector' => $stock['sector'],
+            'source' => 'fmp',
+            'state' => $stock['state'],
+            'symbol' => $stock['symbol'],
+            'volume' => $stock['volume'],
+            'website' => $stock['website'],
+            'zip' => $stock['zip'],
+        ];
     }
 }

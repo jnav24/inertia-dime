@@ -9,5 +9,7 @@ interface BrokerageInterface
     public function getDividend(string $ticker): array;
     public function getStock(string $ticker): array;
     public function getDividendOrCreate(string $ticker): ?Dividend;
+    public function getAndMapDividend(string $symbol): array;
+    public function getAndMapStock(string $symbol): array;
 }
 

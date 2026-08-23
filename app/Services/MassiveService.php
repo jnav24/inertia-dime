@@ -89,4 +89,72 @@ class MassiveService implements BrokerageInterface
 
         return $dividend;
     }
+
+    public function getAndMapDividend(string $symbol): array
+    {
+        $dividend = Arr::first($this->getDividend($symbol));
+        return $this->mapDividend($dividend);
+    }
+
+    public function getAndMapStock(string $symbol): array
+    {
+        $stock = Arr::first($this->getStock($symbol));
+        return $this->mapStock($stock);
+    }
+
+    private function mapDividend(array $stock)
+    {
+        return [
+            'declaration_date' => $stock['declaration_date'] ?? null,
+            'distribution_type' => $stock['distribution_type'],
+            'ex_date' => $stock['ex_dividend_date'] ?? null,
+            'frequency' => FrequencyEnum::fromApiValue($stock['frequency'] ?? 4),
+            'payout_amount' => $stock['cash_amount'] ?? 0.00,
+            'payout_date' => $stock['pay_date'] ?? null,
+            'record_date' => $stock['record_date'] ?? null,
+        ];
+    }
+
+    private function mapStock(array $stock)
+    {
+        // these are missing from the massive api
+        // 'average_volume' => $stock['averageVolume'],
+        // 'beta' => $stock['beta'] ?? 1,
+        // 'ceo' => $stock['ceo'],
+        // 'change' => $stock['change'],
+        // 'change_percentage' => $stock['changePercentage'],
+        // 'cusip' => $stock['cusip'],
+        // 'industry' => $stock['industry'],
+        // 'ipo_date' => $stock['ipoDate'] ?? null,
+        // 'isin' => $stock['isin'],
+        // 'is_actively_trading' => $stock['isActivelyTrading'],
+        // 'is_adr' => $stock['isAdr'],
+        // 'is_etf' => $stock['isEtf'],
+        // 'is_fund' => $stock['isFund'],
+        // 'price' => $stock['price'],
+        // 'range' => $stock['range'],
+        // 'sector' => $stock['sector'],
+        // 'volume' => $stock['volume'],
+        // 'yield' => $this->calculateYield($dividend, $stock['price']),
+        return [
+            'address' => $stock['address']['address1'],
+            'cik' => $stock['cik'],
+            'city' => $stock['address']['city'],
+            'company_name' => $stock['name'],
+            'country' => $stock['locale'],
+            'currency' => $stock['currency_name'],
+            'description' => $stock['description'],
+            'exchange' => $stock['primary_exchange'] ?? null,
+            'exchange_full_name' => $stock['primary_exchange'] ?? null,
+            'full_time_employees' => $stock['total_employees'],
+            'image' => $stock['branding']['logo_url'],
+            'market_cap' => $stock['market_cap'] ?? null,
+            'phone' => $stock['phone_number'],
+            'source' => 'massive',
+            'state' => $stock['address']['state'],
+            'symbol' => $stock['ticker'],
+            'website' => $stock['homepage_url'],
+            'zip' => $stock['address']['postal'],
+        ];
+    }
 }

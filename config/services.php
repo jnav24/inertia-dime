@@ -52,5 +52,9 @@ return [
         'api_key' => env('MASSIVE_API_KEY'),
         'api_url' => env('MASSIVE_API_URL', 'https://api.massive.com'),
     ],
+    'seeking_alpha' => [
+        'api_url' => env('SEEKING_ALPHA_API_URL', 'https://finance-api.seekingalpha.com'),
+        'web_url' => env('SEEKING_ALPHA_API_URL', 'https://seekingalpha.com'),
+    ],
 
 ];

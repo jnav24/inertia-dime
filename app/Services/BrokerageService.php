@@ -4,53 +4,78 @@ namespace App\Services;
 
 use App\Enums\FrequencyEnum;
 use App\Models\Dividend;
-use Illuminate\Support\Arr;
 
 class BrokerageService
 {
-    public function __construct(
-        private readonly FmpService $fmpService,
-        private readonly MassiveService $massiveService,
-    ) {}
+    public readonly array $stocks;
+    public readonly array $dividends;
+
+    public function __construct()
+    {
+        $this->stocks = [
+            FmpService::class,
+            SeekingAlphaService::class,
+        ];
+
+        $this->dividends = [
+            MassiveService::class,
+            SeekingAlphaService::class,
+        ];
+    }
 
     public function getDividendOrCreate(string $ticker): ?Dividend
     {
         $dividend = Dividend::query()->where('symbol', $ticker)->first();
 
         if (empty($dividend)) {
-            $dividendResponse = Arr::first($this->massiveService->getDividend($ticker));
-            $stockResponse = Arr::first($this->fmpService->getStock($ticker));
+            foreach ($this->stocks as $key => $class) {
+                $dividendResponse = app($this->dividends[$key])->getDividend($ticker);
+                $stockResponse = app($class)->getStock($ticker);
 
-            if (empty($dividendResponse) && empty($stockResponse)) {
-                return null;
+                if (!empty($stockResponse) && !empty($dividendResponse)) {
+                    $data = $this->calculateYield([ ...$stockResponse, ...$dividendResponse ]);
+                    $dividend = Dividend::create($data);
+                    break;
+                }
             }
-
-            $dividend = Dividend::create($this->mapDividend($dividendResponse, $stockResponse));
         }
 
         return $dividend;
     }
 
-    public function updateDividend(string $ticker)
+    public function updateDividend(string $ticker): void
     {
         $dividend = Dividend::query()->where('symbol', $ticker)->firstOrFail();
 
-        $dividendResponse = Arr::first($this->massiveService->getDividend($ticker));
-        $stockResponse = Arr::first($this->fmpService->getStock($ticker));
+        foreach ($this->stocks as $key => $class) {
+            $dividendResponse = app($this->dividends[$key])->getDividend($ticker);
+            $stockResponse = app($class)->getStock($ticker);
 
-        if (empty($dividendResponse) && empty($stockResponse)) {
-            return null;
+            if (!empty($stockResponse) && !empty($dividendResponse)) {
+                $data = $this->calculateYield([ ...$stockResponse, ...$dividendResponse ]);
+                $dividend->update($data);
+                break;
+            }
+        }
+    }
+
+    private function calculateYield(array $stock): array
+    {
+        if (!empty($stock['yield'])) {
+            return $stock;
         }
 
-        $dividend->update($this->mapDividend($dividendResponse, $stockResponse));
+        $payoutAmount = ($stock['payout_amount'] ?? 0.00) * ($dividend['frequency'] ?? 4);
+        $stock['yield'] = ($payoutAmount / $stock['price']) * 100;
+        return $stock;
     }
 
-    private function calculateYield(array $dividend, float $price): float
-    {
-        $payoutAmount = ($dividend['cash_amount'] ?? 0.00) * ($dividend['frequency'] ?? 4);
-        return ($payoutAmount / $price) * 100;
-    }
-
+    /**
+     * @deprecated
+     * @param array $dividend
+     * @param array $stock
+     * @return array
+     */
     private function mapDividend(array $dividend, array $stock): array
     {
         return [
