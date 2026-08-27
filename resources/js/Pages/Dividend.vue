@@ -73,7 +73,7 @@ const handleSearchSelection = (event: any) => {
                         <FormAutocomplete
                             @handle-selection="handleSearchSelection"
                             :icon="MagnifyingGlass"
-                            :items="autocompleteOptions"
+                            :items="autocompleteOptions as unknown as Record<string, string>[]"
                             item-label="name"
                             item-value="symbol"
                             label="Search"
