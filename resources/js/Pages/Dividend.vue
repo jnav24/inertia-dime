@@ -3,6 +3,7 @@ import { computed, ref } from 'vue';
 import { Head } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import AuthenticatedContentLayout from '@/Layouts/AuthenticatedContentLayout.vue';
+import Holdings from '@/Components/Dividends/Holdings.vue';
 import Tabs from '@/Components/tabs/Tabs.vue';
 import TabItem from '@/Components/tabs/TabItem.vue';
 import FormAutocomplete from '@/Components/Fields/FormAutocomplete.vue';
@@ -11,37 +12,23 @@ import MagnifyingGlass from '@/Components/Icons/outline/MagnifyingGlass.vue';
 import BudgetForm from '@/Components/Fields/BudgetForm.vue';
 import { PageProps } from '@/types/providers';
 import Typography from '@/Components/Elements/Typography.vue';
-import Table from '@/Components/table/Table.vue';
 import { convertToCurrency, convertToPercentage } from '@/utils/functions';
-import ColumnBasic from '@/Components/table/ColumnBasic.vue';
-import Settings from '@/Components/Icons/outline/Settings.vue';
-import FormButton from '@/Components/Fields/FormButton.vue';
+import useDividends from '@/Composables/useDividends';
+import { UserDividend, UserDividendSearch } from '@/types/dividends';
 
 type Props = PageProps & {
-    items: { data: any[] };
-    results: { data: any[] };
+    items: { data: UserDividend[] };
+    results: { data: UserDividendSearch[] };
 };
 
 const props = defineProps<Props>();
+
+const { frequency, totalMarketValue } = useDividends({ items: props.items.data });
 
 const dividend = ref({});
 const showModal = ref(false);
 
 const autocompleteOptions = computed(() => props.results.data.map((item) => item.dividend));
-
-const totalMarketValue = computed(() => {
-    return props.items.data.reduce((acc, item) => acc + item.dividend.price * item.quantity, 0);
-});
-
-const frequency = (value: string) => {
-    const options: Record<string, number> = {
-        annually: 1,
-        semiannual: 2,
-        quarterly: 4,
-        monthly: 12,
-    };
-    return options[value] ?? 1;
-};
 
 const handleDividendSelection = (selected: any) => {
     dividend.value = {
@@ -113,77 +100,14 @@ const handleSearchSelection = (event: any) => {
 
             <Tabs>
                 <TabItem title="Holdings">
-                    <Table :items="items.data">
-                        <ColumnBasic :colspan="3" header="Name">
-                            <template v-slot:default="{ data }">
-                                <div class="flex items-center space-x-2">
-                                    <img :src="data.dividend.image" alt="" class="h-12 w-12" />
-                                    <div>
-                                        <Typography variant="body1">
-                                            {{ data.dividend.name }}
-                                        </Typography>
-                                        <Typography variant="caption">
-                                            {{ data.dividend.symbol }}
-                                        </Typography>
-                                    </div>
-                                </div>
-                            </template>
-                        </ColumnBasic>
-                        <ColumnBasic :colspan="1" header="Price">
-                            <template v-slot:default="{ data }">
-                                {{ convertToCurrency(data.dividend.price) }}
-                            </template>
-                        </ColumnBasic>
-                        <ColumnBasic :colspan="1" header="% of Portfolio">
-                            <template v-slot:default="{ data }">
-                                {{
-                                    convertToPercentage(
-                                        (data.dividend.price * data.quantity) / totalMarketValue,
-                                        true,
-                                    )
-                                }}
-                            </template>
-                        </ColumnBasic>
-                        <ColumnBasic :colspan="1" header="Shares">
-                            <template v-slot:default="{ data }">
-                                {{ data.quantity }}
-                            </template>
-                        </ColumnBasic>
-                        <ColumnBasic header="Yield">
-                            <template v-slot:default="{ data }">
-                                {{ convertToPercentage(data.dividend.yield) }}
-                            </template>
-                        </ColumnBasic>
-                        <ColumnBasic :colspan="2" header="Market Value">
-                            <template v-slot:default="{ data }">
-                                {{ convertToCurrency(data.dividend.price * data.quantity) }}
-                            </template>
-                        </ColumnBasic>
-                        <ColumnBasic :colspan="1" header="Annual Income">
-                            <template v-slot:default="{ data }">
-                                {{
-                                    convertToCurrency(
-                                        data.dividend.payout_amount *
-                                            frequency(data.dividend.frequency) *
-                                            data.quantity,
-                                    )
-                                }}
-                            </template>
-                        </ColumnBasic>
-                        <ColumnBasic :colspan="1" header="">
-                            <template v-slot:default="{ data }">
-                                <div class="flex justify-end">
-                                    <FormButton
-                                        @click="handleDividendSelection(data)"
-                                        :icon="Settings"
-                                        fab
-                                    ></FormButton>
-                                </div>
-                            </template>
-                        </ColumnBasic>
-                    </Table>
+                    <Holdings @handle-selection="handleDividendSelection" :items="items.data" />
                 </TabItem>
-                <TabItem title="Payouts">Payouts</TabItem>
+                <TabItem title="Payouts">
+                    <pre>notes for payouts tab</pre>
+                    <pre>
+If the declaration date and payout date already passed, then the payout amount for the next divided is estimated</pre
+                    >
+                </TabItem>
             </Tabs>
         </AuthenticatedContentLayout>
     </AuthenticatedLayout>
