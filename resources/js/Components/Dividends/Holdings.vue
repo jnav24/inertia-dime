@@ -104,7 +104,7 @@ const upcomingPayoutDate = computed(() => {
         </div>
     </div>
 
-    <Table :items="items.data">
+    <Table :items="items">
         <ColumnBasic :colspan="3" header="Name">
             <template v-slot:default="{ data }">
                 <div class="flex items-center space-x-2">
