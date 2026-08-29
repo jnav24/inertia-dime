@@ -50,7 +50,7 @@ const upcomingPayoutDate = computed(() => {
 
     const futureDates = [...props.items]
         .map((item) => new Date(item.dividend.payout_date))
-        .filter((date) => date >= today)
+        .filter((date) => !isNaN(date.getTime()) && date >= today)
         .sort((a, b) => a.getTime() - b.getTime());
 
     return futureDates.length > 0 ? futureDates[0] : null;

@@ -12,10 +12,9 @@ enum FrequencyEnum: string {
     {
         return match ($value) {
             12, 'Monthly' => self::Monthly,
-            4, 'Quarterly' => self::Quarterly,
             1, 'Annually' => self::Annually,
             2, 'Semiannual' => self::Semiannual,
-            default => null,
+            default => self::Quarterly,
         };
     }
 }

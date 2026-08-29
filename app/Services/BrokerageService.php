@@ -97,7 +97,7 @@ class BrokerageService
             'exchange' => $stock['exchange'] ?? null,
             'exchange_full_name' => $stock['exchangeFullName'] ?? null,
             'ex_date' => $dividend['ex_dividend_date'] ?? null,
-            'frequency' => FrequencyEnum::fromApiValue($dividend['frequency'] ?? 4),
+            'frequency' => FrequencyEnum::fromApiValue($dividend['frequency'] ?? 4)->value,
             'full_time_employees' => $stock['fullTimeEmployees'],
             'market_cap' => $stock['marketCap'] ?? null,
             'image' => $stock['image'],

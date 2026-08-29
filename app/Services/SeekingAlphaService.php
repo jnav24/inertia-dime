@@ -15,7 +15,7 @@ class SeekingAlphaService implements BrokerageInterface
     public function getDividend(string $symbol): array
     {
         $params = [
-            'slugs' => $symbol,
+            'slugs' => strtoupper($symbol),
             'fields' => [
                 'companyName',
                 'divDistribution',
@@ -64,7 +64,7 @@ class SeekingAlphaService implements BrokerageInterface
 
         $response = Http::withHeaders([
             'Content-Type' => 'application/json'
-        ])->get(config('services.seeking_alpha.web_url') . "/api/v3/symbols/{$symbol}");
+        ])->get(config('services.seeking_alpha.web_url') . "/api/v3/symbols/" . strtoupper($symbol));
 
         $data = $response->json()['data'] ?? null;
         $included = $response->json()['included'] ?? null;
@@ -191,7 +191,7 @@ class SeekingAlphaService implements BrokerageInterface
         return [
             'declaration_date' => $dividend['dividends'][0]['date'] ?? null,
             'ex_date' => $dividend['dividends'][0]['exDate'] ?? null,
-            'frequency' => FrequencyEnum::fromApiValue($dividend['divDistribution'] ?? 4),
+            'frequency' => FrequencyEnum::fromApiValue($dividend['divDistribution'] ?? 4)->value,
             'last_dividend' => $dividend['dividends'][1]['amount'] ?? 0.00,
             'market_cap' => $dividend['marketCap'] ?? null,
             'payout_amount' => $dividend['dividends'][0]['amount'] ?? 0.00,

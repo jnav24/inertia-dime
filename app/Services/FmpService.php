@@ -57,7 +57,7 @@ class FmpService implements BrokerageInterface
             $dividend = Dividend::create([
                 'declaration_date' => $dividendResponse['declaration_date'] ?? null,
                 'ex_date' => $dividendResponse['ex_date'] ?? null,
-                'frequency' => FrequencyEnum::fromApiValue($dividendResponse['frequency'] ?? 4),
+                'frequency' => FrequencyEnum::fromApiValue($dividendResponse['frequency'] ?? 4)->value,
                 'name' => $stockResponse['name'],
                 'image' => $stockResponse['image'],
                 'industry' => $stockResponse['industry'],
@@ -97,7 +97,7 @@ class FmpService implements BrokerageInterface
             'declaration_date' => $stock['declarationDate'] ?? null,
             'distribution_type' => $stock['distributionType'] ?? 'recurring',
             'ex_date' => $stock['date'] ?? null,
-            'frequency' => FrequencyEnum::fromApiValue($stock['frequency'] ?? 4),
+            'frequency' => FrequencyEnum::fromApiValue($stock['frequency'] ?? 4)->value,
             'payout_amount' => $stock['dividend'] ?? 0.00,
             'payout_date' => $stock['payDate'] ?? null,
             'record_date' => $stock['recordDate'] ?? null,

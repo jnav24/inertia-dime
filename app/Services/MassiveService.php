@@ -72,7 +72,7 @@ class MassiveService implements BrokerageInterface
             $dividend = Dividend::create([
                 'declaration_date' => $dividendResponse['declaration_date'] ?? null,
                 'ex_date' => $dividendResponse['ex_dividend_date'] ?? null,
-                'frequency' => FrequencyEnum::fromApiValue($dividendResponse['frequency'] ?? 4),
+                'frequency' => FrequencyEnum::fromApiValue($dividendResponse['frequency'] ?? 4)->value,
                 'name' => $stockResponse['name'],
                 'image' => $stockResponse['branding']['logo_url'],
                 'industry' => $stockResponse['industry'], // no industry in massive api
@@ -112,7 +112,7 @@ class MassiveService implements BrokerageInterface
             'declaration_date' => $stock['declaration_date'] ?? null,
             'distribution_type' => $stock['distribution_type'] ?? 'recurring',
             'ex_date' => $stock['ex_dividend_date'] ?? null,
-            'frequency' => FrequencyEnum::fromApiValue($stock['frequency'] ?? 4),
+            'frequency' => FrequencyEnum::fromApiValue($stock['frequency'] ?? 4)->value,
             'payout_amount' => $stock['cash_amount'] ?? 0.00,
             'payout_date' => $stock['pay_date'] ?? null,
             'record_date' => $stock['record_date'] ?? null,
