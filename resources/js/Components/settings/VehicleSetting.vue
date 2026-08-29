@@ -80,7 +80,7 @@ watch(
         <ColumnBasic header="Model" searchable />
         <ColumnBasic header="License" />
         <ColumnBadge
-            :color="(d) => (d.is_active ? ColumnBadgeColor.SUCCESS : ColumnBadgeColor.DANGER)"
+            :color="(d) => (d.value.is_active ? ColumnBadgeColor.SUCCESS : ColumnBadgeColor.DANGER)"
             header="Status"
         >
             <template v-slot:default="{ data }">
