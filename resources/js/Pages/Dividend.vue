@@ -14,11 +14,13 @@ import { PageProps } from '@/types/providers';
 import Typography from '@/Components/Elements/Typography.vue';
 import { convertToCurrency, convertToPercentage } from '@/utils/functions';
 import useDividends from '@/Composables/useDividends';
-import { UserDividend, UserDividendSearch } from '@/types/dividends';
+import { UserDividend, UserDividendSearch, UserDividendTransaction } from '@/types/dividends';
+import Transactions from '@/Components/Dividends/Transactions.vue';
 
 type Props = PageProps & {
     items: { data: UserDividend[] };
     results: { data: UserDividendSearch[] };
+    transactions: { data: UserDividendTransaction[] };
 };
 
 const props = defineProps<Props>();
@@ -107,6 +109,9 @@ const handleSearchSelection = (event: any) => {
                     <pre>
 If the declaration date and payout date already passed, then the payout amount for the next divided is estimated</pre
                     >
+                </TabItem>
+                <TabItem title="Transactions">
+                    <Transactions :transactions="transactions.data" />
                 </TabItem>
             </Tabs>
         </AuthenticatedContentLayout>
