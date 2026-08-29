@@ -1,3 +1,9 @@
+export enum TransactionEnum {
+    BUY = 'bought',
+    SELL = 'sold',
+    REINVEST = 'reinvested',
+}
+
 export type Dividend = {
     change: number;
     change_percentage: number;
@@ -18,7 +24,7 @@ export type Dividend = {
 };
 
 type UserDividendData = {
-    id: string;
+    uuid: string;
     quantity: number;
 };
 
@@ -27,3 +33,12 @@ export type UserDividend = UserDividendData & {
 };
 
 export type UserDividendSearch = Partial<UserDividendData> & { dividend: Dividend };
+
+export type UserDividendTransaction = {
+    uuid: string;
+    transaction_type: TransactionEnum;
+    quantity: number;
+    price: number;
+    transaction_date: string;
+    user_dividend: UserDividend;
+}

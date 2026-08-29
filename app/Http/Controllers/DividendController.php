@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\DividendResource;
 use App\Http\Resources\UserDividendResource;
+use App\Http\Resources\UserDividendTransactionResource;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Throwable;
@@ -126,6 +126,12 @@ class DividendController extends Controller
                     ->values(),
             ),
             'results' => [ 'data' => [] ],
+            'transactions' => UserDividendTransactionResource::collection(
+                UserDividendTransaction::query()
+                    ->with('userDividend.dividend')
+                    ->latest()
+                    ->get()
+            ),
         ];
     }
 }
