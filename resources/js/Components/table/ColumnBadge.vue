@@ -9,12 +9,14 @@ import {
     type TableRowContextType,
 } from '@/types/table';
 import Typography from '@/Components/Elements/Typography.vue';
+import { ucFirst } from '@/utils/functions';
 
 interface Props extends ColumnProps {
     color:
         | ColumnBadgeColor
         | Record<string, ColumnBadgeColor>
         | ((obj: Record<string, any>) => ColumnBadgeColor);
+    capitalize?: boolean;
 }
 
 const colors = {
@@ -44,7 +46,7 @@ const colors = {
     },
 };
 
-const props = withDefaults(defineProps<Props>(), { colspan: 1 });
+const props = withDefaults(defineProps<Props>(), { capitalize: false, colspan: 1 });
 
 const slots = useSlots();
 
@@ -78,7 +80,9 @@ const columnWidth = computed(() => tableContext?.getColSpan(props.colspan));
             <Typography variant="caption">
                 <span class="block text-center" :class="badgeColor.inner">
                     <slot v-if="slots.default" :data="rowData" />
-                    <span v-else>{{ columnValue }}</span>
+                    <span v-else>
+                        {{ capitalize ? ucFirst(columnValue ?? '') : columnValue }}
+                    </span>
                 </span>
             </Typography>
         </div>

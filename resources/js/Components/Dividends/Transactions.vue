@@ -18,24 +18,31 @@ const transactionColor = (item: Record<string, any>) => {
         [TransactionEnum.REINVEST]: ColumnBadgeColor.WARNING,
     };
 
-    return options[(item as UserDividendTransaction).transaction_type] ?? ColumnBadgeColor.GRAY;
+    return (
+        options[(item.value as UserDividendTransaction).transaction_type] ?? ColumnBadgeColor.GRAY
+    );
 };
 </script>
 
 <template>
     <Table :items="transactions">
-        <ColumnBadge :color="transactionColor" header="Type" notation="transaction_type" />
+        <ColumnBadge
+            :color="transactionColor"
+            header="Type"
+            notation="transaction_type"
+            capitalize
+        />
 
         <ColumnBasic :colspan="3" header="Name">
             <template v-slot:default="{ data }">
                 <div class="flex items-center space-x-2">
-                    <img :src="data.userDivided.dividend.image" alt="" class="h-12 w-12" />
+                    <img :src="data.user_dividend.dividend.image" alt="" class="h-12 w-12" />
                     <div>
                         <Typography variant="body1">
-                            {{ data.userDivided.dividend.name }}
+                            {{ data.user_dividend.dividend.name }}
                         </Typography>
                         <Typography variant="caption">
-                            {{ data.userDivided.dividend.symbol }}
+                            {{ data.user_dividend.dividend.symbol }}
                         </Typography>
                     </div>
                 </div>
@@ -44,7 +51,7 @@ const transactionColor = (item: Record<string, any>) => {
 
         <ColumnBasic :colspan="1" header="Shares">
             <template v-slot:default="{ data }">
-                {{ data.quantity.toString().toFixed(2) }}
+                {{ data.quantity.toFixed(2) }}
             </template>
         </ColumnBasic>
 
@@ -56,7 +63,7 @@ const transactionColor = (item: Record<string, any>) => {
 
         <ColumnBasic :colspan="1" header="Date">
             <template v-slot:default="{ data }">
-                {{ formatTimeZone('yyyy-MM-dd', data.transaction_date) }}
+                {{ formatTimeZone('yyyy-MM-dd', 'UTC', data.transaction_date) }}
             </template>
         </ColumnBasic>
     </Table>

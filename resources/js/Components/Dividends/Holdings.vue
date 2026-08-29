@@ -137,7 +137,7 @@ const upcomingPayoutDate = computed(() => {
         </ColumnBasic>
         <ColumnBasic :colspan="1" header="Shares">
             <template v-slot:default="{ data }">
-                {{ data.quantity.toString().toFixed(2) }}
+                {{ data.quantity.toFixed(2) }}
             </template>
         </ColumnBasic>
         <ColumnBasic header="Yield">
