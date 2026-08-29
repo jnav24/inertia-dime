@@ -70,25 +70,25 @@ const stats = computed(() => {
         { label: 'Payout Amount', value: dividendPayout.value },
         {
             label: 'Declaration Date',
-            value: formatTimeZone(format, tz, props.dividend.dividend.declaration_date),
+            value: getFormattedDateTime(props.dividend.dividend.declaration_date),
             tooltip:
                 'The date the company’s board officially announces the dividend (and usually sets the dividend amount and the other key dates like ex-dividend and payment).',
         },
         {
             label: 'Ex Date',
-            value: formatTimeZone(format, tz, props.dividend.dividend.ex_date),
+            value: getFormattedDateTime(props.dividend.dividend.ex_date),
             tooltip:
                 'The cutoff for eligibility based on share ownership. On/after this date, a new buyer does not get the upcoming dividend; only shareholders who owned the shares before the ex-date are entitled.',
         },
         {
             label: 'Record Date',
-            value: formatTimeZone(format, tz, props.dividend.dividend.record_date),
+            value: getFormattedDateTime(props.dividend.dividend.record_date),
             tooltip:
                 'The date the company checks its official shareholder records to determine who is eligible. In practice, it’s usually set so that investors who were still holders on the ex-date will be the ones recorded.',
         },
         {
             label: 'Payout Date',
-            value: formatTimeZone(format, tz, props.dividend.dividend.payout_date),
+            value: getFormattedDateTime(props.dividend.dividend.payout_date),
         },
     ];
 });
@@ -108,6 +108,11 @@ const holdings = computed(() => {
 });
 
 const truncateDescription = computed(() => props.dividend.dividend.description.length > maxLength);
+
+const getFormattedDateTime = (value?: string) => {
+    if (!value) return '--';
+    return formatTimeZone(format, tz, props.dividend.dividend.declaration_date);
+};
 
 watch(
     () => props.notify,
