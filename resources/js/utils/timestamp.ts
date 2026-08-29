@@ -9,7 +9,7 @@ import {
 } from 'date-fns';
 import { toZonedTime } from 'date-fns-tz';
 
-const getDateObject = (timestamp = '') => (timestamp.length ? new Date(timestamp) : new Date());
+const getDateObject = (timestamp = '') => (timestamp?.length ? new Date(timestamp) : new Date());
 
 export const formatDate = (pattern = 'yyyy-MM-dd hh:mm a', timestamp = ''): string => {
     return format(getDateObject(timestamp), pattern);
