@@ -41,8 +41,8 @@ const colors = {
         outer: 'border-success bg-success/20',
     },
     [ColumnBadgeColor.WARNING]: {
-        inner: 'text-warning',
-        outer: 'border-warning bg-warning/20',
+        inner: 'text-dm-secondary',
+        outer: 'border-dm-secondary bg-secondary/20',
     },
 };
 
