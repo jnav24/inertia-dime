@@ -7,6 +7,7 @@ import FormInput from '@/Components/Fields/FormInput.vue';
 import ExpenseFormActions from '@/Components/Forms/ExpenseFormActions.vue';
 import FormSelect from '@/Components/Fields/FormSelect.vue';
 import ExpenseFormConfirmation from '@/Components/Forms/ExpenseFormConfirmation.vue';
+import ExpensePayOff from '@/Components/ExpensePayOff.vue';
 
 defineEmits<ExpenseFormEmits>();
 const props = defineProps<CreditCardExpenseFormProps>();
@@ -16,6 +17,8 @@ const limit = computed(() => convertToDollar(props.expense?.data.limit));
 </script>
 
 <template>
+    <ExpensePayOff :balance="expense?.data.balance ?? 0" :total="expense?.data.limit ?? 0" />
+
     <div class="mb-6 grid grid-cols-2 gap-4">
         <FormInput label="Template" hidden :value="String(!!isTemplate)" />
         <FormInput label="Name" :rules="['required', 'min:3']" :value="expense?.data?.name ?? ''" />
