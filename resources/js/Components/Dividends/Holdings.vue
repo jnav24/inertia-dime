@@ -8,6 +8,7 @@ import Typography from '@/Components/Elements/Typography.vue';
 import { computed } from 'vue';
 import useDividends from '@/Composables/useDividends';
 import { UserDividend } from '@/types/dividends';
+import { formatTimeZone } from '@/utils/timestamp';
 
 type Props = {
     items: UserDividend[];
@@ -99,7 +100,7 @@ const upcomingPayoutDate = computed(() => {
         <div class="pl-4">
             <Typography variant="caption">Next Payout Date</Typography>
             <Typography variant="body1">
-                {{ upcomingPayoutDate ? new Date(upcomingPayoutDate).toLocaleDateString() : 'N/A' }}
+                {{ upcomingPayoutDate ? formatTimeZone('yyyy-MM-dd', 'UTC', upcomingPayoutDate.toISOString()) : 'N/A' }}
             </Typography>
         </div>
     </div>
