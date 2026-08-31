@@ -11,21 +11,21 @@ type Props = {
 const props = defineProps<Props>();
 
 const percentage = computed(() => {
-    return convertToPercentage(props.balance / props.total, true);
+    return convertToPercentage((props.total - props.balance) / props.total, true);
 });
 </script>
 
 <template>
-    <div class="mb-2 flex items-center justify-end">
+    <div class="mb-2 flex items-center justify-between">
         <Typography variant="caption">Debt Progress</Typography>
         <Typography variant="caption">{{ percentage }}</Typography>
     </div>
 
-    <div class="relative h-2 w-full">
+    <div class="relative h-2 mb-4 w-full">
         <div
             class="absolute left-0 top-0 h-2 rounded-md bg-primary"
-            :style="`width: ${percentage}`"
+            :style="`width: ${percentage}; z-index: 2`"
         />
-        <div class="absolute left-0 top-0 h-2 w-full rounded-md bg-gray-100" />
+        <div class="absolute left-0 top-0 h-2 w-full rounded-md bg-gray-100" style="z-index: 1" />
     </div>
 </template>
