@@ -55,7 +55,13 @@ const transactionColor = (item: Record<string, any>) => {
             </template>
         </ColumnBasic>
 
-        <ColumnBasic :colspan="1" header="Price">
+        <ColumnBasic :colspan="1" header="Purchase Price">
+            <template v-slot:default="{ data }">
+                {{ convertToCurrency(data.price * data.quantity) }}
+            </template>
+        </ColumnBasic>
+
+        <ColumnBasic :colspan="1" header="Market Price">
             <template v-slot:default="{ data }">
                 {{ convertToCurrency(data.price) }}
             </template>
