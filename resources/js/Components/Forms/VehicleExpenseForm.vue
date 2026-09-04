@@ -17,6 +17,7 @@ const page = usePage();
 const typeSelected = ref('');
 const amount = computed(() => convertToDollar(props.expense?.data.amount));
 const balance = computed(() => convertToDollar(props.expense?.data.balance));
+const limit = computed(() => convertToDollar(props.expense?.data.limit));
 const isMileage = computed(() => {
     return props.types.find((item) => item.id === typeSelected.value)?.slug === 'gas';
 });
@@ -61,6 +62,11 @@ const userVehicles = computed(() => {
             label="Due Date"
             :value="(expense?.data?.due_date ?? 1).toString()"
         />
+    </div>
+
+    <div class="mt-4 grid grid-cols-2 gap-4">
+        <FormInput label="Limit" :value="limit" />
+        <FormInput label="APR" :value="(expense?.data?.apr ?? 0.0).toString()" />
     </div>
 
     <ExpenseFormConfirmation v-if="!isTemplate" :expense="expense" />

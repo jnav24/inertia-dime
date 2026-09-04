@@ -147,6 +147,8 @@ export type VehicleExpense = {
         mileage: number;
         confirmation?: string;
         notes?: string;
+        apr: number;
+        limit: number;
         paid_date?: string;
     };
     expense: ExpenseType;

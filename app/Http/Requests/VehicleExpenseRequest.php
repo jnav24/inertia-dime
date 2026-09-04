@@ -17,9 +17,11 @@ class VehicleExpenseRequest extends FormRequest
         return [
             'account_type' => 'required|uuid',
             'amount' => 'required|numeric|decimal:2',
+            'apr' => 'nullable|numeric|decimal:2',
             'balance' => 'nullable|decimal:2',
             'confirmation' => 'nullable|string|max:255',
             'due_date' => 'int|max:31',
+            'limit' => 'nullable|numeric|decimal:2',
             'template' => new BooleanString(),
             'vehicle' => 'required|uuid',
             'paid_date' => 'nullable|date',

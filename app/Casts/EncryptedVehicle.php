@@ -28,6 +28,8 @@ class EncryptedVehicle implements CastsAttributes
             mileage: $item['mileage'],
             confirmation: $item['confirmation'],
             notes: $item['notes'],
+            apr: $item['apr'] ?? 0,
+            limit: $item['limit'] ?? 0,
             paid_date: Carbon::parse($item['paid_date']),
         );
     }
