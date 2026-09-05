@@ -21,11 +21,11 @@ const percentage = computed(() => {
         <Typography variant="caption">{{ percentage }}</Typography>
     </div>
 
-    <div class="relative h-2 mb-4 w-full">
+    <div class="relative mb-4 h-2 w-full">
         <div
             class="absolute left-0 top-0 h-2 rounded-md bg-primary"
             :style="`width: ${percentage}; z-index: 2`"
         />
-        <div class="absolute left-0 top-0 h-2 w-full rounded-md bg-gray-100" style="z-index: 1" />
+        <div class="absolute left-0 top-0 h-2 w-full rounded-md bg-gray-200" style="z-index: 1" />
     </div>
 </template>

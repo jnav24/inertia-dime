@@ -63,6 +63,12 @@ export default {
             },
             minWidth: {
                 6: '1.5rem',
+                100: '25rem',
+                125: '31.25rem',
+                150: '38rem',
+                200: '50rem',
+                250: '63rem',
+                300: '75rem',
             },
             opacity: {
                 85: '0.85',

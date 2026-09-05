@@ -100,7 +100,7 @@ watch(
 
 <template>
     <Modal :show="show" @close-modal="closeModal()" hide-close-button>
-        <div class="w-150 space-y-4 p-4">
+        <div class="min-w-150 space-y-4 p-4">
             <div>
                 <Typography variant="h3">{{ ucFirst(expense) }}</Typography>
                 <Typography variant="caption">Add/Update your expense</Typography>

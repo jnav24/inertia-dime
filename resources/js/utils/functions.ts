@@ -45,3 +45,41 @@ export const debounce = (fn: Function, delay = 300) => {
         timeout = setTimeout(() => fn(...args), delay);
     };
 };
+
+export const simulatePayoff = (balance: number, rate: number, monthlyPayment: number) => {
+    if (monthlyPayment <= 0) {
+        return {
+            finalBalance: balance,
+            months: 0,
+            totalInterest: 0,
+            totalPaid: 0,
+            years: 0,
+        };
+    }
+
+    const monthlyRate = (rate >= 1 ? rate / 100 : rate) / 12;
+    let months = 0;
+    let totalInterest = 0;
+    let totalPaid = 0;
+    const maxIterations = 600; // 50 years safety limit
+
+    while (balance > 0 && months < maxIterations) {
+        const interest = balance * monthlyRate;
+        const payment = Math.min(monthlyPayment, balance + interest);
+
+        balance += interest;
+        balance -= payment;
+
+        totalInterest += interest;
+        totalPaid += payment;
+        months++;
+    }
+
+    return {
+        finalBalance: balance,
+        months,
+        totalInterest,
+        totalPaid,
+        years: months / 12,
+    };
+};

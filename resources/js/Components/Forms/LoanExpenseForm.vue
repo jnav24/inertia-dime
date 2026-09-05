@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { convertToDollar } from '@/utils/functions';
 import { dueDates } from '@/utils/helpers';
 import { ExpenseFormEmits, LoanExpenseFormProps } from '@/types/expenses';
@@ -7,44 +7,75 @@ import FormInput from '@/Components/Fields/FormInput.vue';
 import ExpenseFormActions from '@/Components/Forms/ExpenseFormActions.vue';
 import FormSelect from '@/Components/Fields/FormSelect.vue';
 import ExpenseFormConfirmation from '@/Components/Forms/ExpenseFormConfirmation.vue';
-import ExpensePayOff from '@/Components/ExpensePayOff.vue';
+import PayoffEstimator from '@/Components/PayoffEstimator.vue';
 
 defineEmits<ExpenseFormEmits>();
 const props = defineProps<LoanExpenseFormProps>();
+
+const payoffAmount = ref(props.expense?.data.amount ?? 0.0);
+const payoffApr = ref(props.expense?.data.apr ?? 0.0);
+const payoffBalance = ref(props.expense?.data.balance ?? 0.0);
+const payoffLimit = ref(props.expense?.data.limit ?? 0.0);
+
 const amount = computed(() => convertToDollar(props.expense?.data.amount));
 const balance = computed(() => convertToDollar(props.expense?.data.balance));
 const limit = computed(() => convertToDollar(props.expense?.data.limit));
 </script>
 
 <template>
-    <ExpensePayOff :balance="expense?.data.balance ?? 0" :total="expense?.data.limit ?? 0" />
+    <PayoffEstimator
+        :amount="payoffAmount"
+        :apr="payoffApr"
+        :balance="payoffBalance"
+        :limit="payoffLimit"
+        :show-payoff-panel="!isTemplate"
+        :show-payoff-summary="false"
+    >
+        <div class="mb-6 grid grid-cols-2 gap-4">
+            <FormInput label="Template" hidden :value="String(!!isTemplate)" />
+            <FormInput
+                label="Name"
+                :rules="['required', 'min:3']"
+                :value="expense?.data.name ?? ''"
+            />
+            <FormInput
+                @update:value="payoffAmount = Number($event)"
+                :rules="['required', 'float:2']"
+                :value="amount"
+                label="Amount"
+            />
+            <FormSelect
+                :items="types"
+                label="Account Type"
+                item-label="name"
+                item-value="id"
+                :rules="['required']"
+                :value="expense?.expense?.id ?? ''"
+            />
+            <FormInput
+                @update:value="payoffBalance = Number($event)"
+                :rules="['required', 'float:2']"
+                :value="balance"
+                label="Balance"
+            />
+            <FormSelect
+                v-if="isTemplate"
+                :items="dueDates"
+                label="Due Date"
+                :value="String(expense?.data?.due_date ?? 1)"
+            />
+        </div>
 
-    <div class="mb-6 grid grid-cols-2 gap-4">
-        <FormInput label="Template" hidden :value="String(!!isTemplate)" />
-        <FormInput label="Name" :rules="['required', 'min:3']" :value="expense?.data.name ?? ''" />
-        <FormInput label="Amount" :rules="['required', 'float:2']" :value="amount" />
-        <FormSelect
-            :items="types"
-            label="Account Type"
-            item-label="name"
-            item-value="id"
-            :rules="['required']"
-            :value="expense?.expense?.id ?? ''"
-        />
-        <FormInput label="Balance" :rules="['required', 'float:2']" :value="balance" />
-        <FormSelect
-            v-if="isTemplate"
-            :items="dueDates"
-            label="Due Date"
-            :value="String(expense?.data?.due_date ?? 1)"
-        />
-    </div>
+        <div class="mt-4 grid grid-cols-2 gap-4">
+            <FormInput @update:value="payoffLimit = Number($event)" label="Limit" :value="limit" />
+            <FormInput
+                @update:value="payoffApr = Number($event)"
+                label="APR"
+                :value="(expense?.data?.apr ?? 0.0).toString()"
+            />
+        </div>
 
-    <div class="mt-4 grid grid-cols-2 gap-4">
-        <FormInput label="Limit" :value="limit" />
-        <FormInput label="APR" :value="(expense?.data?.apr ?? 0.0).toString()" />
-    </div>
-
-    <ExpenseFormConfirmation v-if="!isTemplate" :expense="expense" />
-    <ExpenseFormActions @close="$emit('close')" />
+        <ExpenseFormConfirmation v-if="!isTemplate" :expense="expense" />
+        <ExpenseFormActions @close="$emit('close')" />
+    </PayoffEstimator>
 </template>
